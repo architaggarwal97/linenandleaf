@@ -23,7 +23,7 @@ export function Header() {
               to={link.to}
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-foreground font-semibold" }}
-              activeOptions={{ exact: link.to === "/" }}
+              activeOptions={{ exact: false }}
             >
               {link.label}
             </Link>
