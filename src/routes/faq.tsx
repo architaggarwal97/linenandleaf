@@ -51,6 +51,40 @@ const faqs = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+
+export const Route = createFileRoute("/faq")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "/faq" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        innerHTML: JSON.stringify(faqJsonLd),
+      },
+    ],
+  }),
+  component: FaqPage,
+});
+
 function FaqPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
