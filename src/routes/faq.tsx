@@ -72,13 +72,14 @@ export const Route = createFileRoute("/faq")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://linenandleaf.lovable.app/faq" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/faq" }],
+    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/faq" }],
     scripts: [
       {
         type: "application/ld+json",
-        innerHTML: JSON.stringify(faqJsonLd),
+        children: JSON.stringify(faqJsonLd),
       },
     ],
   }),

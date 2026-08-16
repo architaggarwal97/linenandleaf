@@ -17,9 +17,10 @@ export const Route = createFileRoute("/service-area")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://linenandleaf.lovable.app/service-area" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/service-area" }],
+    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/service-area" }],
   }),
   component: ServiceAreaPage,
 });

@@ -14,9 +14,10 @@ export const Route = createFileRoute("/technology")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://linenandleaf.lovable.app/technology" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/technology" }],
+    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/technology" }],
   }),
   component: TechnologyPage,
 });

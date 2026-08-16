@@ -79,16 +79,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Linen & Leaf Dry Cleaners — Sarojini Nagar, New Delhi" },
-      {
-        name: "description",
-        content:
-          "Eco-conscious dry cleaning and laundry in Sarojini Nagar, New Delhi. 99% less water, live order updates and doorstep pickup and delivery.",
-      },
       { name: "author", content: "Linen & Leaf Dry Cleaners" },
       { property: "og:site_name", content: "Linen & Leaf Dry Cleaners" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
