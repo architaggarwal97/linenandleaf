@@ -8,21 +8,6 @@ const TITLE = "FAQ — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
   "Answers on turnaround, pricing, garment care guarantees, pickup areas and how tracking updates work at Linen & Leaf.";
 
-export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/faq" }],
-  }),
-  component: FaqPage,
-});
-
 const faqs = [
   {
     q: "How fast is your turnaround?",
