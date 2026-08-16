@@ -174,7 +174,7 @@ function FaqPage() {
                     role="region"
                     aria-labelledby={`faq-question-${index}`}
                     hidden={!isOpen}
-                    className={`grid transition-all duration-300 ease-in-out ${
+                    className={`grid transition-all duration-300 ease-in-out motion-reduce:transition-none motion-reduce:duration-0 ${
                       isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     }`}
                   >
