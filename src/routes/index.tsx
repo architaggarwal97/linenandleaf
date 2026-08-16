@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck } from "lucide-react";
+import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
@@ -47,7 +47,9 @@ const usps = [
     tint: "bg-blue-50 text-blue-500",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
+    note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
   },
+
   {
     icon: Clock,
     tint: "bg-amber-50 text-amber-500",
@@ -136,21 +138,32 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {usps.map(({ icon: Icon, tint, title, desc }) => (
-              <div
-                key={title}
-                className="bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 group hover:-translate-y-2"
-              >
+            {usps.map((usp) => {
+              const Icon = usp.icon;
+              const note = "note" in usp ? (usp.note as string) : null;
+              return (
                 <div
-                  className={`h-14 w-14 sm:h-16 sm:w-16 ${tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}
+                  key={usp.title}
+                  className="bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 group hover:-translate-y-2"
                 >
-                  <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                  <div
+                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}
+                  >
+                    <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 sm:mb-4">{usp.title}</h3>
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-light">{usp.desc}</p>
+                  {note ? (
+                    <p className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4 sm:p-5 text-sm sm:text-base text-blue-900/80 font-light leading-relaxed">
+                      <Sparkles className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
+                      <span>{note}</span>
+                    </p>
+                  ) : null}
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 sm:mb-4">{title}</h3>
-                <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-light">{desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
         </div>
       </section>
 
