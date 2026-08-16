@@ -15,9 +15,10 @@ export const Route = createFileRoute("/how-it-works")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://linenandleaf.lovable.app/how-it-works" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/how-it-works" }],
+    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/how-it-works" }],
   }),
   component: HowItWorksPage,
 });
