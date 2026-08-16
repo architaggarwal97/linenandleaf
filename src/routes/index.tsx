@@ -119,11 +119,6 @@ function Home() {
                 <MessageCircle className="h-5 w-5" /> WhatsApp Us
               </a>
             </div>
-
-            <div className="mt-10 inline-flex items-center gap-2 text-slate-500 text-sm sm:text-base font-light">
-              <ShieldCheck className="h-5 w-5 text-teal-600 shrink-0" />
-              <span>Independent & Authentic — a founder-led business, not a franchise.</span>
-            </div>
           </div>
         </div>
       </section>
