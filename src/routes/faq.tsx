@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { whatsappLink } from "@/lib/whatsapp";
 
@@ -51,9 +52,27 @@ const faqs = [
     q: "Do you handle bridal and designer wear?",
     a: "Yes. Embellished, bridal and designer pieces are handled individually with fabric-specific processing and extra photo documentation.",
   },
+  {
+    q: "What kinds of garments can I send?",
+    a: "Shirts, trousers, suits, sarees, lehengas, jackets, coats, dresses, curtains, bedsheets and most everyday or occasion wear. If you're unsure, send us a photo on WhatsApp and we'll confirm.",
+  },
+  {
+    q: "Do I need to be home for pickup or delivery?",
+    a: "Not necessarily. You can leave garments with a neighbour, security guard or in a pre-agreed safe spot. We coordinate the handover details over WhatsApp.",
+  },
+  {
+    q: "How do I pay?",
+    a: "We accept UPI, cash and most major wallets. Payment is collected after you approve the quote and before delivery, unless you've arranged a prepaid wallet balance with us.",
+  },
 ];
 
 function FaqPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const toggle = (index: number) => {
+    setOpenIndex((current) => (current === index ? null : index));
+  };
+
   return (
     <>
       <PageHero
@@ -63,18 +82,58 @@ function FaqPage() {
       />
 
       <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
-          {faqs.map((faq) => (
-            <article
-              key={faq.q}
-              className="p-6 sm:p-8 bg-slate-50 rounded-3xl border border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300"
-            >
-              <h2 className="font-semibold text-slate-800 mb-3">{faq.q}</h2>
-              <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-light">{faq.a}</p>
-            </article>
-          ))}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-3 sm:space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <article
+                  key={faq.q}
+                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
+                    isOpen
+                      ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                      : "bg-slate-50 border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggle(index)}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${index}`}
+                    className="w-full flex items-center justify-between gap-4 p-5 sm:p-8 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/30 rounded-2xl sm:rounded-3xl"
+                  >
+                    <h2 className="font-semibold text-slate-800 text-base sm:text-lg pr-2">
+                      {faq.q}
+                    </h2>
+                    <span
+                      className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <ChevronDown className="h-5 w-5" />
+                    </span>
+                  </button>
+                  <div
+                    id={`faq-answer-${index}`}
+                    role="region"
+                    aria-labelledby={`faq-question-${index}`}
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="px-5 sm:px-8 pb-5 sm:pb-8 text-slate-500 text-sm sm:text-base leading-relaxed font-light">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
 
-          <div className="text-center pt-8">
+          <div className="text-center pt-10 sm:pt-12">
             <a
               href={whatsappLink("Hi Linen & Leaf! I have a question.")}
               target="_blank"
