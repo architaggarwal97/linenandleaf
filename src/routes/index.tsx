@@ -18,7 +18,18 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://linenandleaf.lovable.app/" },
       ...socialMeta(TITLE, DESCRIPTION),
     ],
-    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/" }],
+    links: [
+      { rel: "canonical", href: "https://linenandleaf.lovable.app/" },
+      // Hero headline uses the Fraunces display face — preload the latin
+      // variable subset so above-the-fold text paints without a swap flash.
+      {
+        rel: "preload",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+        href: "https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeP2Xz5c.woff2",
+      },
+    ],
     scripts: [breadcrumbScript("/", "Home")],
   }),
   component: Home,
