@@ -11,12 +11,12 @@ const DESCRIPTION =
   "Book a free doorstep pickup in Sarojini Nagar by WhatsApp, phone or a quick form. We confirm your slot straight away.";
 
 type ContactSearch = {
-  name?: string;
-  phone?: string;
-  address?: string;
-  items?: string;
-  date?: string;
-  slot?: string;
+  name?: string | undefined;
+  phone?: string | undefined;
+  address?: string | undefined;
+  items?: string | undefined;
+  date?: string | undefined;
+  slot?: string | undefined;
 };
 
 const SLOTS = ["Morning (9 AM – 12 PM)", "Afternoon (12 – 4 PM)", "Evening (4 – 8 PM)"];
