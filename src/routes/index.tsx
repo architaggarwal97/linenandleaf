@@ -60,6 +60,12 @@ const usps = [
     title: "Best-in-Class Equipment",
     desc: "Modern commercial-grade dry-cleaning and finishing equipment. Precision care, not just a neighbourhood press.",
   },
+  {
+    icon: ShieldCheck,
+    tint: "bg-amber-50 text-amber-600",
+    title: "Independent & Authentic",
+    desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
+  },
 ];
 
 const steps = [
@@ -113,11 +119,6 @@ function Home() {
                 <MessageCircle className="h-5 w-5" /> WhatsApp Us
               </a>
             </div>
-
-            <div className="mt-10 inline-flex items-center gap-2 text-slate-500 text-sm sm:text-base font-light">
-              <ShieldCheck className="h-5 w-5 text-teal-600 shrink-0" />
-              <span>Independent & Authentic — a founder-led business, not a franchise.</span>
-            </div>
           </div>
         </div>
       </section>
@@ -130,11 +131,11 @@ function Home() {
               The Standard Has Changed
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
-              Four things we do differently from a traditional neighbourhood presser.
+              Five things we do differently from a traditional neighbourhood presser.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {usps.map(({ icon: Icon, tint, title, desc }) => (
               <div
                 key={title}
