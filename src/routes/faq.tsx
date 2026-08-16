@@ -48,7 +48,7 @@ const faqs = [
   },
   {
     q: "How do I pay?",
-    a: "We accept UPI, cash and most major wallets. Payment is collected after you approve the quote and before delivery, unless you've arranged a prepaid wallet balance with us.",
+    a: "We accept UPI, cash and most major wallets. Payment is collected after you approve the quote and before delivery.",
   },
 ];
 
