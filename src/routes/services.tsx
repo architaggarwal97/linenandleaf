@@ -21,7 +21,12 @@ export const Route = createFileRoute("/services")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/services" }],
-    scripts: [breadcrumbScript("/services", "Services & Pricing")],
+    scripts: [
+      breadcrumbScript("/services", "Services & Pricing"),
+      servicesScript(
+        services.map((s) => ({ name: s.title, description: s.desc })),
+      ),
+    ],
   }),
   component: ServicesPage,
 });
