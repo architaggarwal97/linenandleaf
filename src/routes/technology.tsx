@@ -83,6 +83,16 @@ function TechnologyPage() {
         </div>
       </section>
 
+      <section className="py-16 md:py-20 bg-teal-50 border-y border-teal-100">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">See it for yourself</h2>
+          <p className="text-slate-600 font-light leading-relaxed">
+            You're welcome to visit us at Sarojini Nagar Market and watch the process firsthand. No appointment needed —
+            just drop by during opening hours.
+          </p>
+        </div>
+      </section>
+
       <section className="py-16 md:py-20 bg-[#f8faf9]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">

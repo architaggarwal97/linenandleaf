@@ -129,8 +129,8 @@ function ContactPage() {
                   <MapPin className="h-5 w-5 text-teal-600 shrink-0 mt-0.5" />
                   <address className="not-italic leading-relaxed">{site.address}</address>
                 </li>
-                <li className="flex items-center gap-3">
-                  <MessageCircle className="h-5 w-5 text-teal-600 shrink-0" />
+                <li className="flex items-start gap-3">
+                  <MessageCircle className="h-5 w-5 text-teal-600 shrink-0 mt-0.5" />
                   <a className="hover:text-teal-700" href={whatsappLink()} target="_blank" rel="noreferrer">
                     WhatsApp {site.whatsappNumber}
                   </a>
@@ -146,6 +146,9 @@ function ContactPage() {
                   <span>Open Daily: 9:00 AM – 9:00 PM</span>
                 </li>
               </ul>
+              <p className="mt-5 pt-5 border-t border-slate-200 text-sm text-teal-700 font-light leading-relaxed">
+                Walk-ins welcome — come see the process live, no appointment needed.
+              </p>
             </div>
             <div className="p-8 rounded-3xl bg-teal-50 border border-teal-100">
               <p className="text-sm text-teal-900 font-light leading-relaxed">

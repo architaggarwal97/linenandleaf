@@ -210,6 +210,9 @@ function Home() {
               <MessageCircle className="h-6 w-6 shrink-0" /> Start a WhatsApp Chat
             </a>
           </div>
+          <p className="mt-8 text-teal-100/70 text-sm sm:text-base font-light">
+            Prefer to see it in person? Drop by our Sarojini Nagar outlet anytime.
+          </p>
         </div>
       </section>
     </>
