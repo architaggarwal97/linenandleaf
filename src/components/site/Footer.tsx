@@ -1,54 +1,88 @@
 import { Link } from "@tanstack/react-router";
+import { MapPin, Clock, MessageCircle, Phone } from "lucide-react";
 import { Wordmark } from "./Wordmark";
 import { navLinks, site } from "@/lib/site";
+import { whatsappLink } from "@/lib/whatsapp";
+
+const localities = [
+  "Sarojini Nagar",
+  "RK Puram",
+  "Netaji Nagar",
+  "INA Colony",
+  "Vasant Vihar",
+  "Safdarjung Enclave",
+];
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border bg-secondary/50">
-      <div className="site-container grid gap-10 py-14 md:grid-cols-3 md:py-16">
-        <div>
-          <Wordmark size="md" withTagline />
-          <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Eco-conscious dry cleaning and laundry for Sarojini Nagar — 99% less water, fully
-            tracked, delivered to your door.
-          </p>
-        </div>
-
-        <div>
-          <h2 className="eyebrow">Visit us</h2>
-          <address className="mt-4 space-y-3 text-sm not-italic leading-relaxed text-muted-foreground">
-            <p>{site.address}</p>
-            <p>
-              <a className="hover:text-foreground" href={site.whatsappUrl} target="_blank" rel="noreferrer">
-                WhatsApp {site.whatsappNumber}
-              </a>
+    <footer className="bg-teal-950 text-teal-200/60 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 pb-12">
+          <div>
+            <div className="mb-6">
+              <Wordmark variant="dark" />
+            </div>
+            <p className="text-sm leading-relaxed font-light md:pr-8">
+              Premium, eco-conscious garment care on modern commercial-grade dry-cleaning equipment, with
+              doorstep pickup and delivery.
             </p>
-            <p>
-              <a className="hover:text-foreground" href={site.phoneHref}>
-                Call {site.phone}
-              </a>
+          </div>
+
+          <div>
+            <h2 className="text-white font-medium mb-5 sm:mb-6 tracking-wide">Location &amp; Contact</h2>
+            <address className="space-y-3 sm:space-y-4 text-sm font-light not-italic">
+              <p className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 mt-0.5 text-teal-500 shrink-0" />
+                <span className="leading-relaxed">{site.address}</span>
+              </p>
+              <p className="flex items-center gap-3">
+                <MessageCircle className="h-5 w-5 text-teal-500 shrink-0" />
+                <a className="hover:text-white transition-colors" href={whatsappLink()} target="_blank" rel="noreferrer">
+                  WhatsApp {site.whatsappNumber}
+                </a>
+              </p>
+              <p className="flex items-center gap-3">
+                <Phone className="h-5 w-5 text-teal-500 shrink-0" />
+                <a className="hover:text-white transition-colors" href={site.phoneHref}>
+                  {site.phone}
+                </a>
+              </p>
+              <p className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-teal-500 shrink-0" />
+                <span>Open Daily: 9:00 AM – 9:00 PM</span>
+              </p>
+            </address>
+          </div>
+
+          <div>
+            <h2 className="text-white font-medium mb-5 sm:mb-6 tracking-wide">Explore</h2>
+            <ul className="space-y-3 text-sm font-light">
+              {navLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="hover:text-white transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-white font-medium mb-5 sm:mb-6 tracking-wide">Where We Serve</h2>
+            <p className="text-sm font-light leading-relaxed mb-4">
+              Pickup and delivery is currently limited to Sarojini Nagar and a few nearby localities:
             </p>
-          </address>
+            <ul className="space-y-2 text-sm font-light">
+              {localities.map((l) => (
+                <li key={l}>{l}</li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div>
-          <h2 className="eyebrow">Explore</h2>
-          <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-muted-foreground sm:grid-cols-2 md:grid-cols-1">
-            {navLinks.map((link) => (
-              <li key={link.to}>
-                <Link to={link.to} className="transition-colors hover:text-foreground">
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-border/70">
-        <div className="site-container flex flex-col gap-2 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Linen &amp; Leaf Dry Cleaners. Sarojini Nagar, New Delhi.</p>
-          <p>Pickup &amp; delivery, six days a week.</p>
+        <div className="border-t border-teal-900/50 pt-8 mt-4 text-xs sm:text-sm text-center font-light flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>© {new Date().getFullYear()} Linen and Leaf Dry Cleaners. All rights reserved.</p>
+          <p>Sarojini Nagar Market, New Delhi.</p>
         </div>
       </div>
     </footer>

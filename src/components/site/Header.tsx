@@ -1,86 +1,93 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { Wordmark } from "./Wordmark";
-import { Button } from "@/components/ui/button";
 import { navLinks, site } from "@/lib/site";
+import { whatsappLink } from "@/lib/whatsapp";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-sm">
-      <div className="site-container flex h-16 items-center justify-between gap-4 md:h-20">
-        <Link to="/" className="shrink-0" aria-label={site.name} onClick={() => setOpen(false)}>
-          <Wordmark size="sm" />
-        </Link>
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          <Link to="/" aria-label={site.name} onClick={() => setOpen(false)} className="relative z-50">
+            <Wordmark />
+          </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Main">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground font-semibold" }}
-              activeOptions={{ exact: false }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild variant="outline" size="sm">
-            <a href={site.whatsappUrl} target="_blank" rel="noreferrer">
-              WhatsApp
-            </a>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/contact">Book a Pickup</Link>
-          </Button>
-        </div>
-
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border text-foreground lg:hidden"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
-      </div>
-
-      {open ? (
-        <div className="border-t border-border bg-background lg:hidden">
-          <nav className="site-container flex flex-col py-3" aria-label="Mobile">
+          <div className="hidden lg:flex space-x-7 items-center">
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                onClick={() => setOpen(false)}
-                className="border-b border-border/60 py-3 text-sm text-muted-foreground last:border-0"
-                activeProps={{ className: "text-foreground font-semibold" }}
+                className="text-sm font-medium text-slate-500 hover:text-teal-600 transition-colors"
+                activeProps={{ className: "text-teal-700 font-semibold" }}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="flex flex-col gap-2 py-4 sm:flex-row">
-              <Button asChild className="flex-1">
-                <Link to="/contact" onClick={() => setOpen(false)}>
-                  Book a Pickup
-                </Link>
-              </Button>
-              <Button asChild variant="whatsapp" className="flex-1">
-                <a href={site.whatsappUrl} target="_blank" rel="noreferrer">
-                  WhatsApp us
-                </a>
-              </Button>
-            </div>
-          </nav>
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-2.5 rounded-full font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-0.5"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp Us
+            </a>
+          </div>
+
+          <div className="lg:hidden flex items-center relative z-50">
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="text-slate-600 hover:text-teal-600 p-2 focus:outline-none"
+            >
+              {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            </button>
+          </div>
         </div>
-      ) : null}
-    </header>
+      </div>
+
+      <div
+        className={`lg:hidden fixed inset-x-0 top-20 bg-white border-b border-slate-100 shadow-2xl transition-all duration-300 ease-in-out ${
+          open ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-4 invisible"
+        }`}
+      >
+        <div className="flex flex-col px-6 py-8 space-y-6 bg-white/95 backdrop-blur-3xl">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setOpen(false)}
+              className="text-lg font-medium text-slate-700 hover:text-teal-600"
+              activeProps={{ className: "text-teal-700 font-semibold" }}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            to="/contact"
+            onClick={() => setOpen(false)}
+            className="w-full text-center bg-teal-800 text-white px-6 py-4 rounded-2xl font-semibold"
+          >
+            Book a Pickup
+          </Link>
+          <a
+            href={whatsappLink()}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setOpen(false)}
+            className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-green-500/20"
+          >
+            <MessageCircle className="h-5 w-5" />
+            WhatsApp Us
+          </a>
+        </div>
+      </div>
+    </nav>
   );
 }

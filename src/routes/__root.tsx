@@ -11,7 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
 
 function NotFoundComponent() {
   return (
@@ -82,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Eco-conscious dry cleaning and laundry in Sarojini Nagar, New Delhi. 99% less water, live order tracking and doorstep pickup and delivery.",
+          "Eco-conscious dry cleaning and laundry in Sarojini Nagar, New Delhi. 99% less water, live order updates and doorstep pickup and delivery.",
       },
       { name: "author", content: "Linen & Leaf Dry Cleaners" },
       { property: "og:site_name", content: "Linen & Leaf Dry Cleaners" },
@@ -143,9 +144,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="min-h-screen bg-slate-50 font-sans text-slate-800 selection:bg-teal-200">
+        <Header />
+        <main>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </QueryClientProvider>
   );
 }
-
