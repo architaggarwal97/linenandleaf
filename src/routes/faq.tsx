@@ -79,7 +79,7 @@ export const Route = createFileRoute("/faq")({
     scripts: [
       {
         type: "application/ld+json",
-        innerHTML: JSON.stringify(faqJsonLd),
+        children: JSON.stringify(faqJsonLd),
       },
     ],
   }),
