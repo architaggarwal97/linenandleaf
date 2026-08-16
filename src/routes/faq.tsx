@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
