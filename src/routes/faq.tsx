@@ -8,21 +8,6 @@ const TITLE = "FAQ — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
   "Answers on turnaround, pricing, garment care guarantees, pickup areas and how tracking updates work at Linen & Leaf.";
 
-export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/faq" }],
-  }),
-  component: FaqPage,
-});
-
 const faqs = [
   {
     q: "How fast is your turnaround?",
@@ -65,6 +50,40 @@ const faqs = [
     a: "We accept UPI, cash and most major wallets. Payment is collected after you approve the quote and before delivery, unless you've arranged a prepaid wallet balance with us.",
   },
 ];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+
+export const Route = createFileRoute("/faq")({
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "/faq" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        innerHTML: JSON.stringify(faqJsonLd),
+      },
+    ],
+  }),
+  component: FaqPage,
+});
 
 function FaqPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
