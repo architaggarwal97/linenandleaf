@@ -162,7 +162,7 @@ function ServicesPage() {
             <button
               type="button"
               onClick={requestQuote}
-              className="w-full mt-6 bg-white hover:bg-teal-50 text-teal-950 px-4 py-4 rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 flex justify-center items-center gap-2 hover:-translate-y-1"
+              className="w-full mt-6 bg-white hover:bg-teal-50 text-teal-950 px-4 py-4 rounded-2xl text-[0.8125rem] sm:text-base font-semibold whitespace-nowrap transition-all duration-300 flex justify-center items-center gap-2 hover:-translate-y-1"
             >
               <MessageCircle className="h-5 w-5 shrink-0 text-green-500" />
               <span>Get an exact quote via WhatsApp</span>
