@@ -60,6 +60,12 @@ const usps = [
     title: "Best-in-Class Equipment",
     desc: "Modern commercial-grade dry-cleaning and finishing equipment. Precision care, not just a neighbourhood press.",
   },
+  {
+    icon: ShieldCheck,
+    tint: "bg-amber-50 text-amber-600",
+    title: "Independent & Authentic",
+    desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
+  },
 ];
 
 const steps = [
@@ -134,7 +140,7 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {usps.map(({ icon: Icon, tint, title, desc }) => (
               <div
                 key={title}
