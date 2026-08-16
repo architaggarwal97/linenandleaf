@@ -21,6 +21,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app" }],
+    scripts: [breadcrumbScript("/", "Home")],
   }),
   component: Home,
 });

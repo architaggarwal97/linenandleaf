@@ -19,6 +19,7 @@ export const Route = createFileRoute("/technology")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/technology" }],
+    scripts: [breadcrumbScript("/technology", "Technology & Process")],
   }),
   component: TechnologyPage,
 });

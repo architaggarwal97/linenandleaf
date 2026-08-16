@@ -22,6 +22,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/contact" }],
+    scripts: [breadcrumbScript("/contact", "Book a Pickup")],
   }),
   component: ContactPage,
 });
