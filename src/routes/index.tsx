@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 
-const TITLE = "Linen & Leaf Dry Cleaners — Sarojini Nagar, New Delhi";
+const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =
-  "Eco-conscious dry cleaning in Sarojini Nagar, New Delhi. 99% less water, order updates on WhatsApp and doorstep pickup and delivery.";
+  "Experience premium garment care with 99% less water. Linen & Leaf offers fast, eco-friendly dry cleaning in South Delhi & Sarojini Nagar. Book a free pickup!";
 
 export const Route = createFileRoute("/")({
   head: () => ({
