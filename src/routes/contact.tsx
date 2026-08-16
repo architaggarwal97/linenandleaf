@@ -10,7 +10,26 @@ const TITLE = "Book a Pickup — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
   "Book a free doorstep pickup in Sarojini Nagar by WhatsApp, phone or a quick form. We confirm your slot straight away.";
 
+type ContactSearch = {
+  name?: string;
+  phone?: string;
+  address?: string;
+  items?: string;
+  date?: string;
+  slot?: string;
+};
+
+const SLOTS = ["Morning (9 AM – 12 PM)", "Afternoon (12 – 4 PM)", "Evening (4 – 8 PM)"];
+
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>): ContactSearch => ({
+    name: typeof search['name'] === "string" ? search['name'] : undefined,
+    phone: typeof search['phone'] === "string" ? search['phone'] : undefined,
+    address: typeof search['address'] === "string" ? search['address'] : undefined,
+    items: typeof search['items'] === "string" ? search['items'] : undefined,
+    date: typeof search['date'] === "string" ? search['date'] : undefined,
+    slot: typeof search['slot'] === "string" ? search['slot'] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -28,14 +47,33 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
-  const [details, setDetails] = useState({ name: "", phone: "", address: "", notes: "" });
+  const search = Route.useSearch();
+  const [details, setDetails] = useState({
+    name: search.name ?? "",
+    phone: search.phone ?? "",
+    address: search.address ?? "",
+    notes: search.items ?? "",
+    date: search.date ?? "",
+    slot: search.slot && SLOTS.includes(search.slot) ? search.slot : "",
+  });
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     openWhatsApp(
-      `Hi Linen & Leaf! I'd like to schedule a pickup.\n\n*Name:* ${details.name}\n*Phone:* ${details.phone}\n*Address:* ${details.address}${
-        details.notes ? `\n*Notes:* ${details.notes}` : ""
-      }\n\nPlease confirm the pickup time.`,
+      [
+        "Hi Linen & Leaf! I'd like to schedule a pickup.",
+        "",
+        `*Name:* ${details.name}`,
+        `*Phone:* ${details.phone}`,
+        `*Address:* ${details.address}`,
+        details.date ? `*Preferred date:* ${details.date}` : "",
+        details.slot ? `*Preferred slot:* ${details.slot}` : "",
+        details.notes ? `*Items / Notes:* ${details.notes}` : "",
+        "",
+        "Please confirm the pickup time.",
+      ]
+        .filter((line, i, arr) => line !== "" || (i > 0 && arr[i - 1] !== ""))
+        .join("\n"),
     );
   };
 
@@ -98,6 +136,38 @@ function ContactPage() {
                   className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-slate-700 resize-none"
                   placeholder="e.g. Flat 402, Block B, Sarojini Nagar..."
                 />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Preferred Pickup Date <span className="text-slate-400 font-normal">(optional)</span>
+                  </label>
+                  <input
+                    id="date"
+                    type="date"
+                    value={details.date}
+                    onChange={(e) => setDetails({ ...details, date: e.target.value })}
+                    className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-slate-700"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="slot" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Preferred Time Slot <span className="text-slate-400 font-normal">(optional)</span>
+                  </label>
+                  <select
+                    id="slot"
+                    value={details.slot}
+                    onChange={(e) => setDetails({ ...details, slot: e.target.value })}
+                    className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-slate-700"
+                  >
+                    <option value="">Any time</option>
+                    {SLOTS.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div>
                 <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1.5">
