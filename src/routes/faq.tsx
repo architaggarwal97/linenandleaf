@@ -139,7 +139,7 @@ function FaqPage() {
               return (
                 <article
                   key={faq.q}
-                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
+                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 motion-reduce:transition-none overflow-hidden ${
                     isOpen
                       ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                       : "bg-slate-50 border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
@@ -160,7 +160,7 @@ function FaqPage() {
                     >
                       <span className="pr-2">{faq.q}</span>
                       <span
-                        className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 ${
+                      className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 motion-reduce:transition-none motion-reduce:rotate-0 ${
                           isOpen ? "rotate-180" : ""
                         }`}
                         aria-hidden="true"
@@ -174,7 +174,7 @@ function FaqPage() {
                     role="region"
                     aria-labelledby={`faq-question-${index}`}
                     hidden={!isOpen}
-                    className={`grid transition-all duration-300 ease-in-out ${
+                    className={`grid transition-all duration-300 ease-in-out motion-reduce:transition-none motion-reduce:duration-0 ${
                       isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     }`}
                   >
