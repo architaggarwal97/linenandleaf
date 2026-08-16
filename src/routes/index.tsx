@@ -47,7 +47,9 @@ const usps = [
     tint: "bg-blue-50 text-blue-500",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
+    note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
   },
+
   {
     icon: Clock,
     tint: "bg-amber-50 text-amber-500",
