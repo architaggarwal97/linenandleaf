@@ -22,7 +22,7 @@ export function Header() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-sm font-medium text-slate-500 hover:text-teal-600 transition-colors"
+                className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
                 activeProps={{ className: "text-teal-700 font-semibold" }}
               >
                 {link.label}
@@ -44,7 +44,7 @@ export function Header() {
               onClick={() => setOpen(!open)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="text-slate-600 hover:text-teal-600 p-2 focus:outline-none"
+              className="text-slate-600 hover:text-teal-600 p-2 rounded-full transition-colors hover:bg-slate-100"
             >
               {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
             </button>
@@ -63,7 +63,7 @@ export function Header() {
               key={link.to}
               to={link.to}
               onClick={() => setOpen(false)}
-              className="text-lg font-medium text-slate-700 hover:text-teal-600"
+              className="text-lg font-medium text-slate-700 transition-colors hover:text-teal-600"
               activeProps={{ className: "text-teal-700 font-semibold" }}
             >
               {link.label}
