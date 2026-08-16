@@ -28,8 +28,8 @@ export const Route = createFileRoute("/about")({
 const values = [
   {
     icon: ShieldCheck,
-    title: "Independent, not a franchise",
-    desc: "We're a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate chain. The people who answer your WhatsApp are the people who handle your clothes.",
+    title: "Independent & Authentic",
+    desc: "We are a proudly independent, founder-led business — not a distant corporate franchise. Your clothes never leave our local facility, and the people who answer your WhatsApp are the people who handle your garments.",
   },
   {
     icon: MapPin,
