@@ -4,6 +4,7 @@ import { MapPin, MessageCircle, CheckCircle2, Info } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Service Area — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

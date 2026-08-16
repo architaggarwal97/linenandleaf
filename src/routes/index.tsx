@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =

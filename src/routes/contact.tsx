@@ -4,6 +4,7 @@ import { MessageCircle, Phone, MapPin, Clock } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Book a Pickup — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

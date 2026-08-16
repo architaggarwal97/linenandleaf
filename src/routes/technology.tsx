@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Droplet, Cpu, Camera, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Technology & Process — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

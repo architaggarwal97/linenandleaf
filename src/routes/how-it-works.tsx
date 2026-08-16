@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Phone, Camera, Zap, MapPin, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { whatsappLink } from "@/lib/whatsapp";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "How It Works — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { whatsappLink } from "@/lib/whatsapp";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "FAQ — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Services & Pricing — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =

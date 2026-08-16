@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, MapPin, Users, Leaf } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "About — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
