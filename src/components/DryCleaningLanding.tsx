@@ -403,7 +403,7 @@ export function DryCleaningLanding() {
                 <p className="text-center text-teal-200/60 text-sm font-light mb-8">Build your basket to get an instant quote.</p>
                 
                 <div className="space-y-4">
-                  {Object.keys(PRICING_DATA).map(key => (
+                  {(Object.keys(PRICING_DATA) as CartKey[]).map((key) => (
                     <div key={key} className="flex justify-between items-center pb-4 border-b border-teal-800/50">
                       <div>
                         <p className="text-base sm:text-lg text-teal-100/90 font-light">{PRICING_DATA[key].name}</p>
