@@ -71,7 +71,7 @@ function Home() {
               <Zap className="h-4 w-4 fill-current text-amber-400 shrink-0" />
               <span>South Delhi's Fastest Premium Garment Care</span>
             </div>
-            <h1 className="text-[2rem] xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-800 mb-6 sm:mb-8 leading-[1.15] md:leading-[1.1] text-balance">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-800 mb-6 sm:mb-8 leading-[1.15] md:leading-[1.1] text-balance">
               <span className="font-extrabold text-teal-900 bg-teal-100/80 px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl sm:rounded-2xl inline-block transform -rotate-1 mb-3 sm:mb-4 shadow-sm border border-teal-200/50">
                 99% Less Water.
               </span>
