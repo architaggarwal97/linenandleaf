@@ -160,7 +160,7 @@ function FaqPage() {
                     >
                       <span className="pr-2">{faq.q}</span>
                       <span
-                        className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 ${
+                      className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 motion-reduce:transition-none motion-reduce:rotate-0 ${
                           isOpen ? "rotate-180" : ""
                         }`}
                         aria-hidden="true"
