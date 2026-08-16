@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
-import { breadcrumbScript } from "@/lib/seo";
+import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
 const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =
@@ -16,9 +16,7 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://linenandleaf.lovable.app" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESCRIPTION },
+      ...socialMeta(TITLE, DESCRIPTION),
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app" }],
     scripts: [breadcrumbScript("/", "Home")],

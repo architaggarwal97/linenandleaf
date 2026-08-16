@@ -4,7 +4,7 @@ import { MapPin, MessageCircle, CheckCircle2, Info } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
-import { breadcrumbScript } from "@/lib/seo";
+import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
 const TITLE = "Service Area — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/service-area")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://linenandleaf.lovable.app/service-area" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...socialMeta(TITLE, DESCRIPTION),
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/service-area" }],
     scripts: [breadcrumbScript("/service-area", "Service Area")],
