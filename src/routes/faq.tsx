@@ -87,9 +87,38 @@ export const Route = createFileRoute("/faq")({
 
 function FaqPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const toggle = (index: number) => {
     setOpenIndex((current) => (current === index ? null : index));
+  };
+
+  const focusButton = (index: number) => {
+    const next = (index + faqs.length) % faqs.length;
+    buttonRefs.current[next]?.focus();
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        focusButton(index + 1);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        focusButton(index - 1);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusButton(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusButton(faqs.length - 1);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -102,6 +131,7 @@ function FaqPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="sr-only">Frequently asked questions</h2>
           <div className="space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => {
               const isOpen = openIndex === index;
@@ -114,29 +144,35 @@ function FaqPage() {
                       : "bg-slate-50 border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                   }`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggle(index)}
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${index}`}
-                    className="w-full flex items-center justify-between gap-4 p-5 sm:p-8 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/30 rounded-2xl sm:rounded-3xl"
-                  >
-                    <h2 className="font-semibold text-slate-800 text-base sm:text-lg pr-2">
-                      {faq.q}
-                    </h2>
-                    <span
-                      className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                      aria-hidden="true"
+                  <h3>
+                    <button
+                      type="button"
+                      id={`faq-question-${index}`}
+                      ref={(el) => {
+                        buttonRefs.current[index] = el;
+                      }}
+                      onClick={() => toggle(index)}
+                      onKeyDown={(event) => onKeyDown(event, index)}
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${index}`}
+                      className="w-full flex items-center justify-between gap-4 p-5 sm:p-8 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/50 focus-visible:ring-offset-2 rounded-2xl sm:rounded-3xl font-semibold text-slate-800 text-base sm:text-lg"
                     >
-                      <ChevronDown className="h-5 w-5" />
-                    </span>
-                  </button>
+                      <span className="pr-2">{faq.q}</span>
+                      <span
+                        className={`shrink-0 inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-teal-100/60 text-teal-700 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                        aria-hidden="true"
+                      >
+                        <ChevronDown className="h-5 w-5" />
+                      </span>
+                    </button>
+                  </h3>
                   <div
                     id={`faq-answer-${index}`}
                     role="region"
                     aria-labelledby={`faq-question-${index}`}
+                    hidden={!isOpen}
                     className={`grid transition-all duration-300 ease-in-out ${
                       isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     }`}
@@ -151,6 +187,7 @@ function FaqPage() {
               );
             })}
           </div>
+
 
           <div className="text-center pt-10 sm:pt-12">
             <a
