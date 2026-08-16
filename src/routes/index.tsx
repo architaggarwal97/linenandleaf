@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app" }],
+    scripts: [breadcrumbScript("/", "Home")],
   }),
   component: Home,
 });

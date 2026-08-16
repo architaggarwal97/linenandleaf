@@ -4,6 +4,7 @@ import { MessageCircle, Phone, MapPin, Clock } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "Book a Pickup — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/contact" }],
+    scripts: [breadcrumbScript("/contact", "Book a Pickup")],
   }),
   component: ContactPage,
 });

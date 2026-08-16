@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, MapPin, Users, Leaf } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
+import { breadcrumbScript } from "@/lib/seo";
 
 const TITLE = "About — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/about")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/about" }],
+    scripts: [breadcrumbScript("/about", "About")],
   }),
   component: AboutPage,
 });
