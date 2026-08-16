@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
+import { Reveal } from "@/components/site/Reveal";
 
 const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =
@@ -87,11 +88,11 @@ function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-teal-50 border border-teal-100/60 text-teal-700 text-xs sm:text-sm font-medium mb-8 sm:mb-10 shadow-sm">
+            <div className="ll-rise inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-teal-50 border border-teal-100/60 text-teal-700 text-xs sm:text-sm font-medium mb-8 sm:mb-10 shadow-sm">
               <Zap className="h-4 w-4 fill-current text-amber-400 shrink-0" />
               <span>South Delhi's Fastest Premium Garment Care</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-800 mb-6 sm:mb-8 leading-[1.15] md:leading-[1.1] text-balance">
+            <h1 className="ll-rise ll-d1 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-800 mb-6 sm:mb-8 leading-[1.15] md:leading-[1.1] text-balance">
               <span className="font-extrabold text-teal-900 bg-teal-100/80 px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl sm:rounded-2xl inline-block transform -rotate-1 mb-3 sm:mb-4 shadow-sm border border-teal-200/50">
                 99% Less Water.
               </span>
@@ -101,11 +102,11 @@ function Home() {
                 fully tracked.
               </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-500 mb-10 sm:mb-12 max-w-2xl mx-auto leading-relaxed font-light px-2 sm:px-0">
+            <p className="ll-rise ll-d2 text-base sm:text-lg md:text-xl text-slate-500 mb-10 sm:mb-12 max-w-2xl mx-auto leading-relaxed font-light px-2 sm:px-0">
               Modern, eco-conscious garment care in Sarojini Nagar. Doorstep pickup and delivery, photo checkpoints
               on every order, and total transparency — minus the guesswork.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center w-full px-4 sm:px-0">
+            <div className="ll-rise ll-d3 flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center w-full px-4 sm:px-0">
               <Link
                 to="/contact"
                 className="w-full sm:w-auto flex items-center justify-center gap-2 bg-teal-800 hover:bg-teal-700 text-white px-8 py-4 rounded-full text-base sm:text-lg font-medium transition-all duration-300 shadow-xl shadow-teal-900/10 hover:-translate-y-1"
@@ -129,7 +130,7 @@ function Home() {
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 md:mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">
               The Standard Has Changed
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
@@ -138,13 +139,14 @@ function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {usps.map((usp) => {
+            {usps.map((usp, i) => {
               const Icon = usp.icon;
               const note = "note" in usp ? (usp.note as string) : null;
               return (
-                <div
+                <Reveal
                   key={usp.title}
-                  className="bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 group hover:-translate-y-2"
+                  delay={i * 70}
+                  className="h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 group hover:-translate-y-2"
                 >
                   <div
                     className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}
@@ -159,7 +161,7 @@ function Home() {
                       <span>{note}</span>
                     </p>
                   ) : null}
-                </div>
+                </Reveal>
               );
             })}
           </div>
@@ -171,7 +173,7 @@ function Home() {
       <section className="py-20 md:py-28 bg-[#f8faf9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 md:mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">How It Works</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">How It Works</h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
               Four simple steps, all handled over WhatsApp.
             </p>
@@ -179,17 +181,21 @@ function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-8 relative">
             <div className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-0 border-t-2 border-dashed border-teal-200/60 z-0" />
-            {steps.map(({ step, icon: Icon, title, desc }) => (
-              <div key={step} className="relative z-10 flex flex-col items-center text-center group">
+            {steps.map(({ step, icon: Icon, title, desc }, i) => (
+              <Reveal
+                key={step}
+                delay={i * 80}
+                className="relative z-10 flex flex-col items-center text-center group"
+              >
                 <div className="h-24 w-24 sm:h-28 sm:w-28 bg-white rounded-full flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 sm:mb-8 group-hover:-translate-y-2 transition-transform duration-500">
-                  <span className="text-[0.65rem] sm:text-xs font-bold text-teal-200 mb-1 uppercase tracking-wider">
+                  <span className="text-[0.65rem] sm:text-xs font-bold text-teal-500/70 mb-1 uppercase tracking-wider">
                     {step}
                   </span>
                   <Icon className="h-6 w-6 text-teal-600" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 sm:mb-3">{title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-light px-2">{desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
 
@@ -207,7 +213,7 @@ function Home() {
       {/* CTA */}
       <section className="bg-teal-800 py-20 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
             Ready to upgrade your garment care?
           </h2>
           <p className="text-teal-100/80 text-base sm:text-lg mb-8 sm:mb-10 max-w-2xl mx-auto font-light leading-relaxed px-4">
