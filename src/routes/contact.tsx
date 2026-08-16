@@ -46,7 +46,7 @@ function ContactPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
-          <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-slate-100 p-8 sm:p-10">
+          <div className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-slate-100 p-6 sm:p-10">
             <h2 className="text-2xl font-bold text-slate-800">Schedule your pickup</h2>
             <p className="text-slate-500 font-light mt-2 mb-8">
               Enter your details below. We'll confirm your slot on WhatsApp.
@@ -111,9 +111,9 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-8 py-4 rounded-2xl text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
+                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
               >
-                <MessageCircle className="h-5 w-5" /> Continue on WhatsApp
+                <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
               </button>
             </form>
           </div>

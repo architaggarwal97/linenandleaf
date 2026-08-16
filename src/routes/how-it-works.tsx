@@ -83,13 +83,13 @@ function HowItWorksPage() {
           {steps.map(({ step, icon: Icon, title, desc, detail }) => (
             <article
               key={step}
-              className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
+              className="bg-white rounded-3xl p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
             >
-              <div className="flex items-start gap-5">
-                <div className="h-14 w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+                <div className="h-12 w-12 sm:h-14 sm:w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">
                   <Icon className="h-6 w-6 text-teal-600" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-xs font-bold text-teal-400 uppercase tracking-[0.2em]">Step {step}</span>
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 mb-3">{title}</h2>
                   <p className="text-slate-500 font-light leading-relaxed">{desc}</p>

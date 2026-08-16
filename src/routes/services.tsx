@@ -119,8 +119,8 @@ function ServicesPage() {
 
             <div className="space-y-4">
               {keys.map((key) => (
-                <div key={key} className="flex justify-between items-center gap-4 pb-4 border-b border-teal-800/50">
-                  <p className="text-base sm:text-lg text-teal-100/90 font-light">{ITEMS[key]}</p>
+                <div key={key} className="flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b border-teal-800/50">
+                  <p className="min-w-0 text-sm sm:text-lg text-teal-100/90 font-light">{ITEMS[key]}</p>
                   <div className="flex items-center gap-3 bg-teal-950/60 rounded-full p-1 border border-teal-800/50 shrink-0">
                     <button
                       type="button"
@@ -162,9 +162,10 @@ function ServicesPage() {
             <button
               type="button"
               onClick={requestQuote}
-              className="w-full mt-6 bg-white hover:bg-teal-50 text-teal-950 py-4 rounded-2xl font-semibold transition-all duration-300 flex justify-center items-center gap-2 hover:-translate-y-1"
+              className="w-full mt-6 bg-white hover:bg-teal-50 text-teal-950 px-4 py-4 rounded-2xl text-sm sm:text-base font-semibold transition-all duration-300 flex justify-center items-center gap-2 hover:-translate-y-1"
             >
-              <MessageCircle className="h-5 w-5 text-green-500" /> Get an exact quote via WhatsApp
+              <MessageCircle className="h-5 w-5 shrink-0 text-green-500" />
+              <span>Get an exact quote via WhatsApp</span>
             </button>
           </div>
         </div>
