@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin } from "lucide-react";
+import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
@@ -112,6 +112,11 @@ function Home() {
               >
                 <MessageCircle className="h-5 w-5" /> WhatsApp Us
               </a>
+            </div>
+
+            <div className="mt-10 inline-flex items-center gap-2 text-slate-500 text-sm sm:text-base font-light">
+              <ShieldCheck className="h-5 w-5 text-teal-600 shrink-0" />
+              <span>Independent & Authentic — a founder-led business, not a franchise.</span>
             </div>
           </div>
         </div>
