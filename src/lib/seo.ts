@@ -85,3 +85,28 @@ export function breadcrumbScript(path: string, name: string) {
     }),
   };
 }
+
+export const OG_IMAGE = `${ORIGIN}/og-image.jpg`;
+
+/** Consistent OpenGraph + Twitter image/card tags for every page. */
+export function socialMeta(title: string, description: string) {
+  return [
+    { property: "og:image", content: OG_IMAGE },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    {
+      property: "og:image:alt",
+      content: "Linen & Leaf Dry Cleaners — Sarojini Nagar, New Delhi",
+    },
+    { property: "og:site_name", content: "Linen & Leaf Dry Cleaners" },
+    { property: "og:locale", content: "en_IN" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+    { name: "twitter:image", content: OG_IMAGE },
+    {
+      name: "twitter:image:alt",
+      content: "Linen & Leaf Dry Cleaners — Sarojini Nagar, New Delhi",
+    },
+  ];
+}

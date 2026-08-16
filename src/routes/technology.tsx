@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Droplet, Cpu, Camera, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
-import { breadcrumbScript } from "@/lib/seo";
+import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
 const TITLE = "Technology & Process — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/technology")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://linenandleaf.lovable.app/technology" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...socialMeta(TITLE, DESCRIPTION),
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/technology" }],
     scripts: [breadcrumbScript("/technology", "Technology & Process")],

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, MapPin, Users, Leaf } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { site } from "@/lib/site";
-import { breadcrumbScript } from "@/lib/seo";
+import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
 const TITLE = "About — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://linenandleaf.lovable.app/about" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...socialMeta(TITLE, DESCRIPTION),
     ],
     links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/about" }],
     scripts: [breadcrumbScript("/about", "About")],
