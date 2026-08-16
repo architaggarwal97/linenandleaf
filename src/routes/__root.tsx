@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { site } from "@/lib/site";
+import { MobileActionBar } from "@/components/site/MobileActionBar";
 
 function NotFoundComponent() {
   return (
@@ -167,13 +168,20 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-800 selection:bg-teal-200">
+      <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-teal-800 focus:px-5 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
+        >
+          Skip to content
+        </a>
         <Header />
-        <main>
+        <main id="main">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
         <Footer />
+        <MobileActionBar />
       </div>
     </QueryClientProvider>
   );
