@@ -139,7 +139,7 @@ function FaqPage() {
               return (
                 <article
                   key={faq.q}
-                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
+                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 motion-reduce:transition-none overflow-hidden ${
                     isOpen
                       ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                       : "bg-slate-50 border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
