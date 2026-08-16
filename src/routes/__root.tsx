@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { site } from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -97,16 +98,41 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "DryCleaningOrLaundry",
-          name: "Linen & Leaf Dry Cleaners",
-          telephone: "+918800446635",
+          "@type": ["LocalBusiness", "DryCleaningOrLaundry"],
+          "@id": "https://linenandleaf.lovable.app",
+          name: site.name,
+          url: "https://linenandleaf.lovable.app",
+          telephone: site.whatsappNumber.replace(/\s/g, ""),
+          contactPoint: [
+            {
+              "@type": "ContactPoint",
+              telephone: site.whatsappNumber.replace(/\s/g, ""),
+              contactType: "WhatsApp",
+              availableLanguage: ["English", "Hindi"],
+            },
+            {
+              "@type": "ContactPoint",
+              telephone: site.phone.replace(/\s/g, ""),
+              contactType: "Phone",
+              availableLanguage: ["English", "Hindi"],
+            },
+          ],
           address: {
             "@type": "PostalAddress",
             streetAddress: "1st Floor, Shop No. 108, Sarojini Nagar Market",
             addressLocality: "New Delhi",
+            addressRegion: "Delhi",
             postalCode: "110023",
             addressCountry: "IN",
           },
+          areaServed: [
+            { "@type": "Place", name: "Sarojini Nagar" },
+            { "@type": "Place", name: "RK Puram" },
+            { "@type": "Place", name: "Netaji Nagar" },
+            { "@type": "Place", name: "INA Colony" },
+            { "@type": "Place", name: "Vasant Vihar" },
+            { "@type": "Place", name: "Safdarjung Enclave" },
+          ],
         }),
       },
     ],
