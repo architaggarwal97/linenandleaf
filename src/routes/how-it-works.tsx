@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Phone, Camera, Zap, MapPin, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { whatsappLink } from "@/lib/whatsapp";
+import { Reveal } from "@/components/site/Reveal";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
 const TITLE = "How It Works — Linen & Leaf Dry Cleaners";
@@ -83,9 +84,11 @@ function HowItWorksPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          {steps.map(({ step, icon: Icon, title, desc, detail }) => (
-            <article
+          {steps.map(({ step, icon: Icon, title, desc, detail }, i) => (
+            <Reveal
+              as="article"
               key={step}
+              delay={i * 60}
               className="bg-white rounded-3xl p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
             >
               <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
@@ -103,7 +106,7 @@ function HowItWorksPage() {
                   </ul>
                 </div>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </section>
