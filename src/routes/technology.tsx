@@ -79,7 +79,7 @@ function TechnologyPage() {
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
               </div>
-              <h2 className="text-xl font-bold text-slate-800 mb-3">{title}</h2>
+              <h2 className="font-display text-xl font-bold text-slate-800 mb-3">{title}</h2>
               <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
             </Reveal>
           ))}
@@ -88,7 +88,7 @@ function TechnologyPage() {
 
       <section className="py-16 md:py-20 bg-teal-50 border-y border-teal-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">See it for yourself</h2>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">See it for yourself</h2>
           <p className="text-slate-600 font-light leading-relaxed">
             You're welcome to visit us at Sarojini Nagar Market and watch the process firsthand. No appointment needed —
             just drop by during opening hours.
@@ -98,7 +98,7 @@ function TechnologyPage() {
 
       <section className="py-16 md:py-20 bg-[#f8faf9]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">
             A note on turnaround
           </h2>
           <p className="text-slate-500 font-light leading-relaxed">

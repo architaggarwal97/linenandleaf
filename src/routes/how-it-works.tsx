@@ -97,7 +97,7 @@ function HowItWorksPage() {
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold text-teal-400 uppercase tracking-[0.2em]">Step {step}</span>
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-2 mb-3">{title}</h2>
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-800 mt-2 mb-3">{title}</h2>
                   <p className="text-slate-500 font-light leading-relaxed">{desc}</p>
                   <ul className="mt-5 space-y-2 text-sm text-slate-600 font-light list-disc pl-5">
                     {detail.map((d) => (
@@ -113,7 +113,7 @@ function HowItWorksPage() {
 
       <section className="bg-teal-800 py-16 md:py-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 tracking-tight">Ready when you are.</h2>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-6 tracking-tight">Ready when you are.</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
