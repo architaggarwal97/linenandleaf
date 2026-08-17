@@ -123,7 +123,7 @@ function ServicesPage() {
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-teal-800/30 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Reveal className="bg-teal-900/40 backdrop-blur-xl border border-teal-800/50 rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-12 shadow-2xl">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center tracking-tight">Build Your Basket</h2>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2 text-center tracking-tight">Build Your Basket</h2>
             <p className="text-center text-teal-200/60 text-sm font-light mb-8">
               Select what you'd like cleaned and we'll quote it exactly on WhatsApp.
             </p>
