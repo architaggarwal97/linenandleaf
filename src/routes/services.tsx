@@ -4,6 +4,7 @@ import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, servicesScript, socialMeta } from "@/lib/seo";
+import { Reveal } from "@/components/site/Reveal";
 
 const TITLE = "Services & Pricing — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -100,17 +101,19 @@ function ServicesPage() {
 
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-3">
-          {services.map(({ icon: Icon, title, desc }) => (
-            <div
+          {services.map(({ icon: Icon, title, desc }, i) => (
+            <Reveal
+              as="article"
               key={title}
+              delay={i * 70}
               className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
               </div>
-              <h2 className="text-xl font-bold text-slate-800 mb-3">{title}</h2>
+              <h2 className="font-display text-xl font-bold text-slate-800 mb-3">{title}</h2>
               <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -119,7 +122,7 @@ function ServicesPage() {
       <section className="py-16 md:py-24 bg-teal-950 text-white relative overflow-hidden">
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-teal-800/30 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="bg-teal-900/40 backdrop-blur-xl border border-teal-800/50 rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-12 shadow-2xl">
+          <Reveal className="bg-teal-900/40 backdrop-blur-xl border border-teal-800/50 rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-12 shadow-2xl">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-center tracking-tight">Build Your Basket</h2>
             <p className="text-center text-teal-200/60 text-sm font-light mb-8">
               Select what you'd like cleaned and we'll quote it exactly on WhatsApp.
@@ -175,7 +178,7 @@ function ServicesPage() {
               <MessageCircle className="h-5 w-5 shrink-0 text-green-500" />
               <span>Get an exact quote via WhatsApp</span>
             </button>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>
