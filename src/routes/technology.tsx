@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Droplet, Cpu, Camera, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
+import { Reveal } from "@/components/site/Reveal";
 
 const TITLE = "Technology & Process — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -68,9 +69,11 @@ function TechnologyPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {blocks.map(({ icon: Icon, title, desc }) => (
-            <article
+          {blocks.map(({ icon: Icon, title, desc }, i) => (
+            <Reveal
+              as="article"
               key={title}
+              delay={i * 70}
               className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
@@ -78,7 +81,7 @@ function TechnologyPage() {
               </div>
               <h2 className="text-xl font-bold text-slate-800 mb-3">{title}</h2>
               <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
       </section>
