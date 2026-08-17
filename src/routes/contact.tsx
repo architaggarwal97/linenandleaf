@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, Phone, MapPin, Clock } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
@@ -87,8 +88,8 @@ function ContactPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
-          <div className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-slate-100 p-6 sm:p-10">
-            <h2 className="text-2xl font-bold text-slate-800">Schedule your pickup</h2>
+          <Reveal className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-slate-100 p-6 sm:p-10">
+            <h2 className="font-display text-2xl font-bold text-slate-800">Schedule your pickup</h2>
             <p className="text-slate-500 font-light mt-2 mb-8">
               Enter your details below. We'll confirm your slot on WhatsApp.
             </p>
@@ -189,11 +190,11 @@ function ContactPage() {
                 <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
               </button>
             </form>
-          </div>
+          </Reveal>
 
           <aside className="space-y-6">
             <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100">
-              <h2 className="text-lg font-bold text-slate-800 mb-5">Reach us directly</h2>
+              <h2 className="font-display text-lg font-bold text-slate-800 mb-5">Reach us directly</h2>
               <ul className="space-y-4 text-sm text-slate-600 font-light">
                 <li className="flex items-start gap-3">
                   <MapPin className="h-5 w-5 text-teal-600 shrink-0 mt-0.5" />

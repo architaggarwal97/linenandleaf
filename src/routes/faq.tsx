@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircle, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 
@@ -139,8 +140,10 @@ function FaqPage() {
             {faqs.map((faq, index) => {
               const isOpen = openIndex === index;
               return (
-                <article
+                <Reveal
+                  as="article"
                   key={faq.q}
+                  delay={index * 50}
                   className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 motion-reduce:transition-none overflow-hidden ${
                     isOpen
                       ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
@@ -186,7 +189,7 @@ function FaqPage() {
                       </p>
                     </div>
                   </div>
-                </article>
+                </Reveal>
               );
             })}
           </div>

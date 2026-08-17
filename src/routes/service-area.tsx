@@ -5,6 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
 import { site } from "@/lib/site";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
+import { Reveal } from "@/components/site/Reveal";
 
 const TITLE = "Service Area — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -59,8 +60,8 @@ function ServiceAreaPage() {
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-2">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Check your PIN code</h2>
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Check your PIN code</h2>
             <p className="text-slate-500 font-light leading-relaxed mb-8">
               Enter your PIN code to see whether we currently pick up from your area.
             </p>
@@ -122,10 +123,10 @@ function ServiceAreaPage() {
                 </a>
               </address>
             </div>
-          </div>
+          </Reveal>
 
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Localities we cover</h2>
+          <Reveal delay={90}>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Localities we cover</h2>
             <p className="text-slate-500 font-light leading-relaxed mb-8">
               Free doorstep pickup and delivery is currently limited to Sarojini Nagar and the localities immediately
               around it. If you're just outside, ask us — we may still be able to help.
@@ -141,7 +142,7 @@ function ServiceAreaPage() {
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
         </div>
       </section>
     </>
