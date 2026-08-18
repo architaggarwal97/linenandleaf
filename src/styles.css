@@ -270,6 +270,41 @@
   }
 }
 
+/* Stepper tap feedback + selection badge pop */
+@keyframes ll-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.86); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ll-badge-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+.ll-pop {
+  animation: ll-pop 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ll-badge-pop {
+  animation: ll-badge-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ll-press:active {
+  transform: scale(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll-pop,
+  .ll-badge-pop {
+    animation: none;
+  }
+  .ll-press:active {
+    transform: none;
+  }
+}
+
 /* Room for the mobile sticky action bar */
 @media (max-width: 639px) {
   body {
