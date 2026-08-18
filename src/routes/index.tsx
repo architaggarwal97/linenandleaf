@@ -98,7 +98,7 @@ function Home() {
               </span>
               <br />
               Cleaner clothes,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-400 block sm:inline">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500 block sm:inline">
                 fully tracked.
               </span>
             </h1>
