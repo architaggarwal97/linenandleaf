@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X, MessageCircle } from "lucide-react";
 import { Wordmark } from "./Wordmark";
@@ -7,10 +7,24 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100/50">
+    <nav
+      className={`ll-header sticky top-0 z-50 backdrop-blur-xl border-b ${
+        scrolled
+          ? "bg-white/95 border-slate-200/70 shadow-[0_8px_30px_rgb(0,0,0,0.05)]"
+          : "bg-white/70 border-slate-100/40"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link to="/" aria-label={site.name} onClick={() => setOpen(false)} className="relative z-50">

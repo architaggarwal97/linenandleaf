@@ -98,7 +98,7 @@ function Home() {
               </span>
               <br />
               Cleaner clothes,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-400 block sm:inline">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500 block sm:inline">
                 fully tracked.
               </span>
             </h1>
@@ -146,7 +146,7 @@ function Home() {
                 <Reveal
                   key={usp.title}
                   delay={i * 70}
-                  className="h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-all duration-500 group hover:-translate-y-2"
+                  className="h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 group ll-card"
                 >
                   <div
                     className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}

@@ -10,7 +10,7 @@ export function Wordmark({ variant = "light" }: { variant?: "light" | "dark" }) 
         />
         <div
           className={`absolute inset-0.5 bg-gradient-to-br ${
-            isDark ? "from-teal-500 to-cyan-400 shadow-teal-900/50" : "from-teal-600 to-teal-400 shadow-teal-600/30"
+            isDark ? "from-teal-500 to-emerald-400 shadow-teal-900/50" : "from-teal-600 to-teal-400 shadow-teal-600/30"
           } rounded-tr-[1.25rem] rounded-bl-[1.25rem] rounded-tl-md rounded-br-md flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-500`}
         >
           <Leaf className={`h-4 w-4 ${isDark ? "text-teal-950" : "text-white"} drop-shadow-sm`} strokeWidth={2.5} />
