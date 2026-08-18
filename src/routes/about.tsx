@@ -65,7 +65,7 @@ function AboutPage() {
               as="article"
               key={title}
               delay={i * 70}
-              className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
+              className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 ll-card"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />

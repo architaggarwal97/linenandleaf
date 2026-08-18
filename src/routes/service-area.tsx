@@ -135,7 +135,7 @@ function ServiceAreaPage() {
               {localities.map((l) => (
                 <li
                   key={l}
-                  className="flex items-start gap-3 p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)]"
+                  className="ll-card flex items-start gap-3 p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)]"
                 >
                   <CheckCircle2 className="h-5 w-5 text-teal-500 shrink-0 mt-0.5" />
                   <span className="text-slate-700 font-light">{l}</span>

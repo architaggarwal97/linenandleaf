@@ -89,7 +89,7 @@ function HowItWorksPage() {
               as="article"
               key={step}
               delay={i * 60}
-              className="bg-white rounded-3xl p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50"
+              className="bg-white rounded-3xl p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 ll-card"
             >
               <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
                 <div className="h-12 w-12 sm:h-14 sm:w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">

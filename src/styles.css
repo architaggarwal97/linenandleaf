@@ -324,8 +324,8 @@
   background-color: oklch(0.991 0.005 92) !important;
 }
 
-.bg-white\/80 {
-  background-color: oklch(0.991 0.005 92 / 0.8) !important;
+.bg-white\/70 {
+  background-color: oklch(0.991 0.005 92 / 0.7) !important;
 }
 
 .bg-white\/95 {
