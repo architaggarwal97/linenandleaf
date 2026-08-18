@@ -311,3 +311,69 @@
     padding-bottom: 4.75rem;
   }
 }
+
+/* ---------------------------------------------------------------
+   Design-system polish pass
+   Warm off-white surfaces, deep-slate ink, teal-green accent,
+   confident display typography, and shared card interactions.
+---------------------------------------------------------------- */
+
+/* Warm off-white instead of pure white across sections and cards.
+   Declared after Tailwind's utilities so it wins on source order. */
+.bg-white {
+  background-color: oklch(0.991 0.005 92) !important;
+}
+
+.bg-white\/80 {
+  background-color: oklch(0.991 0.005 92 / 0.8) !important;
+}
+
+.bg-white\/95 {
+  background-color: oklch(0.991 0.005 92 / 0.95) !important;
+}
+
+.bg-slate-50 {
+  background-color: oklch(0.972 0.008 95) !important;
+}
+
+body {
+  background-color: oklch(0.973 0.014 92);
+  color: oklch(0.3 0.02 240);
+}
+
+/* Headlines: bolder, tighter, still elegant */
+.font-display,
+h1, h2, h3 {
+  letter-spacing: -0.022em;
+}
+
+h1.font-display,
+h2.font-display,
+h3.font-display,
+.font-display {
+  font-weight: 700;
+}
+
+/* Shared card lift-and-shadow interaction */
+@utility ll-card {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 300ms ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px oklch(0.32 0.05 175 / 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll-card:hover {
+    transform: none;
+  }
+}
+
+/* Frosted header states */
+.ll-header {
+  transition: background-color 300ms ease, box-shadow 300ms ease,
+    border-color 300ms ease, backdrop-filter 300ms ease;
+}
