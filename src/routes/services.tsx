@@ -70,22 +70,26 @@ function ServicesPage() {
     saree: 0,
     trousers: 0,
   });
+  const [pulse, setPulse] = useState(0);
+  const [popped, setPopped] = useState<string | null>(null);
 
   const keys = Object.keys(ITEMS) as ItemKey[];
+  const selected = keys.filter((k) => cart[k] > 0);
   const totalItems = keys.reduce((sum, k) => sum + cart[k], 0);
+  const hasItems = totalItems > 0;
+  const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
 
-  const update = (key: ItemKey, delta: number) =>
-    setCart((prev) => ({ ...prev, [key]: Math.max(0, prev[key] + delta) }));
+  const update = (key: ItemKey, delta: number) => {
+    const next = Math.max(0, cart[key] + delta);
+    if (next === cart[key]) return;
+    setCart({ ...cart, [key]: next });
+    setPulse((p) => p + 1);
+    setPopped(`${key}:${delta}:${Date.now()}`);
+  };
 
   const requestQuote = () => {
-    if (totalItems === 0) {
-      openWhatsApp("Hi Linen & Leaf! I'd like an exact quote for my garments.");
-      return;
-    }
-    const list = keys
-      .filter((k) => cart[k] > 0)
-      .map((k) => `- ${cart[k]}x ${ITEMS[k]}`)
-      .join("\n");
+    if (!hasItems) return;
+    const list = selected.map((k) => `- ${cart[k]}x ${ITEMS[k]}`).join("\n");
     openWhatsApp(
       `Hi Linen & Leaf! I'd like an exact quote for these items:\n\n${list}\n\nTotal items: ${totalItems}\n\nPlease share pricing and current turnaround time.`,
     );
@@ -129,54 +133,108 @@ function ServicesPage() {
             </p>
 
             <div className="space-y-4">
-              {keys.map((key) => (
-                <div key={key} className="flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b border-teal-800/50">
-                  <p className="min-w-0 text-sm sm:text-lg text-teal-100/90 font-light">{ITEMS[key]}</p>
-                  <div className="flex items-center gap-3 bg-teal-950/60 rounded-full p-1 border border-teal-800/50 shrink-0">
-                    <button
-                      type="button"
-                      aria-label={`Remove one ${ITEMS[key]}`}
-                      onClick={() => update(key, -1)}
-                      className="p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-colors"
+              {keys.map((key) => {
+                const count = cart[key];
+                return (
+                  <div
+                    key={key}
+                    className={`flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b transition-colors duration-300 ${
+                      count > 0 ? "border-teal-600/60" : "border-teal-800/50"
+                    }`}
+                  >
+                    <p
+                      className={`min-w-0 text-sm sm:text-lg font-light transition-colors duration-300 ${
+                        count > 0 ? "text-white" : "text-teal-100/90"
+                      }`}
                     >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="w-5 text-center text-white font-medium">{cart[key]}</span>
-                    <button
-                      type="button"
-                      aria-label={`Add one ${ITEMS[key]}`}
-                      onClick={() => update(key, 1)}
-                      className="p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-colors"
+                      {ITEMS[key]}
+                    </p>
+                    <div
+                      className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
+                        count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
+                      }`}
                     >
-                      <Plus className="h-4 w-4" />
-                    </button>
+                      <button
+                        type="button"
+                        aria-label={`Remove one ${ITEMS[key]}`}
+                        disabled={count === 0}
+                        onClick={() => update(key, -1)}
+                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150 disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <span
+                        key={`${key}-${count}`}
+                        aria-live="polite"
+                        className={`w-5 text-center text-white font-medium tabular-nums ${popped ? "ll-pop" : ""}`}
+                      >
+                        {count}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`Add one ${ITEMS[key]}`}
+                        onClick={() => update(key, 1)}
+                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            <div className="mt-8 bg-teal-950/40 p-5 rounded-2xl border border-teal-800/30">
-              <p className="text-teal-100/60 font-light text-sm mb-2">
-                {totalItems === 0 ? "Nothing selected yet" : `${totalItems} item${totalItems > 1 ? "s" : ""} selected`}
-              </p>
-              <ul className="text-white text-sm space-y-1">
-                {keys
-                  .filter((k) => cart[k] > 0)
-                  .map((k) => (
-                    <li key={k}>
+            {/* Live selection summary */}
+            <div
+              className={`mt-8 p-5 rounded-2xl border transition-all duration-300 ${
+                hasItems ? "bg-teal-900/60 border-teal-500/40" : "bg-teal-950/40 border-teal-800/30"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  key={pulse}
+                  className={`ll-badge-pop inline-flex h-9 min-w-9 px-2 items-center justify-center rounded-full text-sm font-bold tabular-nums transition-colors duration-300 ${
+                    hasItems ? "bg-teal-400 text-teal-950" : "bg-teal-800/70 text-teal-300"
+                  }`}
+                >
+                  {totalItems}
+                </span>
+                <p className="text-sm font-medium text-white">
+                  Your Selection
+                  <span className="block text-xs font-light text-teal-200/70">
+                    {hasItems
+                      ? `${totalItems} item${totalItems > 1 ? "s" : ""} — ${summary}`
+                      : "Nothing selected yet"}
+                  </span>
+                </p>
+              </div>
+              {hasItems ? (
+                <ul className="mt-4 flex flex-wrap gap-2" aria-live="polite">
+                  {selected.map((k) => (
+                    <li
+                      key={k}
+                      className="ll-pop rounded-full bg-teal-950/60 border border-teal-700/50 px-3 py-1 text-xs text-teal-100"
+                    >
                       {cart[k]}× {ITEMS[k]}
                     </li>
                   ))}
-              </ul>
+                </ul>
+              ) : null}
             </div>
 
             <button
               type="button"
               onClick={requestQuote}
-              className="w-full mt-6 bg-white hover:bg-teal-50 text-teal-950 px-4 py-4 rounded-2xl text-[0.8125rem] sm:text-base font-semibold whitespace-nowrap transition-all duration-300 flex justify-center items-center gap-2 hover:-translate-y-1"
+              disabled={!hasItems}
+              aria-disabled={!hasItems}
+              className={`w-full mt-6 px-4 py-4 rounded-2xl text-[0.8125rem] sm:text-base font-semibold whitespace-nowrap transition-all duration-300 flex justify-center items-center gap-2 ${
+                hasItems
+                  ? "bg-white hover:bg-teal-50 text-teal-950 shadow-xl shadow-teal-500/10 hover:-translate-y-1 cursor-pointer"
+                  : "bg-teal-900/60 text-teal-300/60 border border-teal-800/60 cursor-not-allowed"
+              }`}
             >
-              <MessageCircle className="h-5 w-5 shrink-0 text-green-500" />
-              <span>Get an exact quote via WhatsApp</span>
+              <MessageCircle className={`h-5 w-5 shrink-0 ${hasItems ? "text-green-500" : "text-teal-500/60"}`} />
+              <span>{hasItems ? "Get My Estimate via WhatsApp" : "Add items to get started"}</span>
             </button>
           </Reveal>
         </div>
