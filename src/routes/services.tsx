@@ -80,12 +80,10 @@ function ServicesPage() {
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
 
   const update = (key: ItemKey, delta: number) => {
-    setCart((prev) => {
-      const next = Math.max(0, prev[key] + delta);
-      if (next === prev[key]) return prev;
-      setPulse((p) => p + 1);
-      return { ...prev, [key]: next };
-    });
+    const next = Math.max(0, cart[key] + delta);
+    if (next === cart[key]) return;
+    setCart({ ...cart, [key]: next });
+    setPulse((p) => p + 1);
     setPopped(`${key}:${delta}:${Date.now()}`);
   };
 
