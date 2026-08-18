@@ -70,22 +70,28 @@ function ServicesPage() {
     saree: 0,
     trousers: 0,
   });
+  const [pulse, setPulse] = useState(0);
+  const [popped, setPopped] = useState<string | null>(null);
 
   const keys = Object.keys(ITEMS) as ItemKey[];
+  const selected = keys.filter((k) => cart[k] > 0);
   const totalItems = keys.reduce((sum, k) => sum + cart[k], 0);
+  const hasItems = totalItems > 0;
+  const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
 
-  const update = (key: ItemKey, delta: number) =>
-    setCart((prev) => ({ ...prev, [key]: Math.max(0, prev[key] + delta) }));
+  const update = (key: ItemKey, delta: number) => {
+    setCart((prev) => {
+      const next = Math.max(0, prev[key] + delta);
+      if (next === prev[key]) return prev;
+      setPulse((p) => p + 1);
+      return { ...prev, [key]: next };
+    });
+    setPopped(`${key}:${delta}:${Date.now()}`);
+  };
 
   const requestQuote = () => {
-    if (totalItems === 0) {
-      openWhatsApp("Hi Linen & Leaf! I'd like an exact quote for my garments.");
-      return;
-    }
-    const list = keys
-      .filter((k) => cart[k] > 0)
-      .map((k) => `- ${cart[k]}x ${ITEMS[k]}`)
-      .join("\n");
+    if (!hasItems) return;
+    const list = selected.map((k) => `- ${cart[k]}x ${ITEMS[k]}`).join("\n");
     openWhatsApp(
       `Hi Linen & Leaf! I'd like an exact quote for these items:\n\n${list}\n\nTotal items: ${totalItems}\n\nPlease share pricing and current turnaround time.`,
     );
