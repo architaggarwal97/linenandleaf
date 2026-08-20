@@ -39,13 +39,17 @@ export const Route = createFileRoute("/")({
 const usps = [
   {
     icon: Droplet,
-    tint: "bg-teal-50 text-teal-500",
+    tint: "bg-teal-50 text-teal-600",
+    hover: "group-hover:bg-teal-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(13,148,136,0.12)]",
     title: "99% Less Water",
     desc: "Solvent-based dry cleaning that uses a fraction of the water of a conventional wash — better for your fabrics and the planet.",
   },
   {
     icon: Eye,
-    tint: "bg-blue-50 text-blue-500",
+    tint: "bg-blue-50 text-blue-600",
+    hover: "group-hover:bg-blue-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(37,99,235,0.12)]",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
     note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
@@ -53,23 +57,30 @@ const usps = [
 
   {
     icon: Clock,
-    tint: "bg-amber-50 text-amber-500",
+    tint: "bg-amber-50 text-amber-600",
+    hover: "group-hover:bg-amber-500",
+    glow: "hover:shadow-[0_20px_40px_rgb(245,158,11,0.14)]",
     title: "Fast Turnaround",
     desc: "Quick, reliable delivery back to your door. Ask us for current timing when you book — we'll confirm it upfront.",
   },
   {
     icon: Cpu,
-    tint: "bg-purple-50 text-purple-500",
+    tint: "bg-purple-50 text-purple-600",
+    hover: "group-hover:bg-purple-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(168,85,247,0.12)]",
     title: "Best-in-Class Equipment",
     desc: "Modern commercial-grade dry-cleaning and finishing equipment. Precision care, not just a neighbourhood press.",
   },
   {
     icon: ShieldCheck,
-    tint: "bg-amber-50 text-amber-600",
+    tint: "bg-amber-50 text-amber-700",
+    hover: "group-hover:bg-amber-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(180,83,9,0.12)]",
     title: "Independent & Authentic",
     desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
   },
 ];
+
 
 const steps = [
   { step: "01", icon: Phone, title: "Book a Pickup", desc: "WhatsApp, call, or use the form. We confirm your slot." },
