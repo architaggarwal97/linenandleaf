@@ -39,13 +39,17 @@ export const Route = createFileRoute("/")({
 const usps = [
   {
     icon: Droplet,
-    tint: "bg-teal-50 text-teal-500",
+    tint: "bg-teal-50 text-teal-600",
+    hover: "group-hover:bg-teal-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(13,148,136,0.12)]",
     title: "99% Less Water",
     desc: "Solvent-based dry cleaning that uses a fraction of the water of a conventional wash — better for your fabrics and the planet.",
   },
   {
     icon: Eye,
-    tint: "bg-blue-50 text-blue-500",
+    tint: "bg-blue-50 text-blue-600",
+    hover: "group-hover:bg-blue-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(37,99,235,0.12)]",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
     note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
@@ -53,23 +57,30 @@ const usps = [
 
   {
     icon: Clock,
-    tint: "bg-amber-50 text-amber-500",
+    tint: "bg-amber-50 text-amber-600",
+    hover: "group-hover:bg-amber-500",
+    glow: "hover:shadow-[0_20px_40px_rgb(245,158,11,0.14)]",
     title: "Fast Turnaround",
     desc: "Quick, reliable delivery back to your door. Ask us for current timing when you book — we'll confirm it upfront.",
   },
   {
     icon: Cpu,
-    tint: "bg-purple-50 text-purple-500",
+    tint: "bg-purple-50 text-purple-600",
+    hover: "group-hover:bg-purple-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(168,85,247,0.12)]",
     title: "Best-in-Class Equipment",
     desc: "Modern commercial-grade dry-cleaning and finishing equipment. Precision care, not just a neighbourhood press.",
   },
   {
     icon: ShieldCheck,
-    tint: "bg-amber-50 text-amber-600",
+    tint: "bg-amber-50 text-amber-700",
+    hover: "group-hover:bg-amber-600",
+    glow: "hover:shadow-[0_20px_40px_rgb(180,83,9,0.12)]",
     title: "Independent & Authentic",
     desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
   },
 ];
+
 
 const steps = [
   { step: "01", icon: Phone, title: "Book a Pickup", desc: "WhatsApp, call, or use the form. We confirm your slot." },
@@ -146,15 +157,16 @@ function Home() {
                 <Reveal
                   key={usp.title}
                   delay={i * 70}
-                  className="h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 group ll-card"
+                  className={`h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100 group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                 >
                   <div
-                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}
+                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
                   >
-                    <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 group-hover:text-white transition-colors duration-500" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 sm:mb-4">{usp.title}</h3>
-                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-light">{usp.desc}</p>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
+
                   {note ? (
                     <p className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4 sm:p-5 text-sm sm:text-base text-blue-900/80 font-light leading-relaxed">
                       <Sparkles className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
