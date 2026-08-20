@@ -153,7 +153,7 @@ function Home() {
               The Standard Has Changed
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
-              Five things we do differently from a traditional neighbourhood presser.
+              Six things we do differently from a traditional neighbourhood presser.
             </p>
           </div>
 
