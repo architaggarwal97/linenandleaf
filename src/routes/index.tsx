@@ -157,15 +157,16 @@ function Home() {
                 <Reveal
                   key={usp.title}
                   delay={i * 70}
-                  className="h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 group ll-card"
+                  className={`h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100 group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                 >
                   <div
-                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} rounded-full flex items-center justify-center mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500`}
+                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
                   >
-                    <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 group-hover:text-white transition-colors duration-500" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 sm:mb-4">{usp.title}</h3>
-                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-light">{usp.desc}</p>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
+
                   {note ? (
                     <p className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4 sm:p-5 text-sm sm:text-base text-blue-900/80 font-light leading-relaxed">
                       <Sparkles className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
