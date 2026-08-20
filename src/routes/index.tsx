@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Sparkles, Leaf } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
@@ -79,6 +79,14 @@ const usps = [
     title: "Independent & Authentic",
     desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
   },
+  {
+    icon: Leaf,
+    tint: "bg-emerald-50 text-emerald-600",
+    hover: "group-hover:bg-emerald-500",
+    glow: "hover:shadow-[0_20px_40px_rgb(16,185,129,0.12)]",
+    title: "Hygiene-First Processing",
+    desc: "Steam sanitization and allergen removal standard with every order. Perfect for households with sensitive skin or children.",
+  },
 ];
 
 
@@ -145,7 +153,7 @@ function Home() {
               The Standard Has Changed
             </h2>
             <p className="text-slate-500 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
-              Five things we do differently from a traditional neighbourhood presser.
+              Six things we do differently from a traditional neighbourhood presser.
             </p>
           </div>
 
