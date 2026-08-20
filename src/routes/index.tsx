@@ -79,6 +79,14 @@ const usps = [
     title: "Independent & Authentic",
     desc: "We are a proudly independent, founder-led business in Sarojini Nagar — not a distant corporate franchise. Your clothes never leave our local facility.",
   },
+  {
+    icon: Leaf,
+    tint: "bg-emerald-50 text-emerald-600",
+    hover: "group-hover:bg-emerald-500",
+    glow: "hover:shadow-[0_20px_40px_rgb(16,185,129,0.12)]",
+    title: "Hygiene-First Processing",
+    desc: "Steam sanitization and allergen removal standard with every order. Perfect for households with sensitive skin or children.",
+  },
 ];
 
 
