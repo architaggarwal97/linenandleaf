@@ -37,6 +37,12 @@ const ITEMS = {
   suit: "2-Piece Suit Care",
   kurta: "Women's Designer Kurta",
   lehenga: "Heavy Bridal / Lehenga",
+  trousers: "Trousers",
+  tshirt: "T-Shirt",
+  blazer: "Blazer / Short Coat",
+  heavyKurta: "Heavy Kurta",
+  sherwani: "Wedding Suit / Sherwani",
+  handbag: "Leather Handbag",
 } as const;
 
 const PRICES: Record<keyof typeof ITEMS, number> = {
@@ -44,9 +50,63 @@ const PRICES: Record<keyof typeof ITEMS, number> = {
   suit: 699,
   kurta: 249,
   lehenga: 999,
+  trousers: 150,
+  tshirt: 150,
+  blazer: 300,
+  heavyKurta: 350,
+  sherwani: 850,
+  handbag: 2800,
 };
 
 type ItemKey = keyof typeof ITEMS;
+
+const ADDONS = {
+  starch: { label: "Starch", price: 25 },
+  polish: { label: "Polish", price: 50 },
+  hanger: { label: "Hanger Packing", price: 50 },
+  button: { label: "Button Stitching", price: 50 },
+} as const;
+
+type AddonKey = keyof typeof ADDONS;
+
+const rateCard: { group: string; rows: { name: string; dry: string; iron?: string }[] }[] = [
+  {
+    group: "Dry Clean & Steam Iron",
+    rows: [
+      { name: "Men's Shirt / T-Shirt", dry: "₹190", iron: "₹65" },
+      { name: "Men's 2-Piece Suit", dry: "₹780", iron: "₹270" },
+      { name: "Women's Kurta", dry: "₹265+", iron: "₹95+" },
+      { name: "Women's Lehenga", dry: "₹1000+", iron: "₹350+" },
+      { name: "Leather Handbag", dry: "₹2800+", iron: "—" },
+    ],
+  },
+  {
+    group: "Everyday & Occasion Wear",
+    rows: [
+      { name: "Shirt", dry: "₹150" },
+      { name: "Trousers", dry: "₹150" },
+      { name: "Kurta (Cotton)", dry: "₹150" },
+      { name: "T-Shirt", dry: "₹150" },
+      { name: "Blazer / Coat — Short", dry: "₹300" },
+      { name: "2-Piece Suit", dry: "₹450" },
+      { name: "Heavy Kurta", dry: "₹350" },
+      { name: "Heavy Dhoti", dry: "₹300" },
+      { name: "Puffer Jacket — Long", dry: "₹600" },
+      { name: "Wedding Suit (3 pcs)", dry: "₹600" },
+      { name: "Designer Wedding Suit / Sherwani", dry: "₹850 – ₹1500+" },
+      { name: "Spot-Clean & Steam Press Only", dry: "₹60 – ₹80" },
+    ],
+  },
+  {
+    group: "Add-ons",
+    rows: [
+      { name: "Starch", dry: "+₹25" },
+      { name: "Polish", dry: "+₹50" },
+      { name: "Hanger Packing", dry: "+₹50" },
+      { name: "Button Stitching", dry: "+₹50" },
+    ],
+  },
+];
 
 const services = [
   {
@@ -59,30 +119,38 @@ const services = [
     icon: Leaf,
     title: "Laundry & Press",
     desc: "Everyday wear washed, dried and crisply pressed. Press-only service available if you just need finishing.",
-    price: "From ₹99 per item",
+    price: "From ₹60 per item",
   },
   {
     icon: Shield,
     title: "Specialist Garment Care",
     desc: "Bridal, embellished and designer pieces handled individually, with photo checkpoints at every stage.",
-    price: "From ₹499 per item",
+    price: "From ₹850 per item",
   },
 ];
 
 function ServicesPage() {
-  const [cart, setCart] = useState<Record<ItemKey, number>>({
-    shirt: 0,
-    suit: 0,
-    kurta: 0,
-    lehenga: 0,
+  const keys = Object.keys(ITEMS) as ItemKey[];
+  const addonKeys = Object.keys(ADDONS) as AddonKey[];
+
+  const [cart, setCart] = useState<Record<ItemKey, number>>(
+    () => Object.fromEntries(keys.map((k) => [k, 0])) as Record<ItemKey, number>,
+  );
+  const [addons, setAddons] = useState<Record<AddonKey, boolean>>({
+    starch: false,
+    polish: false,
+    hanger: false,
+    button: false,
   });
   const [pulse, setPulse] = useState(0);
   const [popped, setPopped] = useState<string | null>(null);
 
-  const keys = Object.keys(ITEMS) as ItemKey[];
   const selected = keys.filter((k) => cart[k] > 0);
+  const activeAddons = addonKeys.filter((k) => addons[k]);
   const totalItems = keys.reduce((sum, k) => sum + cart[k], 0);
-  const totalPrice = keys.reduce((sum, k) => sum + cart[k] * PRICES[k], 0);
+  const itemsPrice = keys.reduce((sum, k) => sum + cart[k] * PRICES[k], 0);
+  const addonsPrice = activeAddons.reduce((sum, k) => sum + ADDONS[k].price * totalItems, 0);
+  const totalPrice = itemsPrice + addonsPrice;
   const hasItems = totalItems > 0;
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
 
@@ -99,8 +167,11 @@ function ServicesPage() {
     const list = selected
       .map((k) => `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]} each = ₹${cart[k] * PRICES[k]}`)
       .join("\n");
+    const addonLine = activeAddons.length
+      ? `\nAdd-ons: ${activeAddons.map((k) => `${ADDONS[k].label} (+₹${ADDONS[k].price}/item)`).join(", ")}`
+      : "";
     openWhatsApp(
-      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}\n\nTotal items: ${totalItems}\nEstimated total: ₹${totalPrice}\n\nPlease confirm pricing and current turnaround time.`,
+      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}${addonLine}\n\nTotal items: ${totalItems}\nEstimated total: ₹${totalPrice}\n\nPlease confirm pricing and current turnaround time.`,
     );
   };
 
@@ -129,6 +200,48 @@ function ServicesPage() {
               <p className="text-sm font-semibold text-teal-700">{price}</p>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* Full rate card */}
+      <section className="py-16 md:py-20 bg-[#fdfcf9]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-center">
+              Full Rate Card
+            </h2>
+            <p className="mt-3 text-center text-slate-500 font-light text-sm sm:text-base">
+              Indicative per-garment pricing. Final quote is confirmed on WhatsApp after we see the garment.
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            {rateCard.map((section, i) => (
+              <Reveal
+                key={section.group}
+                delay={i * 70}
+                className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
+                  section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
+                }`}
+              >
+                <h3 className="text-lg font-bold tracking-tight text-slate-900 mb-5">{section.group}</h3>
+                <ul className="divide-y divide-slate-100">
+                  {section.rows.map((row) => (
+                    <li key={row.name} className="flex items-baseline justify-between gap-4 py-2.5">
+                      <span className="text-sm sm:text-base text-slate-600 font-medium">{row.name}</span>
+                      <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                        {row.dry}
+                        {row.iron ? <span className="text-slate-400 font-normal"> / {row.iron}</span> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {section.rows.some((r) => r.iron) ? (
+                  <p className="mt-4 text-xs text-slate-400 font-light">Dry clean / steam iron</p>
+                ) : null}
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -203,6 +316,34 @@ function ServicesPage() {
               })}
             </div>
 
+            {/* Add-ons */}
+            <div className="mt-8">
+              <p className="text-xs uppercase tracking-widest text-teal-200/60 mb-3">Add-ons (per garment)</p>
+              <div className="flex flex-wrap gap-2">
+                {addonKeys.map((k) => {
+                  const on = addons[k];
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => {
+                        setAddons({ ...addons, [k]: !on });
+                        setPulse((p) => p + 1);
+                      }}
+                      className={`ll-press rounded-full px-4 py-2 text-xs sm:text-sm font-medium border transition-all duration-300 ${
+                        on
+                          ? "bg-teal-400 text-teal-950 border-teal-300"
+                          : "bg-teal-950/50 text-teal-100 border-teal-800/60 hover:border-teal-600"
+                      }`}
+                    >
+                      {ADDONS[k].label} +₹{ADDONS[k].price}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Live selection summary */}
             <div
               className={`mt-8 p-5 rounded-2xl border transition-all duration-300 ${
@@ -243,6 +384,14 @@ function ServicesPage() {
                       className="ll-pop rounded-full bg-teal-950/60 border border-teal-700/50 px-3 py-1 text-xs text-teal-100"
                     >
                       {cart[k]}× {ITEMS[k]}
+                    </li>
+                  ))}
+                  {activeAddons.map((k) => (
+                    <li
+                      key={k}
+                      className="ll-pop rounded-full bg-teal-400/15 border border-teal-400/40 px-3 py-1 text-xs text-teal-100"
+                    >
+                      + {ADDONS[k].label}
                     </li>
                   ))}
                 </ul>
