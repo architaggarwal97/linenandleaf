@@ -33,13 +33,18 @@ export const Route = createFileRoute("/services")({
 });
 
 const ITEMS = {
-  shirt: "Men's Shirt",
-  suit: "2-Piece Suit",
-  kurta: "Women's Kurta / Suit Set",
+  shirt: "Premium Men's Shirt",
+  suit: "2-Piece Suit Care",
+  kurta: "Women's Designer Kurta",
   lehenga: "Heavy Bridal / Lehenga",
-  saree: "Saree",
-  trousers: "Trousers",
 } as const;
+
+const PRICES: Record<keyof typeof ITEMS, number> = {
+  shirt: 149,
+  suit: 699,
+  kurta: 249,
+  lehenga: 999,
+};
 
 type ItemKey = keyof typeof ITEMS;
 
@@ -48,16 +53,19 @@ const services = [
     icon: Sparkles,
     title: "Dry Cleaning",
     desc: "Solvent-based cleaning for suits, ethnic wear, woollens and delicate fabrics, finished on commercial-grade equipment.",
+    price: "From ₹149 per item",
   },
   {
     icon: Leaf,
     title: "Laundry & Press",
     desc: "Everyday wear washed, dried and crisply pressed. Press-only service available if you just need finishing.",
+    price: "From ₹99 per item",
   },
   {
     icon: Shield,
     title: "Specialist Garment Care",
     desc: "Bridal, embellished and designer pieces handled individually, with photo checkpoints at every stage.",
+    price: "From ₹499 per item",
   },
 ];
 
@@ -67,8 +75,6 @@ function ServicesPage() {
     suit: 0,
     kurta: 0,
     lehenga: 0,
-    saree: 0,
-    trousers: 0,
   });
   const [pulse, setPulse] = useState(0);
   const [popped, setPopped] = useState<string | null>(null);
@@ -76,6 +82,7 @@ function ServicesPage() {
   const keys = Object.keys(ITEMS) as ItemKey[];
   const selected = keys.filter((k) => cart[k] > 0);
   const totalItems = keys.reduce((sum, k) => sum + cart[k], 0);
+  const totalPrice = keys.reduce((sum, k) => sum + cart[k] * PRICES[k], 0);
   const hasItems = totalItems > 0;
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
 
@@ -89,9 +96,11 @@ function ServicesPage() {
 
   const requestQuote = () => {
     if (!hasItems) return;
-    const list = selected.map((k) => `- ${cart[k]}x ${ITEMS[k]}`).join("\n");
+    const list = selected
+      .map((k) => `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]} each = ₹${cart[k] * PRICES[k]}`)
+      .join("\n");
     openWhatsApp(
-      `Hi Linen & Leaf! I'd like an exact quote for these items:\n\n${list}\n\nTotal items: ${totalItems}\n\nPlease share pricing and current turnaround time.`,
+      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}\n\nTotal items: ${totalItems}\nEstimated total: ₹${totalPrice}\n\nPlease confirm pricing and current turnaround time.`,
     );
   };
 
@@ -105,7 +114,7 @@ function ServicesPage() {
 
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-3">
-          {services.map(({ icon: Icon, title, desc }, i) => (
+          {services.map(({ icon: Icon, title, desc, price }, i) => (
             <Reveal
               as="article"
               key={title}
@@ -115,8 +124,9 @@ function ServicesPage() {
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
               </div>
-              <h2 className="font-display text-xl font-bold text-slate-800 mb-3">{title}</h2>
-              <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
+              <h2 className="font-display text-xl font-bold text-slate-800 mb-2">{title}</h2>
+              <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base mb-4">{desc}</p>
+              <p className="text-sm font-semibold text-teal-700">{price}</p>
             </Reveal>
           ))}
         </div>
@@ -135,6 +145,7 @@ function ServicesPage() {
             <div className="space-y-4">
               {keys.map((key) => {
                 const count = cart[key];
+                const lineTotal = count * PRICES[key];
                 return (
                   <div
                     key={key}
@@ -142,13 +153,16 @@ function ServicesPage() {
                       count > 0 ? "border-teal-600/60" : "border-teal-800/50"
                     }`}
                   >
-                    <p
-                      className={`min-w-0 text-sm sm:text-lg font-light transition-colors duration-300 ${
-                        count > 0 ? "text-white" : "text-teal-100/90"
-                      }`}
-                    >
-                      {ITEMS[key]}
-                    </p>
+                    <div className="min-w-0">
+                      <p
+                        className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
+                          count > 0 ? "text-white" : "text-teal-100/90"
+                        }`}
+                      >
+                        {ITEMS[key]}
+                      </p>
+                      <p className="text-xs sm:text-sm text-teal-200/50 font-light">₹{PRICES[key]} each</p>
+                    </div>
                     <div
                       className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
                         count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
@@ -179,6 +193,11 @@ function ServicesPage() {
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
+                    {count > 0 ? (
+                      <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
+                        ₹{lineTotal}
+                      </p>
+                    ) : null}
                   </div>
                 );
               })}
@@ -190,23 +209,31 @@ function ServicesPage() {
                 hasItems ? "bg-teal-900/60 border-teal-500/40" : "bg-teal-950/40 border-teal-800/30"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <span
-                  key={pulse}
-                  className={`ll-badge-pop inline-flex h-9 min-w-9 px-2 items-center justify-center rounded-full text-sm font-bold tabular-nums transition-colors duration-300 ${
-                    hasItems ? "bg-teal-400 text-teal-950" : "bg-teal-800/70 text-teal-300"
-                  }`}
-                >
-                  {totalItems}
-                </span>
-                <p className="text-sm font-medium text-white">
-                  Your Selection
-                  <span className="block text-xs font-light text-teal-200/70">
-                    {hasItems
-                      ? `${totalItems} item${totalItems > 1 ? "s" : ""} — ${summary}`
-                      : "Nothing selected yet"}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span
+                    key={pulse}
+                    className={`ll-badge-pop inline-flex h-9 min-w-9 px-2 items-center justify-center rounded-full text-sm font-bold tabular-nums transition-colors duration-300 ${
+                      hasItems ? "bg-teal-400 text-teal-950" : "bg-teal-800/70 text-teal-300"
+                    }`}
+                  >
+                    {totalItems}
                   </span>
-                </p>
+                  <p className="text-sm font-medium text-white">
+                    Your Selection
+                    <span className="block text-xs font-light text-teal-200/70">
+                      {hasItems
+                        ? `${totalItems} item${totalItems > 1 ? "s" : ""} — ${summary}`
+                        : "Nothing selected yet"}
+                    </span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-teal-200/60 font-light">Estimated total</p>
+                  <p className={`text-xl sm:text-2xl font-bold tabular-nums ${hasItems ? "text-white" : "text-teal-300/50"}`}>
+                    ₹{totalPrice}
+                  </p>
+                </div>
               </div>
               {hasItems ? (
                 <ul className="mt-4 flex flex-wrap gap-2" aria-live="polite">
@@ -229,12 +256,12 @@ function ServicesPage() {
               aria-disabled={!hasItems}
               className={`w-full mt-6 px-4 py-4 rounded-2xl text-[0.8125rem] sm:text-base font-semibold whitespace-nowrap transition-all duration-300 flex justify-center items-center gap-2 ${
                 hasItems
-                  ? "bg-white hover:bg-teal-50 text-teal-950 shadow-xl shadow-teal-500/10 hover:-translate-y-1 cursor-pointer"
-                  : "bg-teal-900/60 text-teal-300/60 border border-teal-800/60 cursor-not-allowed"
+                  ? "bg-green-500 hover:bg-green-600 text-white shadow-xl shadow-green-500/20 hover:-translate-y-1 cursor-pointer"
+                  : "bg-slate-600/40 text-slate-300/70 border border-slate-600/50 cursor-not-allowed"
               }`}
             >
-              <MessageCircle className={`h-5 w-5 shrink-0 ${hasItems ? "text-green-500" : "text-teal-500/60"}`} />
-              <span>{hasItems ? "Get My Estimate via WhatsApp" : "Add items to get started"}</span>
+              <MessageCircle className={`h-5 w-5 shrink-0 ${hasItems ? "text-white" : "text-slate-400/60"}`} />
+              <span>{hasItems ? "Book this Estimate via WhatsApp" : "Get a Custom Quote"}</span>
             </button>
           </Reveal>
         </div>
