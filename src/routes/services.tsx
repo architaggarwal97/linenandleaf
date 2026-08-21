@@ -145,6 +145,7 @@ function ServicesPage() {
             <div className="space-y-4">
               {keys.map((key) => {
                 const count = cart[key];
+                const lineTotal = count * PRICES[key];
                 return (
                   <div
                     key={key}
@@ -152,13 +153,16 @@ function ServicesPage() {
                       count > 0 ? "border-teal-600/60" : "border-teal-800/50"
                     }`}
                   >
-                    <p
-                      className={`min-w-0 text-sm sm:text-lg font-light transition-colors duration-300 ${
-                        count > 0 ? "text-white" : "text-teal-100/90"
-                      }`}
-                    >
-                      {ITEMS[key]}
-                    </p>
+                    <div className="min-w-0">
+                      <p
+                        className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
+                          count > 0 ? "text-white" : "text-teal-100/90"
+                        }`}
+                      >
+                        {ITEMS[key]}
+                      </p>
+                      <p className="text-xs sm:text-sm text-teal-200/50 font-light">₹{PRICES[key]} each</p>
+                    </div>
                     <div
                       className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
                         count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
@@ -189,6 +193,11 @@ function ServicesPage() {
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
+                    {count > 0 ? (
+                      <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
+                        ₹{lineTotal}
+                      </p>
+                    ) : null}
                   </div>
                 );
               })}
@@ -200,23 +209,31 @@ function ServicesPage() {
                 hasItems ? "bg-teal-900/60 border-teal-500/40" : "bg-teal-950/40 border-teal-800/30"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <span
-                  key={pulse}
-                  className={`ll-badge-pop inline-flex h-9 min-w-9 px-2 items-center justify-center rounded-full text-sm font-bold tabular-nums transition-colors duration-300 ${
-                    hasItems ? "bg-teal-400 text-teal-950" : "bg-teal-800/70 text-teal-300"
-                  }`}
-                >
-                  {totalItems}
-                </span>
-                <p className="text-sm font-medium text-white">
-                  Your Selection
-                  <span className="block text-xs font-light text-teal-200/70">
-                    {hasItems
-                      ? `${totalItems} item${totalItems > 1 ? "s" : ""} — ${summary}`
-                      : "Nothing selected yet"}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span
+                    key={pulse}
+                    className={`ll-badge-pop inline-flex h-9 min-w-9 px-2 items-center justify-center rounded-full text-sm font-bold tabular-nums transition-colors duration-300 ${
+                      hasItems ? "bg-teal-400 text-teal-950" : "bg-teal-800/70 text-teal-300"
+                    }`}
+                  >
+                    {totalItems}
                   </span>
-                </p>
+                  <p className="text-sm font-medium text-white">
+                    Your Selection
+                    <span className="block text-xs font-light text-teal-200/70">
+                      {hasItems
+                        ? `${totalItems} item${totalItems > 1 ? "s" : ""} — ${summary}`
+                        : "Nothing selected yet"}
+                    </span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-teal-200/60 font-light">Estimated total</p>
+                  <p className={`text-xl sm:text-2xl font-bold tabular-nums ${hasItems ? "text-white" : "text-teal-300/50"}`}>
+                    ₹{totalPrice}
+                  </p>
+                </div>
               </div>
               {hasItems ? (
                 <ul className="mt-4 flex flex-wrap gap-2" aria-live="polite">
@@ -239,12 +256,12 @@ function ServicesPage() {
               aria-disabled={!hasItems}
               className={`w-full mt-6 px-4 py-4 rounded-2xl text-[0.8125rem] sm:text-base font-semibold whitespace-nowrap transition-all duration-300 flex justify-center items-center gap-2 ${
                 hasItems
-                  ? "bg-white hover:bg-teal-50 text-teal-950 shadow-xl shadow-teal-500/10 hover:-translate-y-1 cursor-pointer"
-                  : "bg-teal-900/60 text-teal-300/60 border border-teal-800/60 cursor-not-allowed"
+                  ? "bg-green-500 hover:bg-green-600 text-white shadow-xl shadow-green-500/20 hover:-translate-y-1 cursor-pointer"
+                  : "bg-slate-600/40 text-slate-300/70 border border-slate-600/50 cursor-not-allowed"
               }`}
             >
-              <MessageCircle className={`h-5 w-5 shrink-0 ${hasItems ? "text-green-500" : "text-teal-500/60"}`} />
-              <span>{hasItems ? "Get My Estimate via WhatsApp" : "Add items to get started"}</span>
+              <MessageCircle className={`h-5 w-5 shrink-0 ${hasItems ? "text-white" : "text-slate-400/60"}`} />
+              <span>{hasItems ? "Book this Estimate via WhatsApp" : "Get a Custom Quote"}</span>
             </button>
           </Reveal>
         </div>
