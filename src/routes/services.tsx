@@ -114,7 +114,7 @@ function ServicesPage() {
 
       <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-3">
-          {services.map(({ icon: Icon, title, desc }, i) => (
+          {services.map(({ icon: Icon, title, desc, price }, i) => (
             <Reveal
               as="article"
               key={title}
@@ -124,8 +124,9 @@ function ServicesPage() {
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
               </div>
-              <h2 className="font-display text-xl font-bold text-slate-800 mb-3">{title}</h2>
-              <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
+              <h2 className="font-display text-xl font-bold text-slate-800 mb-2">{title}</h2>
+              <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base mb-4">{desc}</p>
+              <p className="text-sm font-semibold text-teal-700">{price}</p>
             </Reveal>
           ))}
         </div>
