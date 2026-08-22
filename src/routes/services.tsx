@@ -32,33 +32,73 @@ export const Route = createFileRoute("/services")({
   component: ServicesPage,
 });
 
-const ITEMS = {
-  shirt: "Premium Men's Shirt",
-  suit: "2-Piece Suit Care",
-  kurta: "Women's Designer Kurta",
-  lehenga: "Heavy Bridal / Lehenga",
-  trousers: "Trousers",
-  tshirt: "T-Shirt",
-  blazer: "Blazer / Short Coat",
-  heavyKurta: "Heavy Kurta",
-  sherwani: "Wedding Suit / Sherwani",
-  handbag: "Leather Handbag",
-} as const;
+const CATALOGUE = [
+  {
+    group: "Everyday Wear",
+    items: [
+      { key: "shirt", label: "Shirt", price: 150 },
+      { key: "trousers", label: "Trousers", price: 150 },
+      { key: "tshirt", label: "T-Shirt", price: 150 },
+      { key: "kurtaCotton", label: "Kurta (Cotton)", price: 150 },
+      { key: "spotClean", label: "Spot-Clean & Steam Press Only", price: 60, from: true, note: "₹60 – ₹80" },
+    ],
+  },
+  {
+    group: "Premium Dry Clean",
+    items: [
+      { key: "premiumShirt", label: "Men's Shirt / T-Shirt (Dry Clean)", price: 190 },
+      { key: "shirtIron", label: "Men's Shirt / T-Shirt (Steam Iron)", price: 65 },
+      { key: "suitDry", label: "Men's 2-Piece Suit (Dry Clean)", price: 780 },
+      { key: "suitIron", label: "Men's 2-Piece Suit (Steam Iron)", price: 270 },
+      { key: "suit", label: "2-Piece Suit", price: 450 },
+    ],
+  },
+  {
+    group: "Blazers, Coats & Jackets",
+    items: [
+      { key: "blazer", label: "Blazer / Coat — Short", price: 300 },
+      { key: "puffer", label: "Puffer Jacket — Long", price: 600 },
+    ],
+  },
+  {
+    group: "Ethnic & Occasion Wear",
+    items: [
+      { key: "kurta", label: "Women's Kurta", price: 265, from: true, note: "₹265+" },
+      { key: "kurtaIron", label: "Women's Kurta (Steam Iron)", price: 95, from: true, note: "₹95+" },
+      { key: "heavyKurta", label: "Heavy Kurta", price: 350 },
+      { key: "heavyDhoti", label: "Heavy Dhoti", price: 300 },
+      { key: "lehenga", label: "Women's Lehenga", price: 1000, from: true, note: "₹1000+" },
+      { key: "lehengaIron", label: "Women's Lehenga (Steam Iron)", price: 350, from: true, note: "₹350+" },
+      { key: "weddingSuit", label: "Wedding Suit (3 pcs)", price: 600 },
+      {
+        key: "sherwani",
+        label: "Designer Wedding Suit / Sherwani",
+        price: 850,
+        from: true,
+        note: "₹850 – ₹1500+",
+      },
+    ],
+  },
+  {
+    group: "Accessories",
+    items: [{ key: "handbag", label: "Leather Handbag", price: 2800, from: true, note: "₹2800+" }],
+  },
+] as const;
 
-const PRICES: Record<keyof typeof ITEMS, number> = {
-  shirt: 149,
-  suit: 699,
-  kurta: 249,
-  lehenga: 999,
-  trousers: 150,
-  tshirt: 150,
-  blazer: 300,
-  heavyKurta: 350,
-  sherwani: 850,
-  handbag: 2800,
-};
+type ItemKey = (typeof CATALOGUE)[number]["items"][number]["key"];
 
-type ItemKey = keyof typeof ITEMS;
+const ALL_ITEMS = CATALOGUE.flatMap((g) => g.items) as readonly {
+  key: ItemKey;
+  label: string;
+  price: number;
+  from?: boolean;
+  note?: string;
+}[];
+
+const ITEMS = Object.fromEntries(ALL_ITEMS.map((i) => [i.key, i.label])) as Record<ItemKey, string>;
+const PRICES = Object.fromEntries(ALL_ITEMS.map((i) => [i.key, i.price])) as Record<ItemKey, number>;
+const FROM_KEYS = new Set<ItemKey>(ALL_ITEMS.filter((i) => i.from).map((i) => i.key));
+
 
 const ADDONS = {
   starch: { label: "Starch", price: 25 },
