@@ -425,7 +425,7 @@ function ServicesPage() {
                 <div className="text-right">
                   <p className="text-xs text-teal-200/60 font-light">Estimated total</p>
                   <p className={`text-xl sm:text-2xl font-bold tabular-nums ${hasItems ? "text-white" : "text-teal-300/50"}`}>
-                    ₹{totalPrice}
+                    {totalLabel}
                   </p>
                 </div>
               </div>
