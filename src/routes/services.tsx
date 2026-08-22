@@ -32,33 +32,70 @@ export const Route = createFileRoute("/services")({
   component: ServicesPage,
 });
 
-const ITEMS = {
-  shirt: "Premium Men's Shirt",
-  suit: "2-Piece Suit Care",
-  kurta: "Women's Designer Kurta",
-  lehenga: "Heavy Bridal / Lehenga",
-  trousers: "Trousers",
-  tshirt: "T-Shirt",
-  blazer: "Blazer / Short Coat",
-  heavyKurta: "Heavy Kurta",
-  sherwani: "Wedding Suit / Sherwani",
-  handbag: "Leather Handbag",
-} as const;
+const CATALOGUE = [
+  {
+    group: "Everyday Wear",
+    items: [
+      { key: "shirt", label: "Shirt", price: 150 },
+      { key: "trousers", label: "Trousers", price: 150 },
+      { key: "tshirt", label: "T-Shirt", price: 150 },
+      { key: "kurtaCotton", label: "Kurta (Cotton)", price: 150 },
+      { key: "spotClean", label: "Spot-Clean & Steam Press Only", price: 60, from: true, note: "₹60 – ₹80" },
+    ],
+  },
+  {
+    group: "Premium Dry Clean",
+    items: [
+      { key: "premiumShirt", label: "Men's Shirt / T-Shirt (Dry Clean)", price: 190 },
+      { key: "shirtIron", label: "Men's Shirt / T-Shirt (Steam Iron)", price: 65 },
+      { key: "suitDry", label: "Men's 2-Piece Suit (Dry Clean)", price: 780 },
+      { key: "suitIron", label: "Men's 2-Piece Suit (Steam Iron)", price: 270 },
+      { key: "suit", label: "2-Piece Suit", price: 450 },
+    ],
+  },
+  {
+    group: "Blazers, Coats & Jackets",
+    items: [
+      { key: "blazer", label: "Blazer / Coat — Short", price: 300 },
+      { key: "puffer", label: "Puffer Jacket — Long", price: 600 },
+    ],
+  },
+  {
+    group: "Ethnic & Occasion Wear",
+    items: [
+      { key: "kurta", label: "Women's Kurta", price: 265, from: true, note: "₹265+" },
+      { key: "kurtaIron", label: "Women's Kurta (Steam Iron)", price: 95, from: true, note: "₹95+" },
+      { key: "heavyKurta", label: "Heavy Kurta", price: 350 },
+      { key: "heavyDhoti", label: "Heavy Dhoti", price: 300 },
+      { key: "lehenga", label: "Women's Lehenga", price: 1000, from: true, note: "₹1000+" },
+      { key: "lehengaIron", label: "Women's Lehenga (Steam Iron)", price: 350, from: true, note: "₹350+" },
+      { key: "weddingSuit", label: "Wedding Suit (3 pcs)", price: 600 },
+      {
+        key: "sherwani",
+        label: "Designer Wedding Suit / Sherwani",
+        price: 850,
+        from: true,
+        note: "₹850 – ₹1500+",
+      },
+    ],
+  },
+  {
+    group: "Accessories",
+    items: [{ key: "handbag", label: "Leather Handbag", price: 2800, from: true, note: "₹2800+" }],
+  },
+] as const;
 
-const PRICES: Record<keyof typeof ITEMS, number> = {
-  shirt: 149,
-  suit: 699,
-  kurta: 249,
-  lehenga: 999,
-  trousers: 150,
-  tshirt: 150,
-  blazer: 300,
-  heavyKurta: 350,
-  sherwani: 850,
-  handbag: 2800,
-};
+type ItemKey = (typeof CATALOGUE)[number]["items"][number]["key"];
+type CatalogItem = { key: ItemKey; label: string; price: number; from?: boolean; note?: string };
 
-type ItemKey = keyof typeof ITEMS;
+const ALL_ITEMS: CatalogItem[] = CATALOGUE.flatMap((g) => g.items.map((i) => ({ ...i })));
+
+
+
+const ITEMS = Object.fromEntries(ALL_ITEMS.map((i) => [i.key, i.label])) as Record<ItemKey, string>;
+const PRICES = Object.fromEntries(ALL_ITEMS.map((i) => [i.key, i.price])) as Record<ItemKey, number>;
+const FROM_KEYS = new Set<ItemKey>(ALL_ITEMS.filter((i) => i.from).map((i) => i.key));
+
 
 const ADDONS = {
   starch: { label: "Starch", price: 25 },
@@ -151,8 +188,11 @@ function ServicesPage() {
   const itemsPrice = keys.reduce((sum, k) => sum + cart[k] * PRICES[k], 0);
   const addonsPrice = activeAddons.reduce((sum, k) => sum + ADDONS[k].price * totalItems, 0);
   const totalPrice = itemsPrice + addonsPrice;
+  const isFrom = selected.some((k) => FROM_KEYS.has(k));
+  const totalLabel = `₹${totalPrice}${isFrom ? "+" : ""}`;
   const hasItems = totalItems > 0;
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
+
 
   const update = (key: ItemKey, delta: number) => {
     const next = Math.max(0, cart[key] + delta);
@@ -165,14 +205,18 @@ function ServicesPage() {
   const requestQuote = () => {
     if (!hasItems) return;
     const list = selected
-      .map((k) => `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]} each = ₹${cart[k] * PRICES[k]}`)
+      .map(
+        (k) =>
+          `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]}${FROM_KEYS.has(k) ? "+" : ""} each = ₹${cart[k] * PRICES[k]}${FROM_KEYS.has(k) ? "+" : ""}`,
+      )
       .join("\n");
     const addonLine = activeAddons.length
       ? `\nAdd-ons: ${activeAddons.map((k) => `${ADDONS[k].label} (+₹${ADDONS[k].price}/item)`).join(", ")}`
       : "";
     openWhatsApp(
-      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}${addonLine}\n\nTotal items: ${totalItems}\nEstimated total: ₹${totalPrice}\n\nPlease confirm pricing and current turnaround time.`,
+      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}${addonLine}\n\nTotal items: ${totalItems}\nEstimated total: ${totalLabel}\n\nPlease confirm pricing and current turnaround time.`,
     );
+
   };
 
   return (
@@ -255,66 +299,79 @@ function ServicesPage() {
               Select what you'd like cleaned and we'll quote it exactly on WhatsApp.
             </p>
 
-            <div className="space-y-4">
-              {keys.map((key) => {
-                const count = cart[key];
-                const lineTotal = count * PRICES[key];
-                return (
-                  <div
-                    key={key}
-                    className={`flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b transition-colors duration-300 ${
-                      count > 0 ? "border-teal-600/60" : "border-teal-800/50"
-                    }`}
-                  >
-                    <div className="min-w-0">
-                      <p
-                        className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
-                          count > 0 ? "text-white" : "text-teal-100/90"
-                        }`}
-                      >
-                        {ITEMS[key]}
-                      </p>
-                      <p className="text-xs sm:text-sm text-teal-200/50 font-light">₹{PRICES[key]} each</p>
-                    </div>
-                    <div
-                      className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
-                        count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        aria-label={`Remove one ${ITEMS[key]}`}
-                        disabled={count === 0}
-                        onClick={() => update(key, -1)}
-                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150 disabled:opacity-30 disabled:hover:bg-transparent"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span
-                        key={`${key}-${count}`}
-                        aria-live="polite"
-                        className={`w-5 text-center text-white font-medium tabular-nums ${popped ? "ll-pop" : ""}`}
-                      >
-                        {count}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={`Add one ${ITEMS[key]}`}
-                        onClick={() => update(key, 1)}
-                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    </div>
-                    {count > 0 ? (
-                      <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
-                        ₹{lineTotal}
-                      </p>
-                    ) : null}
+            <div className="space-y-8">
+              {CATALOGUE.map((group) => (
+                <div key={group.group}>
+                  <p className="text-xs uppercase tracking-widest text-teal-200/60 mb-3">{group.group}</p>
+                  <div className="space-y-4">
+                    {group.items.map((item) => {
+                      const key = item.key as ItemKey;
+                      const count = cart[key];
+                      const lineTotal = count * item.price;
+                      const note = "note" in item ? item.note : undefined;
+                      return (
+                        <div
+                          key={key}
+                          className={`flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b transition-colors duration-300 ${
+                            count > 0 ? "border-teal-600/60" : "border-teal-800/50"
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <p
+                              className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
+                                count > 0 ? "text-white" : "text-teal-100/90"
+                              }`}
+                            >
+                              {item.label}
+                            </p>
+                            <p className="text-xs sm:text-sm text-teal-200/50 font-light">
+                              {note ?? `₹${item.price}`} each
+                            </p>
+                          </div>
+                          <div
+                            className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
+                              count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              aria-label={`Remove one ${item.label}`}
+                              disabled={count === 0}
+                              onClick={() => update(key, -1)}
+                              className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150 disabled:opacity-30 disabled:hover:bg-transparent"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </button>
+                            <span
+                              key={`${key}-${count}`}
+                              aria-live="polite"
+                              className={`w-5 text-center text-white font-medium tabular-nums ${popped ? "ll-pop" : ""}`}
+                            >
+                              {count}
+                            </span>
+                            <button
+                              type="button"
+                              aria-label={`Add one ${item.label}`}
+                              onClick={() => update(key, 1)}
+                              className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                          {count > 0 ? (
+                            <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
+                              ₹{lineTotal}
+                              {FROM_KEYS.has(key) ? "+" : ""}
+                            </p>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
+
 
             {/* Add-ons */}
             <div className="mt-8">
@@ -372,7 +429,7 @@ function ServicesPage() {
                 <div className="text-right">
                   <p className="text-xs text-teal-200/60 font-light">Estimated total</p>
                   <p className={`text-xl sm:text-2xl font-bold tabular-nums ${hasItems ? "text-white" : "text-teal-300/50"}`}>
-                    ₹{totalPrice}
+                    {totalLabel}
                   </p>
                 </div>
               </div>
