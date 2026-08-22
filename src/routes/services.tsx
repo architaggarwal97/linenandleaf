@@ -188,8 +188,11 @@ function ServicesPage() {
   const itemsPrice = keys.reduce((sum, k) => sum + cart[k] * PRICES[k], 0);
   const addonsPrice = activeAddons.reduce((sum, k) => sum + ADDONS[k].price * totalItems, 0);
   const totalPrice = itemsPrice + addonsPrice;
+  const isFrom = selected.some((k) => FROM_KEYS.has(k));
+  const totalLabel = `₹${totalPrice}${isFrom ? "+" : ""}`;
   const hasItems = totalItems > 0;
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
+
 
   const update = (key: ItemKey, delta: number) => {
     const next = Math.max(0, cart[key] + delta);
