@@ -205,14 +205,18 @@ function ServicesPage() {
   const requestQuote = () => {
     if (!hasItems) return;
     const list = selected
-      .map((k) => `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]} each = ₹${cart[k] * PRICES[k]}`)
+      .map(
+        (k) =>
+          `- ${cart[k]}x ${ITEMS[k]} @ ₹${PRICES[k]}${FROM_KEYS.has(k) ? "+" : ""} each = ₹${cart[k] * PRICES[k]}${FROM_KEYS.has(k) ? "+" : ""}`,
+      )
       .join("\n");
     const addonLine = activeAddons.length
       ? `\nAdd-ons: ${activeAddons.map((k) => `${ADDONS[k].label} (+₹${ADDONS[k].price}/item)`).join(", ")}`
       : "";
     openWhatsApp(
-      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}${addonLine}\n\nTotal items: ${totalItems}\nEstimated total: ₹${totalPrice}\n\nPlease confirm pricing and current turnaround time.`,
+      `Hi Linen & Leaf! I'd like to book this estimate:\n\n${list}${addonLine}\n\nTotal items: ${totalItems}\nEstimated total: ${totalLabel}\n\nPlease confirm pricing and current turnaround time.`,
     );
+
   };
 
   return (
