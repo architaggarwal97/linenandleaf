@@ -292,66 +292,79 @@ function ServicesPage() {
               Select what you'd like cleaned and we'll quote it exactly on WhatsApp.
             </p>
 
-            <div className="space-y-4">
-              {keys.map((key) => {
-                const count = cart[key];
-                const lineTotal = count * PRICES[key];
-                return (
-                  <div
-                    key={key}
-                    className={`flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b transition-colors duration-300 ${
-                      count > 0 ? "border-teal-600/60" : "border-teal-800/50"
-                    }`}
-                  >
-                    <div className="min-w-0">
-                      <p
-                        className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
-                          count > 0 ? "text-white" : "text-teal-100/90"
-                        }`}
-                      >
-                        {ITEMS[key]}
-                      </p>
-                      <p className="text-xs sm:text-sm text-teal-200/50 font-light">₹{PRICES[key]} each</p>
-                    </div>
-                    <div
-                      className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
-                        count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        aria-label={`Remove one ${ITEMS[key]}`}
-                        disabled={count === 0}
-                        onClick={() => update(key, -1)}
-                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150 disabled:opacity-30 disabled:hover:bg-transparent"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span
-                        key={`${key}-${count}`}
-                        aria-live="polite"
-                        className={`w-5 text-center text-white font-medium tabular-nums ${popped ? "ll-pop" : ""}`}
-                      >
-                        {count}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={`Add one ${ITEMS[key]}`}
-                        onClick={() => update(key, 1)}
-                        className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    </div>
-                    {count > 0 ? (
-                      <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
-                        ₹{lineTotal}
-                      </p>
-                    ) : null}
+            <div className="space-y-8">
+              {CATALOGUE.map((group) => (
+                <div key={group.group}>
+                  <p className="text-xs uppercase tracking-widest text-teal-200/60 mb-3">{group.group}</p>
+                  <div className="space-y-4">
+                    {group.items.map((item) => {
+                      const key = item.key as ItemKey;
+                      const count = cart[key];
+                      const lineTotal = count * item.price;
+                      const note = "note" in item ? item.note : undefined;
+                      return (
+                        <div
+                          key={key}
+                          className={`flex justify-between items-center gap-3 sm:gap-4 pb-4 border-b transition-colors duration-300 ${
+                            count > 0 ? "border-teal-600/60" : "border-teal-800/50"
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <p
+                              className={`text-sm sm:text-lg font-medium transition-colors duration-300 ${
+                                count > 0 ? "text-white" : "text-teal-100/90"
+                              }`}
+                            >
+                              {item.label}
+                            </p>
+                            <p className="text-xs sm:text-sm text-teal-200/50 font-light">
+                              {note ?? `₹${item.price}`} each
+                            </p>
+                          </div>
+                          <div
+                            className={`flex items-center gap-3 rounded-full p-1 border shrink-0 transition-colors duration-300 ${
+                              count > 0 ? "bg-teal-900/80 border-teal-500/60" : "bg-teal-950/60 border-teal-800/50"
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              aria-label={`Remove one ${item.label}`}
+                              disabled={count === 0}
+                              onClick={() => update(key, -1)}
+                              className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150 disabled:opacity-30 disabled:hover:bg-transparent"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </button>
+                            <span
+                              key={`${key}-${count}`}
+                              aria-live="polite"
+                              className={`w-5 text-center text-white font-medium tabular-nums ${popped ? "ll-pop" : ""}`}
+                            >
+                              {count}
+                            </span>
+                            <button
+                              type="button"
+                              aria-label={`Add one ${item.label}`}
+                              onClick={() => update(key, 1)}
+                              className="ll-press p-1.5 rounded-full hover:bg-teal-800 text-teal-200 transition-all duration-150"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                          {count > 0 ? (
+                            <p className="hidden sm:block text-sm font-semibold text-teal-200 tabular-nums w-20 text-right">
+                              ₹{lineTotal}
+                              {FROM_KEYS.has(key) ? "+" : ""}
+                            </p>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
+
 
             {/* Add-ons */}
             <div className="mt-8">
