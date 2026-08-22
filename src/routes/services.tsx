@@ -83,12 +83,13 @@ const CATALOGUE = [
     group: "Accessories",
     items: [{ key: "handbag", label: "Leather Handbag", price: 2800, from: true, note: "₹2800+" }],
   },
-];
+] as const;
 
 type ItemKey = (typeof CATALOGUE)[number]["items"][number]["key"];
+type CatalogItem = { key: ItemKey; label: string; price: number; from?: boolean; note?: string };
 
-const ALL_ITEMS: { key: ItemKey; label: string; price: number; from?: boolean; note?: string }[] =
-  CATALOGUE.flatMap((g) => g.items);
+const ALL_ITEMS: CatalogItem[] = CATALOGUE.flatMap((g) => g.items.map((i) => ({ ...i })));
+
 
 
 const ITEMS = Object.fromEntries(ALL_ITEMS.map((i) => [i.key, i.label])) as Record<ItemKey, string>;
