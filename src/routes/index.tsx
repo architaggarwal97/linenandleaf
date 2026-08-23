@@ -144,6 +144,25 @@ function Home() {
         </div>
       </section>
 
+      {/* Visit outlet callout */}
+      <section className="py-12 md:py-16 bg-[#fdfcf9] border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left bg-white rounded-[2rem] p-8 sm:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="h-14 w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">
+              <MapPin className="h-7 w-7 text-teal-600" />
+            </div>
+            <div>
+              <p className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mb-1">
+                We urge you to visit our outlet and see the magic happening live!
+              </p>
+              <p className="text-slate-500 font-light text-sm sm:text-base">
+                Walk-ins are always welcome — 1st Floor, Shop No. 108, Sarojini Nagar Market, New Delhi 110023.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* USPs */}
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
