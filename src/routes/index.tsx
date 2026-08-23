@@ -270,6 +270,29 @@ function Home() {
           </p>
         </div>
       </section>
+
+      {/* Wallet teaser */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="bg-teal-900 rounded-[2rem] p-8 sm:p-12 md:p-16 text-center text-white shadow-[0_20px_40px_rgb(13,148,136,0.15)]">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Prepay and get 10% more to spend.
+            </h2>
+            <p className="text-teal-100/80 text-base sm:text-lg max-w-2xl mx-auto font-light mb-8 leading-relaxed">
+              Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order.
+            </p>
+            <Link
+              to="/wallet"
+              className="inline-flex items-center justify-center gap-2 bg-white text-teal-900 px-8 py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-teal-950/20"
+            >
+              Top Up Now <ArrowRight className="h-5 w-5" />
+            </Link>
+            <p className="mt-6 text-xs sm:text-sm text-teal-200/60 font-light">
+              No login required. Top-up is confirmed over WhatsApp.
+            </p>
+          </Reveal>
+        </div>
+      </section>
     </>
   );
 }
