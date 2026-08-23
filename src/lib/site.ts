@@ -16,5 +16,6 @@ export const navLinks = [
   { to: "/service-area", label: "Service Area" },
   { to: "/about", label: "About" },
   { to: "/faq", label: "FAQ" },
+  { to: "/wallet", label: "Wallet" },
   { to: "/contact", label: "Book a Pickup" },
 ] as const;

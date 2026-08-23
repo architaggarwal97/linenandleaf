@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Sparkles, Leaf } from "lucide-react";
+import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera, MapPin, ShieldCheck, Leaf } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
@@ -52,7 +52,6 @@ const usps = [
     glow: "hover:shadow-[0_20px_40px_rgb(37,99,235,0.12)]",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
-    note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
   },
 
   {
@@ -145,6 +144,25 @@ function Home() {
         </div>
       </section>
 
+      {/* Visit outlet callout */}
+      <section className="py-12 md:py-16 bg-[#fdfcf9] border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left bg-white rounded-[2rem] p-8 sm:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="h-14 w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">
+              <MapPin className="h-7 w-7 text-teal-600" />
+            </div>
+            <div>
+              <p className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mb-1">
+                We urge you to visit our outlet and see the magic happening live!
+              </p>
+              <p className="text-slate-500 font-light text-sm sm:text-base">
+                Walk-ins are always welcome — 1st Floor, Shop No. 108, Sarojini Nagar Market, New Delhi 110023.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* USPs */}
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,7 +178,6 @@ function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {usps.map((usp, i) => {
               const Icon = usp.icon;
-              const note = "note" in usp ? (usp.note as string) : null;
               return (
                 <Reveal
                   key={usp.title}
@@ -174,13 +191,6 @@ function Home() {
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
                   <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
-
-                  {note ? (
-                    <p className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4 sm:p-5 text-sm sm:text-base text-blue-900/80 font-light leading-relaxed">
-                      <Sparkles className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
-                      <span>{note}</span>
-                    </p>
-                  ) : null}
                 </Reveal>
               );
             })}
@@ -258,6 +268,29 @@ function Home() {
           <p className="mt-8 text-teal-100/70 text-sm sm:text-base font-light">
             Prefer to see it in person? Drop by our Sarojini Nagar outlet anytime.
           </p>
+        </div>
+      </section>
+
+      {/* Wallet teaser */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="bg-teal-900 rounded-[2rem] p-8 sm:p-12 md:p-16 text-center text-white shadow-[0_20px_40px_rgb(13,148,136,0.15)]">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              Prepay and get 10% more to spend.
+            </h2>
+            <p className="text-teal-100/80 text-base sm:text-lg max-w-2xl mx-auto font-light mb-8 leading-relaxed">
+              Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order.
+            </p>
+            <Link
+              to="/wallet"
+              className="inline-flex items-center justify-center gap-2 bg-white text-teal-900 px-8 py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:-translate-y-1 shadow-xl shadow-teal-950/20"
+            >
+              Top Up Now <ArrowRight className="h-5 w-5" />
+            </Link>
+            <p className="mt-6 text-xs sm:text-sm text-teal-200/60 font-light">
+              No login required. Top-up is confirmed over WhatsApp.
+            </p>
+          </Reveal>
         </div>
       </section>
     </>

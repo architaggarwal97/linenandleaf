@@ -247,72 +247,6 @@ function ServicesPage() {
         </div>
       </section>
 
-      {/* Full rate card */}
-      <section className="py-16 md:py-20 bg-[#fdfcf9]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-center">
-              Full Rate Card
-            </h2>
-            <p className="mt-3 text-center text-slate-500 font-light text-sm sm:text-base">
-              Indicative per-garment pricing. Final quote is confirmed on WhatsApp after we see the garment.
-            </p>
-          </Reveal>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {rateCard.map((section, i) => {
-              const hasIron = section.rows.some((r) => r.iron);
-              return (
-                <Reveal
-                  key={section.group}
-                  delay={i * 70}
-                  className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
-                    section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
-                  }`}
-                >
-                  <h3 className="text-lg font-bold tracking-tight text-slate-900 mb-5">{section.group}</h3>
-
-                  {hasIron ? (
-                    <div className="grid grid-cols-[1fr_auto_auto] gap-4 pb-2 mb-1 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
-                      <span>Service</span>
-                      <span className="text-right">Dry Clean</span>
-                      <span className="text-right">Steam Iron</span>
-                    </div>
-                  ) : null}
-
-                  <ul className="divide-y divide-slate-100">
-                    {section.rows.map((row) => (
-                      <li
-                        key={row.name}
-                        className={`py-3 items-baseline ${
-                          hasIron ? "grid grid-cols-[1fr_auto_auto] gap-4" : "flex justify-between gap-4"
-                        }`}
-                      >
-                        <span className="text-sm sm:text-base text-slate-700 font-medium">{row.name}</span>
-                        <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap text-right">
-                          {row.dry}
-                        </span>
-                        {row.iron ? (
-                          <span className="text-sm font-semibold text-slate-500 tabular-nums whitespace-nowrap text-right">
-                            {row.iron}
-                          </span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {hasIron ? (
-                    <p className="mt-4 text-xs text-slate-400 font-light">
-                      Steam iron is press/finish only; dry clean includes full cleaning + finishing.
-                    </p>
-                  ) : null}
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Quote builder */}
       <section className="py-16 md:py-24 bg-teal-950 text-white relative overflow-hidden">
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-teal-800/30 rounded-full blur-[120px] pointer-events-none" />
@@ -494,6 +428,72 @@ function ServicesPage() {
               <span>{hasItems ? "Book this Estimate via WhatsApp" : "Get a Custom Quote"}</span>
             </button>
           </Reveal>
+        </div>
+      </section>
+
+      {/* Full rate card */}
+      <section className="py-16 md:py-20 bg-[#fdfcf9]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-center">
+              Full Rate Card
+            </h2>
+            <p className="mt-3 text-center text-slate-500 font-light text-sm sm:text-base">
+              Indicative per-garment pricing. Final quote is confirmed on WhatsApp after we see the garment.
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            {rateCard.map((section, i) => {
+              const hasIron = section.rows.some((r) => r.iron);
+              return (
+                <Reveal
+                  key={section.group}
+                  delay={i * 70}
+                  className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
+                    section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
+                  }`}
+                >
+                  <h3 className="text-lg font-bold tracking-tight text-slate-900 mb-5">{section.group}</h3>
+
+                  {hasIron ? (
+                    <div className="grid grid-cols-[1fr_auto_auto] gap-4 pb-2 mb-1 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                      <span>Service</span>
+                      <span className="text-right">Dry Clean</span>
+                      <span className="text-right">Steam Iron</span>
+                    </div>
+                  ) : null}
+
+                  <ul className="divide-y divide-slate-100">
+                    {section.rows.map((row) => (
+                      <li
+                        key={row.name}
+                        className={`py-3 items-baseline ${
+                          hasIron ? "grid grid-cols-[1fr_auto_auto] gap-4" : "flex justify-between gap-4"
+                        }`}
+                      >
+                        <span className="text-sm sm:text-base text-slate-700 font-medium">{row.name}</span>
+                        <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap text-right">
+                          {row.dry}
+                        </span>
+                        {row.iron ? (
+                          <span className="text-sm font-semibold text-slate-500 tabular-nums whitespace-nowrap text-right">
+                            {row.iron}
+                          </span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {hasIron ? (
+                    <p className="mt-4 text-xs text-slate-400 font-light">
+                      Steam iron is press/finish only; dry clean includes full cleaning + finishing.
+                    </p>
+                  ) : null}
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
       </section>
     </>
