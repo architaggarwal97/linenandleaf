@@ -260,31 +260,55 @@ function ServicesPage() {
           </Reveal>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {rateCard.map((section, i) => (
-              <Reveal
-                key={section.group}
-                delay={i * 70}
-                className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
-                  section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
-                }`}
-              >
-                <h3 className="text-lg font-bold tracking-tight text-slate-900 mb-5">{section.group}</h3>
-                <ul className="divide-y divide-slate-100">
-                  {section.rows.map((row) => (
-                    <li key={row.name} className="flex items-baseline justify-between gap-4 py-2.5">
-                      <span className="text-sm sm:text-base text-slate-600 font-medium">{row.name}</span>
-                      <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
-                        {row.dry}
-                        {row.iron ? <span className="text-slate-400 font-normal"> / {row.iron}</span> : null}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {section.rows.some((r) => r.iron) ? (
-                  <p className="mt-4 text-xs text-slate-400 font-light">Dry clean / steam iron</p>
-                ) : null}
-              </Reveal>
-            ))}
+            {rateCard.map((section, i) => {
+              const hasIron = section.rows.some((r) => r.iron);
+              return (
+                <Reveal
+                  key={section.group}
+                  delay={i * 70}
+                  className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
+                    section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
+                  }`}
+                >
+                  <h3 className="text-lg font-bold tracking-tight text-slate-900 mb-5">{section.group}</h3>
+
+                  {hasIron ? (
+                    <div className="grid grid-cols-[1fr_auto_auto] gap-4 pb-2 mb-1 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                      <span>Service</span>
+                      <span className="text-right">Dry Clean</span>
+                      <span className="text-right">Steam Iron</span>
+                    </div>
+                  ) : null}
+
+                  <ul className="divide-y divide-slate-100">
+                    {section.rows.map((row) => (
+                      <li
+                        key={row.name}
+                        className={`py-3 items-baseline ${
+                          hasIron ? "grid grid-cols-[1fr_auto_auto] gap-4" : "flex justify-between gap-4"
+                        }`}
+                      >
+                        <span className="text-sm sm:text-base text-slate-700 font-medium">{row.name}</span>
+                        <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap text-right">
+                          {row.dry}
+                        </span>
+                        {row.iron ? (
+                          <span className="text-sm font-semibold text-slate-500 tabular-nums whitespace-nowrap text-right">
+                            {row.iron}
+                          </span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {hasIron ? (
+                    <p className="mt-4 text-xs text-slate-400 font-light">
+                      Steam iron is press/finish only; dry clean includes full cleaning + finishing.
+                    </p>
+                  ) : null}
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
