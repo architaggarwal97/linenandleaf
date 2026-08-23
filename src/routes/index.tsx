@@ -159,7 +159,6 @@ function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {usps.map((usp, i) => {
               const Icon = usp.icon;
-              const note = "note" in usp ? (usp.note as string) : null;
               return (
                 <Reveal
                   key={usp.title}
@@ -173,13 +172,6 @@ function Home() {
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
                   <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
-
-                  {note ? (
-                    <p className="mt-6 flex items-start gap-3 rounded-2xl bg-blue-50/70 p-4 sm:p-5 text-sm sm:text-base text-blue-900/80 font-light leading-relaxed">
-                      <Sparkles className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
-                      <span>{note}</span>
-                    </p>
-                  ) : null}
                 </Reveal>
               );
             })}
