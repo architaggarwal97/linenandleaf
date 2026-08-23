@@ -52,7 +52,6 @@ const usps = [
     glow: "hover:shadow-[0_20px_40px_rgb(37,99,235,0.12)]",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
-    note: "We urge you to visit our outlet and see the magic happening live! Walk-ins are always welcome.",
   },
 
   {
