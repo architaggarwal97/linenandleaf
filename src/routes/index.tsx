@@ -145,7 +145,7 @@ function Home() {
       </section>
 
       {/* Visit outlet callout */}
-      <section className="py-12 md:py-16 bg-[#fdfcf9] border-y border-slate-100">
+      <section className="py-12 md:py-16 bg-[#fafafa] border-y border-slate-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-6 sm:mb-8 leading-tight">
@@ -165,7 +165,7 @@ function Home() {
       </section>
 
       {/* USPs */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-20 md:py-28 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 md:mb-20">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">
@@ -183,7 +183,7 @@ function Home() {
                 <Reveal
                   key={usp.title}
                   delay={i * 70}
-                  className={`h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100 group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
+                  className={`h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                 >
                   <div
                     className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
@@ -201,7 +201,7 @@ function Home() {
       </section>
 
       {/* How it works teaser */}
-      <section className="py-20 md:py-28 bg-[#f8faf9]">
+      <section className="py-20 md:py-28 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 md:mb-20">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">How It Works</h2>
@@ -218,7 +218,7 @@ function Home() {
                 delay={i * 80}
                 className="relative z-10 flex flex-col items-center text-center group"
               >
-                <div className="h-24 w-24 sm:h-28 sm:w-28 bg-white rounded-full flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 sm:mb-8 group-hover:-translate-y-2 transition-transform duration-500">
+                <div className="h-24 w-24 sm:h-28 sm:w-28 bg-white rounded-full flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.06)] mb-6 sm:mb-8 transition-all duration-500 group-hover:-translate-y-2">
                   <span className="text-[0.65rem] sm:text-xs font-bold text-teal-500/70 mb-1 uppercase tracking-wider">
                     {step}
                   </span>
@@ -273,7 +273,7 @@ function Home() {
       </section>
 
       {/* Wallet teaser */}
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-20 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="bg-teal-900 rounded-[2rem] p-8 sm:p-12 md:p-16 text-center text-white shadow-[0_20px_40px_rgb(13,148,136,0.15)]">
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">

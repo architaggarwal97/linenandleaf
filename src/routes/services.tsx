@@ -227,14 +227,14 @@ function ServicesPage() {
         description="We price per garment and confirm the full quote on WhatsApp before we begin — no hidden fees, no surprises at the door."
       />
 
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-20 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-3">
           {services.map(({ icon: Icon, title, desc, price }, i) => (
             <Reveal
               as="article"
               key={title}
               delay={i * 70}
-              className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 ll-card"
+              className="bg-white rounded-3xl p-8 ll-card"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
@@ -432,7 +432,7 @@ function ServicesPage() {
       </section>
 
       {/* Full rate card */}
-      <section className="py-16 md:py-20 bg-[#fdfcf9]">
+      <section className="py-16 md:py-20 bg-[#fafafa]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-center">
@@ -450,7 +450,7 @@ function ServicesPage() {
                 <Reveal
                   key={section.group}
                   delay={i * 70}
-                  className={`bg-white rounded-[2rem] p-6 sm:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)] ll-card ${
+                  className={`bg-white rounded-[2rem] p-6 sm:p-8 ll-card ${
                     section.group === "Everyday & Occasion Wear" ? "lg:row-span-2" : ""
                   }`}
                 >

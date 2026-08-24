@@ -67,14 +67,14 @@ function TechnologyPage() {
         description="The equipment and process behind every Linen & Leaf order — and why it treats your clothes and the city's water supply better."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
           {blocks.map(({ icon: Icon, title, desc }, i) => (
             <Reveal
               as="article"
               key={title}
               delay={i * 70}
-              className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 ll-card"
+              className="bg-white rounded-3xl p-8 ll-card"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
@@ -96,7 +96,7 @@ function TechnologyPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-20 bg-[#f8faf9]">
+      <section className="py-16 md:py-20 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">
             A note on turnaround
