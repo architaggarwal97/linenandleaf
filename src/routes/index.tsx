@@ -146,19 +146,20 @@ function Home() {
 
       {/* Visit outlet callout */}
       <section className="py-12 md:py-16 bg-[#fdfcf9] border-y border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center sm:text-left bg-white rounded-[2rem] p-8 sm:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <div className="h-14 w-14 bg-teal-50 rounded-2xl flex items-center justify-center shrink-0">
-              <MapPin className="h-7 w-7 text-teal-600" />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Reveal>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-6 sm:mb-8 leading-tight">
+              We urge you to visit our outlet and see the magic happening live!
+            </h2>
+            <div className="inline-flex items-center gap-2 sm:gap-3 bg-white border border-teal-100/80 rounded-full px-4 sm:px-6 py-2.5 sm:py-3 shadow-[0_4px_20px_rgb(0,0,0,0.04)] mb-4">
+              <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-teal-600 shrink-0" />
+              <span className="text-base sm:text-lg font-bold text-teal-700 tracking-tight">
+                Walk-ins are always welcome.
+              </span>
             </div>
-            <div>
-              <p className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mb-1">
-                We urge you to visit our outlet and see the magic happening live!
-              </p>
-              <p className="text-slate-500 font-light text-sm sm:text-base">
-                Walk-ins are always welcome — 1st Floor, Shop No. 108, Sarojini Nagar Market, New Delhi 110023.
-              </p>
-            </div>
+            <p className="text-slate-500 font-light text-sm sm:text-base max-w-xl mx-auto">
+              1st Floor, Shop No. 108, Sarojini Nagar Market, New Delhi 110023.
+            </p>
           </Reveal>
         </div>
       </section>
