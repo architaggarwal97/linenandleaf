@@ -107,7 +107,7 @@ function ServiceAreaPage() {
               </div>
             )}
 
-            <div className="mt-10 p-6 sm:p-8 bg-slate-50 rounded-3xl border border-slate-100">
+            <div className="mt-10 p-6 sm:p-8 bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-2">
               <h3 className="font-semibold text-slate-800 mb-2 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-teal-600" /> Our shop
               </h3>
@@ -135,7 +135,7 @@ function ServiceAreaPage() {
               {localities.map((l) => (
                 <li
                   key={l}
-                  className="ll-card flex items-start gap-3 p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)]"
+                  className="ll-card flex items-start gap-3 p-5 rounded-2xl bg-white"
                 >
                   <CheckCircle2 className="h-5 w-5 text-teal-500 shrink-0 mt-0.5" />
                   <span className="text-slate-700 font-light">{l}</span>

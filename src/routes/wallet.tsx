@@ -69,9 +69,9 @@ function WalletPage() {
         description="Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — no accounts, no login, just a simple WhatsApp handoff."
       />
 
-      <section className="py-16 md:py-24 bg-[#fdfcf9]">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal className="bg-white rounded-[2rem] p-8 sm:p-12 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.05)]">
+          <Reveal className="bg-white rounded-[2rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-2">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-12 w-12 bg-teal-50 rounded-xl flex items-center justify-center">
                 <Wallet className="h-6 w-6 text-teal-600" />
