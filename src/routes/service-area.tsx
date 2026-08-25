@@ -58,7 +58,7 @@ function ServiceAreaPage() {
         description="We're a small independent operation in Sarojini Nagar Market. We keep our pickup radius tight so collections and deliveries stay quick and reliable."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-2">
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Check your PIN code</h2>
@@ -107,7 +107,7 @@ function ServiceAreaPage() {
               </div>
             )}
 
-            <div className="mt-10 p-6 sm:p-8 bg-slate-50 rounded-3xl border border-slate-100">
+            <div className="mt-10 p-6 sm:p-8 bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-2">
               <h3 className="font-semibold text-slate-800 mb-2 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-teal-600" /> Our shop
               </h3>
@@ -135,7 +135,7 @@ function ServiceAreaPage() {
               {localities.map((l) => (
                 <li
                   key={l}
-                  className="ll-card flex items-start gap-3 p-5 rounded-2xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)]"
+                  className="ll-card flex items-start gap-3 p-5 rounded-2xl bg-white"
                 >
                   <CheckCircle2 className="h-5 w-5 text-teal-500 shrink-0 mt-0.5" />
                   <span className="text-slate-700 font-light">{l}</span>
