@@ -86,9 +86,9 @@ function ContactPage() {
         description="Fill in the form and we'll continue the conversation on WhatsApp — or just call us. Whatever's easiest."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
-          <Reveal className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-slate-100 p-6 sm:p-10">
+          <Reveal className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-2 p-6 sm:p-10">
             <h2 className="font-display text-2xl font-bold text-slate-800">Schedule your pickup</h2>
             <p className="text-slate-500 font-light mt-2 mb-8">
               Enter your details below. We'll confirm your slot on WhatsApp.

@@ -58,14 +58,14 @@ function AboutPage() {
         description="Linen & Leaf was started to fix what's frustrating about traditional dry cleaning: no visibility, vague pricing and no accountability when something goes wrong."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-2">
           {values.map(({ icon: Icon, title, desc }, i) => (
             <Reveal
               as="article"
               key={title}
               delay={i * 70}
-              className="bg-white rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 ll-card"
+              className="bg-white rounded-3xl p-8 ll-card"
             >
               <div className="h-14 w-14 bg-teal-50 rounded-full flex items-center justify-center mb-6">
                 <Icon className="h-6 w-6 text-teal-600" />
@@ -77,7 +77,7 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-20 bg-[#f8faf9]">
+      <section className="py-16 md:py-20 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Come say hello</h2>
           <address className="not-italic text-slate-500 font-light leading-relaxed">{site.address}</address>
