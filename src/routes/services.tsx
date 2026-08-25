@@ -166,6 +166,117 @@ const services = [
   },
 ];
 
+type RewardTier = {
+  icon: React.ElementType;
+  label: string;
+  threshold: number;
+  progress: number;
+};
+
+/*
+ * Static rewards strip for the Services page.
+ * TODO: Once the price estimator has a real running total, drive lock states
+ * and progress rings dynamically against that total instead of these
+ * illustrative defaults.
+ */
+const REWARDS: RewardTier[] = [
+  { icon: Package, label: "Free Pickup", threshold: 200, progress: 35 },
+  { icon: Truck, label: "Free Delivery", threshold: 500, progress: 0 },
+  { icon: Coins, label: "₹100 Cashback", threshold: 900, progress: 0 },
+  { icon: Banknote, label: "₹200 Cashback", threshold: 1500, progress: 0 },
+];
+
+function RewardsStrip() {
+  return (
+    <section className="py-10 md:py-12 bg-[#fafafa]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Reveal>
+          <div className="bg-white rounded-[2rem] p-6 sm:p-8 ll-card">
+            <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-teal-600 mb-6">
+              Rewards on every order
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-4">
+              {REWARDS.map((reward, i) => {
+                const Icon = reward.icon;
+                const isLocked = true;
+                const showRing = reward.progress > 0;
+                return (
+                  <div key={reward.label} className="flex flex-col items-center text-center">
+                    <div className="relative h-20 w-20">
+                      {/* Background ring */}
+                      <svg
+                        className="absolute inset-0 h-full w-full -rotate-90 text-slate-100"
+                        viewBox="0 0 100 100"
+                      >
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="46"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="5"
+                        />
+                      </svg>
+
+                      {/* Progress ring */}
+                      {showRing ? (
+                        <svg
+                          className="absolute inset-0 h-full w-full -rotate-90 text-teal-500"
+                          viewBox="0 0 100 100"
+                        >
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="46"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="5"
+                            strokeLinecap="round"
+                            strokeDasharray={`${(reward.progress / 100) * 289.03} 289.03`}
+                          />
+                        </svg>
+                      ) : null}
+
+                      {/* Badge face */}
+                      <div
+                        className={`absolute inset-[5px] rounded-full flex items-center justify-center ${
+                          isLocked ? "bg-slate-50" : "bg-teal-50"
+                        }`}
+                      >
+                        <Icon
+                          className={`h-7 w-7 ${isLocked ? "text-slate-400" : "text-teal-600"}`}
+                        />
+                      </div>
+
+                      {/* Padlock overlay */}
+                      {isLocked ? (
+                        <span className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center">
+                          <Lock className="h-3.5 w-3.5 text-slate-500" />
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p
+                      className={`mt-4 text-sm font-semibold ${
+                        isLocked ? "text-slate-500" : "text-teal-700"
+                      }`}
+                    >
+                      {reward.label}
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-slate-400 tabular-nums">
+                      Unlocks at ₹{reward.threshold}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function ServicesPage() {
   const keys = Object.keys(ITEMS) as ItemKey[];
   const addonKeys = Object.keys(ADDONS) as AddonKey[];
