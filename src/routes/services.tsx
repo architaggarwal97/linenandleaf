@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
+import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles, Truck, Package, Coins, Banknote, Lock } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, servicesScript, socialMeta } from "@/lib/seo";
