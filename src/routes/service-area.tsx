@@ -58,7 +58,7 @@ function ServiceAreaPage() {
         description="We're a small independent operation in Sarojini Nagar Market. We keep our pickup radius tight so collections and deliveries stay quick and reliable."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-12 lg:grid-cols-2">
           <Reveal>
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-800 mb-4 tracking-tight">Check your PIN code</h2>

@@ -133,7 +133,7 @@ function FaqPage() {
         description="If something isn't covered here, message us on WhatsApp — a real person will reply."
       />
 
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="sr-only">Frequently asked questions</h2>
           <div className="space-y-3 sm:space-y-4">
@@ -144,10 +144,10 @@ function FaqPage() {
                   as="article"
                   key={faq.q}
                   delay={index * 50}
-                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-300 motion-reduce:transition-none overflow-hidden ${
+                  className={`rounded-2xl sm:rounded-3xl border transition-all duration-500 motion-reduce:transition-none overflow-hidden hover:-translate-y-1 ${
                     isOpen
-                      ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
-                      : "bg-slate-50 border-transparent hover:border-teal-100 hover:bg-white hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+                      ? "bg-white border-teal-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+                      : "bg-white border-transparent hover:border-teal-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
                   }`}
                 >
                   <h3>
