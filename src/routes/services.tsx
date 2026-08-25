@@ -358,6 +358,8 @@ function ServicesPage() {
         </div>
       </section>
 
+      <RewardsStrip />
+
       {/* Quote builder */}
       <section className="py-16 md:py-24 bg-teal-950 text-white relative overflow-hidden">
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-teal-800/30 rounded-full blur-[120px] pointer-events-none" />
