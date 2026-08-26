@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { MessageCircle } from "lucide-react";
 import { Wordmark } from "./Wordmark";
 import { navLinks, site } from "@/lib/site";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -8,7 +8,10 @@ import { whatsappLink } from "@/lib/whatsapp";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
+  const { location } = useRouterState();
+  const currentPath = location.pathname;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -17,15 +20,41 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    if (open) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [currentPath]);
+
+  const isActive = (to: string) => {
+    if (to === "/") return currentPath === "/";
+    return currentPath === to || currentPath.startsWith(`${to}/`);
+  };
+
   return (
     <nav
-      className={`sticky top-0 bg-white/70 backdrop-blur-xl border-b z-50 transition-all ${
+      className={`sticky top-0 bg-white/70 backdrop-blur-xl border-b z-50 transition-all duration-300 ${
         scrolled ? "shadow-[0_8px_30px_rgb(0,0,0,0.05)] border-slate-200/70" : "border-slate-100/40"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link to="/" aria-label={site.name} onClick={() => setOpen(false)} className="relative z-50">
+          <Link to="/" aria-label={site.name} className="relative z-50">
             <Wordmark />
           </Link>
 
@@ -56,48 +85,94 @@ export function Header() {
               onClick={() => setOpen(!open)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="text-slate-600 hover:text-teal-600 p-2 rounded-full transition-colors hover:bg-slate-100"
+              aria-controls="mobile-menu"
+              className="text-slate-600 hover:text-teal-600 p-2 rounded-full transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
             >
-              {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+              <div className="relative w-7 h-7 flex items-center justify-center">
+                <span
+                  className={`absolute block h-0.5 w-6 bg-current rounded-full transition-all duration-300 ease-out ${
+                    open ? "rotate-45 translate-y-0" : "-translate-y-2"
+                  }`}
+                />
+                <span
+                  className={`absolute block h-0.5 w-6 bg-current rounded-full transition-all duration-300 ease-out ${
+                    open ? "opacity-0 translate-x-2" : "opacity-100 translate-x-0"
+                  }`}
+                />
+                <span
+                  className={`absolute block h-0.5 w-6 bg-current rounded-full transition-all duration-300 ease-out ${
+                    open ? "-rotate-45 translate-y-0" : "translate-y-2"
+                  }`}
+                />
+              </div>
             </button>
           </div>
         </div>
       </div>
 
       <div
-        className={`lg:hidden fixed inset-x-0 top-20 bg-white border-b border-slate-100 shadow-2xl transition-all duration-300 ease-in-out ${
-          open ? "opacity-100 translate-y-0 visible" : "opacity-0 -translate-y-4 invisible"
+        id="mobile-menu"
+        ref={panelRef}
+        aria-hidden={!open}
+        className={`lg:hidden fixed inset-x-0 top-20 bg-white/95 backdrop-blur-3xl border-b border-slate-100 shadow-2xl transition-all duration-300 ease-out origin-top ${
+          open ? "opacity-100 translate-y-0 visible scale-100" : "opacity-0 -translate-y-4 invisible scale-[0.98]"
         }`}
       >
-        <div className="flex flex-col px-6 py-8 space-y-6 bg-white/95 backdrop-blur-3xl">
-          {links.map((link) => (
+        <div className="flex flex-col px-6 py-8 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+          {links.map((link, i) => {
+            const active = isActive(link.to);
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setOpen(false)}
+                className={`group relative flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-300 ${
+                  active
+                    ? "text-teal-700 bg-teal-50/80 font-semibold"
+                    : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
+                }`}
+                style={{
+                  transitionDelay: open ? `${i * 35}ms` : "0ms",
+                  opacity: open ? 1 : 0,
+                  transform: open ? "translateY(0)" : "translateY(-8px)",
+                }}
+              >
+                <span
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full transition-all duration-300 ${
+                    active ? "bg-teal-600 opacity-100" : "bg-teal-400 opacity-0 group-hover:opacity-40"
+                  }`}
+                />
+                {link.label}
+              </Link>
+            );
+          })}
+
+          <div
+            className="pt-4 space-y-3 transition-all duration-300"
+            style={{
+              transitionDelay: open ? `${links.length * 35}ms` : "0ms",
+              opacity: open ? 1 : 0,
+              transform: open ? "translateY(0)" : "translateY(-8px)",
+            }}
+          >
             <Link
-              key={link.to}
-              to={link.to}
+              to="/contact"
               onClick={() => setOpen(false)}
-              className="text-lg font-medium text-slate-700 transition-colors hover:text-teal-600"
-              activeProps={{ className: "text-teal-700 font-semibold" }}
+              className="block w-full text-center bg-teal-800 hover:bg-teal-700 text-white px-6 py-4 rounded-2xl font-semibold transition-colors"
             >
-              {link.label}
+              Book a Pickup
             </Link>
-          ))}
-          <Link
-            to="/contact"
-            onClick={() => setOpen(false)}
-            className="w-full text-center bg-teal-800 text-white px-6 py-4 rounded-2xl font-semibold"
-          >
-            Book a Pickup
-          </Link>
-          <a
-            href={whatsappLink()}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => setOpen(false)}
-            className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-green-500/20"
-          >
-            <MessageCircle className="h-5 w-5" />
-            WhatsApp Us
-          </a>
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setOpen(false)}
+              className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-green-500/20 transition-colors"
+            >
+              <MessageCircle className="h-5 w-5" />
+              WhatsApp Us
+            </a>
+          </div>
         </div>
       </div>
     </nav>

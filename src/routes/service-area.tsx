@@ -9,7 +9,7 @@ import { Reveal } from "@/components/site/Reveal";
 
 const TITLE = "Service Area — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
-  "Free pickup and delivery in Sarojini Nagar and nearby localities — RK Puram, Netaji Nagar, INA Colony, Vasant Vihar and Safdarjung Enclave.";
+  "Free pickup and delivery in Sarojini Nagar, Chanakyapuri, RK Puram, Netaji Nagar, INA Colony, Vasant Vihar and Safdarjung Enclave.";
 
 export const Route = createFileRoute("/service-area")({
   head: () => ({
@@ -28,10 +28,11 @@ export const Route = createFileRoute("/service-area")({
   component: ServiceAreaPage,
 });
 
-const SERVED_PINCODES = ["110023", "110022", "110029", "110057", "110066"];
+const SERVED_PINCODES = ["110023", "110022", "110021", "110029", "110057", "110066"];
 
 const localities = [
   "Sarojini Nagar (including GPRA flats and the market)",
+  "Chanakyapuri",
   "RK Puram",
   "Netaji Nagar",
   "INA Colony",
