@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useRouterState } from "tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { MessageCircle } from "lucide-react";
 import { Wordmark } from "./Wordmark";
 import { navLinks, site } from "@/lib/site";
