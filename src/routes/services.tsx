@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles, Truck, Package, Coins, Banknote, Lock } from "lucide-react";
+import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles, Truck, Package, Coins, Banknote, Lock, Check } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, servicesScript, socialMeta } from "@/lib/seo";
@@ -170,7 +170,7 @@ type RewardTier = {
   icon: React.ElementType;
   label: string;
   threshold: number;
-  progress: number;
+  detail: string;
 };
 
 /*
@@ -420,7 +420,7 @@ function ServicesPage() {
         </div>
       </section>
 
-      <RewardsStrip />
+      <RewardsStrip total={totalPrice} />
 
       {/* Quote builder */}
       <section className="py-16 md:py-24 bg-teal-950 text-white relative overflow-hidden">
