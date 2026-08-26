@@ -21,13 +21,12 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
   }, [open]);
 
   useEffect(() => {
