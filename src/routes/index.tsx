@@ -3,6 +3,7 @@ import { Droplet, Eye, Clock, Cpu, Zap, MessageCircle, ArrowRight, Phone, Camera
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
+import { RewardsStrip } from "@/components/site/RewardsStrip";
 
 const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
 const DESCRIPTION =
@@ -294,6 +295,9 @@ function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* Rewards preview */}
+      <RewardsStrip total={0} />
     </>
   );
 }
