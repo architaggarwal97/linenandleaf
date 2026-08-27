@@ -57,7 +57,7 @@ export function RewardsStrip({ total }: { total: number }) {
             <p className="text-center text-sm font-light text-slate-500 mb-6">
               {total > 0
                 ? `Your basket is at ₹${total} — keep adding to unlock more.`
-                : "Add items to your basket below to start unlocking rewards."}
+                : "Rewards unlock automatically as your order value grows."}
             </p>
 
             <div className="-mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
