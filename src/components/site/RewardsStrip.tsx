@@ -1,5 +1,6 @@
 import { useState, type ElementType } from "react";
-import { Package, Truck, Coins, Banknote, Lock, Check } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Package, Truck, Coins, Banknote, Lock, Check, ArrowRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 
 type RewardTier = {
@@ -43,8 +44,17 @@ const REWARDS: RewardTier[] = [
 
 const RING = 2 * Math.PI * 46;
 
-export function RewardsStrip({ total }: { total: number }) {
+export function RewardsStrip({
+  total,
+  cta,
+}: {
+  total: number;
+  /** Optional CTA rendered beneath the strip — used on the homepage to route to the live estimator. */
+  cta?: { label: string; to: string };
+}) {
   const [open, setOpen] = useState<string | null>(null);
+  // Empty state: no basket total calculated yet (e.g. homepage preview).
+  const isEmpty = total <= 0;
 
   return (
     <section className="py-10 md:py-12 bg-[#fafafa]">
