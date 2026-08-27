@@ -6,6 +6,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 const localities = [
   "Sarojini Nagar",
+  "Chanakyapuri",
   "RK Puram",
   "Netaji Nagar",
   "INA Colony",
@@ -70,7 +71,7 @@ export function Footer() {
           <div>
             <h2 className="text-white font-medium mb-5 sm:mb-6 tracking-wide">Where We Serve</h2>
             <p className="text-sm font-light leading-relaxed mb-4">
-              Pickup and delivery is currently limited to Sarojini Nagar and a few nearby localities:
+              Pickup and delivery is currently available in Sarojini Nagar, Chanakyapuri and nearby localities:
             </p>
             <ul className="space-y-2 text-sm font-light">
               {localities.map((l) => (
