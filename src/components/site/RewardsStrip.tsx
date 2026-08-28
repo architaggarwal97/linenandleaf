@@ -65,9 +65,9 @@ export function RewardsStrip({
               Rewards on every order
             </p>
             <p className="text-center text-sm font-light text-slate-500 mb-6">
-              {total > 0
-                ? `Your basket is at ₹${total} — keep adding to unlock more.`
-                : "Rewards unlock automatically as your order value grows."}
+              {isEmpty
+                ? "No basket total yet — build your order on the Services page and watch these rewards unlock."
+                : `Your basket is at ₹${total} — keep adding to unlock more.`}
             </p>
 
             <div className="-mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -127,7 +127,7 @@ export function RewardsStrip({
 
                           <span
                             className={`absolute inset-[5px] rounded-full flex items-center justify-center transition-colors duration-500 ${
-                              unlocked ? "bg-teal-50" : "bg-slate-50"
+                              unlocked ? "bg-teal-50 ll-unlock-pop" : "bg-slate-50"
                             }`}
                           >
                             <Icon
@@ -176,8 +176,24 @@ export function RewardsStrip({
                     </li>
                   );
                 })}
-              </ul>
+          </ul>
             </div>
+
+            {cta ? (
+              <div className="mt-8 text-center">
+                <Link
+                  to={cta.to}
+                  className="inline-flex items-center justify-center gap-2 bg-teal-800 hover:bg-teal-700 text-white px-7 py-3.5 rounded-full text-sm sm:text-base font-medium transition-all duration-300 shadow-lg shadow-teal-900/10 hover:-translate-y-0.5"
+                >
+                  {cta.label} <ArrowRight className="h-4 w-4 text-teal-200" />
+                </Link>
+                {isEmpty ? (
+                  <p className="mt-3 text-xs text-slate-400 font-light">
+                    Add items in the estimator — your progress rings fill live as the total grows.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </Reveal>
       </div>
