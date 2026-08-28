@@ -73,16 +73,66 @@ export function Header() {
           </Link>
 
           <div className="hidden lg:flex space-x-7 items-center">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
-                activeProps={{ className: "text-teal-700 font-semibold" }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {links.map((link) =>
+              link.children ? (
+                <div
+                  key={link.to}
+                  className="relative"
+                  onMouseEnter={openAbout}
+                  onMouseLeave={closeAbout}
+                  onFocus={openAbout}
+                  onBlur={closeAbout}
+                >
+                  <Link
+                    to={link.to}
+                    className={`relative inline-flex items-center gap-1 text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full ${
+                      isParentActive(link)
+                        ? "text-teal-700 font-semibold after:w-full"
+                        : "text-slate-500 hover:text-teal-600"
+                    }`}
+                  >
+                    {link.label}
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                        aboutOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Link>
+                  <div
+                    className={`absolute left-1/2 -translate-x-1/2 top-full pt-2 transition-all duration-200 ${
+                      aboutOpen
+                        ? "opacity-100 translate-y-0 visible"
+                        : "opacity-0 -translate-y-2 invisible"
+                    }`}
+                  >
+                    <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 p-2 min-w-[10rem]">
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                            isActive(child.to)
+                              ? "text-teal-700 bg-teal-50 font-semibold"
+                              : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
+                  activeProps={{ className: "text-teal-700 font-semibold" }}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
             <a
               href={whatsappLink()}
               target="_blank"
