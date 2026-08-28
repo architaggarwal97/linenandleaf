@@ -8,6 +8,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const aboutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
   const { location } = useRouterState();
