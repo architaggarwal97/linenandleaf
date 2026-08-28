@@ -182,34 +182,65 @@ export function Header() {
           open ? "opacity-100 translate-y-0 visible scale-100" : "opacity-0 -translate-y-4 invisible scale-[0.98]"
         }`}
       >
-        <div className="flex flex-col px-6 py-8 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
-          {links.map((link, i) => {
-            const active = isActive(link.to);
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className={`group relative flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-300 ${
-                  active
-                    ? "text-teal-700 bg-teal-50/80 font-semibold"
-                    : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
-                }`}
-                style={{
-                  transitionDelay: open ? `${i * 35}ms` : "0ms",
-                  opacity: open ? 1 : 0,
-                  transform: open ? "translateY(0)" : "translateY(-8px)",
-                }}
-              >
-                <span
-                  className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full transition-all duration-300 ${
-                    active ? "bg-teal-600 opacity-100" : "bg-teal-400 opacity-0 group-hover:opacity-40"
-                  }`}
-                />
-                {link.label}
-              </Link>
-            );
-          })}
+          <div className="flex flex-col px-6 py-8 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            {links.map((link, i) => {
+              const active = isParentActive(link);
+              return (
+                <div key={link.to} className="flex flex-col">
+                  <Link
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    className={`group relative flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-300 ${
+                      active
+                        ? "text-teal-700 bg-teal-50/80 font-semibold"
+                        : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
+                    }`}
+                    style={{
+                      transitionDelay: open ? `${i * 35}ms` : "0ms",
+                      opacity: open ? 1 : 0,
+                      transform: open ? "translateY(0)" : "translateY(-8px)",
+                    }}
+                  >
+                    <span
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full transition-all duration-300 ${
+                        active ? "bg-teal-600 opacity-100" : "bg-teal-400 opacity-0 group-hover:opacity-40"
+                      }`}
+                    />
+                    {link.label}
+                  </Link>
+                  {link.children ? (
+                    <div className="pl-8 pr-2 pt-1 pb-1 space-y-1">
+                      {link.children.map((child, ci) => (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          onClick={() => setOpen(false)}
+                          className={`group relative flex items-center rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
+                            isActive(child.to)
+                              ? "text-teal-700 bg-teal-50/60 font-semibold"
+                              : "text-slate-500 hover:text-teal-700 hover:bg-slate-50/60"
+                          }`}
+                          style={{
+                            transitionDelay: open ? `${(i + 1 + ci) * 35}ms` : "0ms",
+                            opacity: open ? 1 : 0,
+                            transform: open ? "translateY(0)" : "translateY(-8px)",
+                          }}
+                        >
+                          <span
+                            className={`absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r-full transition-all duration-300 ${
+                              isActive(child.to)
+                                ? "bg-teal-500 opacity-100"
+                                : "bg-teal-400 opacity-0 group-hover:opacity-40"
+                            }`}
+                          />
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
 
           <div
             className="pt-4 space-y-3 transition-all duration-300"
