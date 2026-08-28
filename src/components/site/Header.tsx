@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ChevronDown } from "lucide-react";
 import { Wordmark } from "./Wordmark";
 import { navLinks, site } from "@/lib/site";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -8,6 +8,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const aboutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
   const { location } = useRouterState();
@@ -46,6 +48,18 @@ export function Header() {
     return currentPath === to || currentPath.startsWith(`${to}/`);
   };
 
+  const isParentActive = (link: (typeof links)[number]) =>
+    isActive(link.to) || (link.children?.some((c) => isActive(c.to)) ?? false);
+
+  const openAbout = () => {
+    if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current);
+    setAboutOpen(true);
+  };
+
+  const closeAbout = () => {
+    aboutTimeoutRef.current = setTimeout(() => setAboutOpen(false), 150);
+  };
+
   return (
     <nav
       className={`sticky top-0 bg-white/70 backdrop-blur-xl border-b z-50 transition-all duration-300 ${
@@ -59,16 +73,66 @@ export function Header() {
           </Link>
 
           <div className="hidden lg:flex space-x-7 items-center">
-            {links.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
-                activeProps={{ className: "text-teal-700 font-semibold" }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {links.map((link) =>
+              link.children ? (
+                <div
+                  key={link.to}
+                  className="relative after:absolute after:top-full after:left-0 after:right-0 after:h-3 after:bg-transparent after:content-['']"
+                  onMouseEnter={openAbout}
+                  onMouseLeave={closeAbout}
+                  onFocus={openAbout}
+                  onBlur={closeAbout}
+                >
+                  <Link
+                    to={link.to}
+                    className={`relative inline-flex items-center gap-1 text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full ${
+                      isParentActive(link)
+                        ? "text-teal-700 font-semibold after:w-full"
+                        : "text-slate-500 hover:text-teal-600"
+                    }`}
+                  >
+                    {link.label}
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                        aboutOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Link>
+                  <div
+                    className={`absolute left-1/2 -translate-x-1/2 top-full pt-2 transition-all duration-200 ${
+                      aboutOpen
+                        ? "opacity-100 translate-y-0 visible"
+                        : "opacity-0 -translate-y-2 invisible"
+                    }`}
+                  >
+                    <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 p-2 min-w-[10rem]">
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                            isActive(child.to)
+                              ? "text-teal-700 bg-teal-50 font-semibold"
+                              : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
+                  activeProps={{ className: "text-teal-700 font-semibold" }}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
             <a
               href={whatsappLink()}
               target="_blank"
@@ -118,34 +182,65 @@ export function Header() {
           open ? "opacity-100 translate-y-0 visible scale-100" : "opacity-0 -translate-y-4 invisible scale-[0.98]"
         }`}
       >
-        <div className="flex flex-col px-6 py-8 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
-          {links.map((link, i) => {
-            const active = isActive(link.to);
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className={`group relative flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-300 ${
-                  active
-                    ? "text-teal-700 bg-teal-50/80 font-semibold"
-                    : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
-                }`}
-                style={{
-                  transitionDelay: open ? `${i * 35}ms` : "0ms",
-                  opacity: open ? 1 : 0,
-                  transform: open ? "translateY(0)" : "translateY(-8px)",
-                }}
-              >
-                <span
-                  className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full transition-all duration-300 ${
-                    active ? "bg-teal-600 opacity-100" : "bg-teal-400 opacity-0 group-hover:opacity-40"
-                  }`}
-                />
-                {link.label}
-              </Link>
-            );
-          })}
+          <div className="flex flex-col px-6 py-8 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            {links.map((link, i) => {
+              const active = isParentActive(link);
+              return (
+                <div key={link.to} className="flex flex-col">
+                  <Link
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    className={`group relative flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-300 ${
+                      active
+                        ? "text-teal-700 bg-teal-50/80 font-semibold"
+                        : "text-slate-600 hover:text-teal-700 hover:bg-slate-50"
+                    }`}
+                    style={{
+                      transitionDelay: open ? `${i * 35}ms` : "0ms",
+                      opacity: open ? 1 : 0,
+                      transform: open ? "translateY(0)" : "translateY(-8px)",
+                    }}
+                  >
+                    <span
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full transition-all duration-300 ${
+                        active ? "bg-teal-600 opacity-100" : "bg-teal-400 opacity-0 group-hover:opacity-40"
+                      }`}
+                    />
+                    {link.label}
+                  </Link>
+                  {link.children ? (
+                    <div className="pl-8 pr-2 pt-1 pb-1 space-y-1">
+                      {link.children.map((child, ci) => (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          onClick={() => setOpen(false)}
+                          className={`group relative flex items-center rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
+                            isActive(child.to)
+                              ? "text-teal-700 bg-teal-50/60 font-semibold"
+                              : "text-slate-500 hover:text-teal-700 hover:bg-slate-50/60"
+                          }`}
+                          style={{
+                            transitionDelay: open ? `${(i + 1 + ci) * 35}ms` : "0ms",
+                            opacity: open ? 1 : 0,
+                            transform: open ? "translateY(0)" : "translateY(-8px)",
+                          }}
+                        >
+                          <span
+                            className={`absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r-full transition-all duration-300 ${
+                              isActive(child.to)
+                                ? "bg-teal-500 opacity-100"
+                                : "bg-teal-400 opacity-0 group-hover:opacity-40"
+                            }`}
+                          />
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
 
           <div
             className="pt-4 space-y-3 transition-all duration-300"

@@ -58,10 +58,17 @@ export function Footer() {
           <div>
             <h2 className="text-white font-medium mb-5 sm:mb-6 tracking-wide">Explore</h2>
             <ul className="space-y-3 text-sm font-light">
-              {navLinks.map((link) => (
-                <li key={link.to}>
-                  <Link to={link.to} className="hover:text-white transition-colors">
-                    {link.label}
+              {navLinks.flatMap((link) =>
+                link.children
+                  ? [
+                      { to: link.to, label: link.label },
+                      ...link.children.map((c) => ({ to: c.to, label: `— ${c.label}` })),
+                    ]
+                  : [{ to: link.to, label: link.label }]
+              ).map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to} className="hover:text-white transition-colors">
+                    {item.label}
                   </Link>
                 </li>
               ))}
