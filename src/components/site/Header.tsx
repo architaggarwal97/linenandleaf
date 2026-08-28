@@ -48,6 +48,18 @@ export function Header() {
     return currentPath === to || currentPath.startsWith(`${to}/`);
   };
 
+  const isParentActive = (link: (typeof links)[number]) =>
+    isActive(link.to) || (link.children?.some((c) => isActive(c.to)) ?? false);
+
+  const openAbout = () => {
+    if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current);
+    setAboutOpen(true);
+  };
+
+  const closeAbout = () => {
+    aboutTimeoutRef.current = setTimeout(() => setAboutOpen(false), 150);
+  };
+
   return (
     <nav
       className={`sticky top-0 bg-white/70 backdrop-blur-xl border-b z-50 transition-all duration-300 ${
