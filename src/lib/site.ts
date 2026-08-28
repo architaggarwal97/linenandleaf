@@ -8,14 +8,23 @@ export const site = {
   whatsappTelHref: "tel:+918800446635",
 };
 
-export const navLinks = [
+export type NavLink = {
+  to: string;
+  label: string;
+  children?: NavLink[];
+};
+
+export const navLinks: NavLink[] = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services & Pricing" },
   { to: "/how-it-works", label: "How It Works" },
   { to: "/technology", label: "Technology & Process" },
   { to: "/service-area", label: "Service Area" },
-  { to: "/about", label: "About" },
-  { to: "/faq", label: "FAQ" },
+  {
+    to: "/about",
+    label: "About",
+    children: [{ to: "/faq", label: "FAQ" }],
+  },
   { to: "/wallet", label: "Wallet" },
   { to: "/contact", label: "Book a Pickup" },
-] as const;
+];
