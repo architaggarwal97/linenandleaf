@@ -77,7 +77,7 @@ export function Header() {
               link.children ? (
                 <div
                   key={link.to}
-                  className="relative"
+                  className="relative after:absolute after:top-full after:left-0 after:right-0 after:h-3 after:bg-transparent after:content-['']"
                   onMouseEnter={openAbout}
                   onMouseLeave={closeAbout}
                   onFocus={openAbout}
