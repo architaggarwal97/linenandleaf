@@ -372,6 +372,29 @@ h3.font-display,
   }
 }
 
+/* Rewards unlock pop — runs when a badge flips from locked to unlocked */
+@keyframes ll-unlock-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.ll-unlock-pop {
+  animation: ll-unlock-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll-unlock-pop {
+    animation: none;
+  }
+}
+
 /* Frosted header states */
 .ll-header {
   transition: background-color 300ms ease, box-shadow 300ms ease,
