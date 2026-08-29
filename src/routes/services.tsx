@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-start";
 import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
