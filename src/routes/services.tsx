@@ -250,7 +250,7 @@ function ServicesPage() {
         </div>
       </section>
 
-      <RewardsStrip total={totalPrice} />
+      <RewardsStrip total={totalPrice} loading={totalItems === 0} />
 
       {/* Quote builder */}
       <section className="py-16 md:py-24 bg-teal-950 text-white relative overflow-hidden">
