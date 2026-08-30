@@ -57,7 +57,7 @@ function WalletPage() {
 
   const topUp = () => {
     if (!isValid) return;
-    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (including the ₹${bonus.toLocaleString("en-IN")} bonus).`;
+    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.`;
     openWhatsApp(message);
   };
 
