@@ -65,8 +65,8 @@ function WalletPage() {
     <>
       <PageHero
         eyebrow="Wallet"
-        title="Prepay & get 10% more to spend."
-        description="Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — no accounts, no login, just a simple WhatsApp handoff."
+        title="Prepay and get 10% more to spend."
+        description="Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order."
       />
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
