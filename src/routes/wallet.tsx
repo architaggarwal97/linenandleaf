@@ -57,7 +57,7 @@ function WalletPage() {
 
   const topUp = () => {
     if (!isValid) return;
-    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (including the ₹${bonus.toLocaleString("en-IN")} bonus).`;
+    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.`;
     openWhatsApp(message);
   };
 
@@ -65,8 +65,8 @@ function WalletPage() {
     <>
       <PageHero
         eyebrow="Wallet"
-        title="Prepay & get 10% more to spend."
-        description="Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — no accounts, no login, just a simple WhatsApp handoff."
+        title="Prepay and get 10% more to spend."
+        description="Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order."
       />
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
@@ -150,7 +150,7 @@ function WalletPage() {
               </div>
               {isValid ? (
                 <p className="mt-4 text-sm text-teal-700/80 font-medium">
-                  You'll get {formatCurrency(credited)} credited — a {formatCurrency(bonus)} bonus.
+                  {formatCurrency(activeAmount)} added becomes {formatCurrency(credited)} ({formatCurrency(bonus)} bonus credited)
                 </p>
               ) : (
                 <p className="mt-4 text-sm text-slate-400 font-light">Enter at least ₹100 to see your bonus.</p>
@@ -176,8 +176,7 @@ function WalletPage() {
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <Info className="h-5 w-5 shrink-0 text-slate-400 mt-0.5" />
               <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
-                Wallet balance is usable only toward Linen & Leaf services. It cannot be cashed out or transferred to
-                another person. Final top-up is confirmed over WhatsApp.
+                No login required. Top-up is confirmed over WhatsApp.
               </p>
             </div>
           </Reveal>
