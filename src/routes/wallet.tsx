@@ -150,7 +150,7 @@ function WalletPage() {
               </div>
               {isValid ? (
                 <p className="mt-4 text-sm text-teal-700/80 font-medium">
-                  You'll get {formatCurrency(credited)} credited — a {formatCurrency(bonus)} bonus.
+                  {formatCurrency(activeAmount)} added becomes {formatCurrency(credited)} ({formatCurrency(bonus)} bonus credited)
                 </p>
               ) : (
                 <p className="mt-4 text-sm text-slate-400 font-light">Enter at least ₹100 to see your bonus.</p>
