@@ -176,8 +176,7 @@ function WalletPage() {
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <Info className="h-5 w-5 shrink-0 text-slate-400 mt-0.5" />
               <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
-                Wallet balance is usable only toward Linen & Leaf services. It cannot be cashed out or transferred to
-                another person. Final top-up is confirmed over WhatsApp.
+                No login required. Top-up is confirmed over WhatsApp.
               </p>
             </div>
           </Reveal>
