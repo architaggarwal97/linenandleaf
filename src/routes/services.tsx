@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-start";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
