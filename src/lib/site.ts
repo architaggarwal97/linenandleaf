@@ -23,7 +23,10 @@ export const navLinks: NavLink[] = [
   {
     to: "/about",
     label: "About",
-    children: [{ to: "/faq", label: "FAQ" }],
+    children: [
+      { to: "/blog", label: "Blog" },
+      { to: "/faq", label: "FAQ" },
+    ],
   },
   { to: "/wallet", label: "Wallet" },
   { to: "/contact", label: "Book a Pickup" },
