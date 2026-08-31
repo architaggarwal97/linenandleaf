@@ -177,27 +177,37 @@ function Home() {
             </p>
           </div>
 
-          <div className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {usps.map((usp, i) => {
-              const Icon = usp.icon;
-              return (
-                <Reveal
-                  key={usp.title}
-                  delay={i * 70}
-                  className={`w-[85vw] sm:w-[350px] shrink-0 snap-center md:w-auto md:shrink-none md:snap-none h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
-                >
-                  <div
-                    className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
+          <div className="relative">
+            {/* Right-edge fade on mobile implies more cards to swipe */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#fafafa] to-transparent z-10 md:hidden" />
+
+            <div className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {usps.map((usp, i) => {
+                const Icon = usp.icon;
+                return (
+                  <Reveal
+                    key={usp.title}
+                    delay={i * 70}
+                    className={`w-[85vw] sm:w-[350px] shrink-0 snap-center md:w-auto md:shrink-none md:snap-none h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                   >
-                    <Icon className="h-7 w-7 sm:h-8 sm:w-8 group-hover:text-white transition-colors duration-500" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
-                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
-                </Reveal>
-              );
-            })}
+                    <div
+                      className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
+                    >
+                      <Icon className="h-7 w-7 sm:h-8 sm:w-8 group-hover:text-white transition-colors duration-500" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
+                    <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
+                  </Reveal>
+                );
+              })}
+            </div>
           </div>
 
+          {/* Mobile scroll hint */}
+          <div className="flex md:hidden items-center justify-center gap-2 mt-2 text-teal-600/80">
+            <ChevronRight className="h-4 w-4 animate-pulse" />
+            <span className="text-xs font-medium tracking-wide uppercase">Swipe to explore</span>
+          </div>
         </div>
       </section>
 
