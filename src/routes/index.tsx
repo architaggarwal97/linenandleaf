@@ -177,14 +177,14 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {usps.map((usp, i) => {
               const Icon = usp.icon;
               return (
                 <Reveal
                   key={usp.title}
                   delay={i * 70}
-                  className={`h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
+                  className={`w-[85vw] sm:w-[350px] shrink-0 snap-center md:w-auto md:shrink-none md:snap-none h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                 >
                   <div
                     className={`h-14 w-14 sm:h-16 sm:w-16 ${usp.tint} ${usp.hover} rounded-2xl flex items-center justify-center mb-6 sm:mb-8 transition-colors duration-500`}
