@@ -11,13 +11,8 @@ const DESCRIPTION =
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
-    meta: [{ title: TITLE }, ...socialMeta(TITLE, DESCRIPTION, "/blog")],
-    scripts: [
-      breadcrumbScript([
-        { name: "Home", path: "/" },
-        { name: "Blog", path: "/blog" },
-      ]),
-    ],
+    meta: [{ title: TITLE }, ...socialMeta(TITLE, DESCRIPTION)],
+    scripts: [breadcrumbScript("/blog", "Blog")],
   }),
   component: BlogPage,
 });
