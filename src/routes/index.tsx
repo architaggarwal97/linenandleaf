@@ -225,25 +225,7 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-8 relative">
-            <div className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-0 border-t-2 border-dashed border-teal-200/60 z-0" />
-            {steps.map(({ step, icon: Icon, title, desc }, i) => (
-              <Reveal
-                key={step}
-                delay={i * 80}
-                className="relative z-10 flex flex-col items-center text-center group"
-              >
-                <div className="h-24 w-24 sm:h-28 sm:w-28 bg-white rounded-full flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.06)] mb-6 sm:mb-8 transition-all duration-500 group-hover:-translate-y-2">
-                  <span className="text-[0.65rem] sm:text-xs font-bold text-teal-500/70 mb-1 uppercase tracking-wider">
-                    {step}
-                  </span>
-                  <Icon className="h-6 w-6 text-teal-600" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 sm:mb-3">{title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed font-light px-2">{desc}</p>
-              </Reveal>
-            ))}
-          </div>
+          <HowItWorksCarousel />
 
           <div className="text-center mt-14">
             <Link
