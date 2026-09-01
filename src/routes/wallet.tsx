@@ -5,7 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
-import { useSavedBasket, saveBasket } from "@/lib/basket";
+import { useSavedBasket, saveBasket, type SavedBasket } from "@/lib/basket";
 
 const TITLE = "Wallet — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -34,6 +34,19 @@ function formatCurrency(value: number) {
   return `₹${value.toLocaleString("en-IN")}`;
 }
 
+function basketSummaryText(basket: SavedBasket) {
+  const lines = basket.lines
+    .map(
+      (line) =>
+        `- ${line.qty}× ${line.label} @ ₹${line.price}${line.from ? "+" : ""} each = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+    )
+    .join("\n");
+  const addonLine = basket.addons.length
+    ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+    : "";
+  return `Hi Linen & Leaf! I'd like to confirm this basket:\n\n${lines}${addonLine}\n\nTotal items: ${basket.totalItems}\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}\n\nPlease confirm pricing and pickup availability.`;
+}
+
 function WalletPage() {
   const { basket, ready } = useSavedBasket();
   const [amount, setAmount] = useState<number>(1000);
@@ -57,9 +70,26 @@ function WalletPage() {
     setIsCustom(true);
   };
 
+  const sendBasket = () => {
+    if (!basket) return;
+    openWhatsApp(basketSummaryText(basket));
+  };
+
   const topUp = () => {
     if (!isValid) return;
-    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.`;
+    const basketPart = basket
+      ? `\n\nI'd like to use this wallet credit toward the following basket:\n${basket.lines
+          .map(
+            (line) =>
+              `- ${line.qty}× ${line.label} = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+          )
+          .join("\n")}${
+          basket.addons.length
+            ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+            : ""
+        }\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}`
+      : "";
+    const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.${basketPart}`;
     openWhatsApp(message);
   };
 
@@ -123,6 +153,14 @@ function WalletPage() {
                 >
                   Edit basket <ArrowRight className="h-4 w-4" />
                 </Link>
+                <button
+                  type="button"
+                  onClick={sendBasket}
+                  className="ll-press inline-flex items-center gap-2 rounded-2xl bg-green-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-600 shadow-lg shadow-green-500/10"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Send basket on WhatsApp
+                </button>
                 <button
                   type="button"
                   onClick={() => saveBasket(null)}
@@ -236,7 +274,7 @@ function WalletPage() {
               }`}
             >
               <MessageCircle className="h-5 w-5" />
-              Top Up via WhatsApp
+              {basket ? "Top Up & Confirm Basket via WhatsApp" : "Top Up via WhatsApp"}
             </button>
 
             {/* Terms */}
