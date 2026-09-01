@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { saveBasket } from "@/lib/basket";
 import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
@@ -195,6 +196,26 @@ function ServicesPage() {
   const totalLabel = `₹${totalPrice}${isFrom ? "+" : ""}`;
   const hasItems = totalItems > 0;
   const summary = selected.map((k) => `${cart[k]} ${ITEMS[k]}`).join(", ");
+
+  // Persist the basket locally (no account needed) so the wallet page can show it.
+  useEffect(() => {
+    saveBasket({
+      lines: selected.map((k) => ({
+        key: k,
+        label: ITEMS[k],
+        qty: cart[k],
+        price: PRICES[k],
+        from: FROM_KEYS.has(k),
+      })),
+      addons: activeAddons.map((k) => ({ key: k, label: ADDONS[k].label, price: ADDONS[k].price })),
+      totalItems,
+      totalPrice,
+      isFrom,
+      updatedAt: Date.now(),
+    });
+  }, [cart, addons, selected, activeAddons, totalItems, totalPrice, isFrom]);
+
+
 
 
   const update = (key: ItemKey, delta: number) => {
