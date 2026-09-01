@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Wallet, MessageCircle, Info, ArrowRight } from "lucide-react";
+import { Wallet, MessageCircle, Info, ArrowRight, ShoppingBag } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
+import { useSavedBasket, saveBasket } from "@/lib/basket";
 
 const TITLE = "Wallet — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
