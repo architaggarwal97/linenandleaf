@@ -73,6 +73,71 @@ function WalletPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {ready && basket ? (
+            <Reveal className="mb-8 bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-12 w-12 bg-teal-50 rounded-xl flex items-center justify-center">
+                  <ShoppingBag className="h-6 w-6 text-teal-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Your Saved Basket</h2>
+                  <p className="text-sm text-slate-500 font-light">
+                    {basket.totalItems} item{basket.totalItems > 1 ? "s" : ""} from the estimator
+                  </p>
+                </div>
+              </div>
+
+              <ul className="divide-y divide-slate-100">
+                {basket.lines.map((line) => (
+                  <li key={line.key} className="py-3 flex items-baseline justify-between gap-4">
+                    <span className="text-sm sm:text-base text-slate-700 font-medium">
+                      {line.qty}× {line.label}
+                    </span>
+                    <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                      ₹{line.qty * line.price}
+                      {line.from ? "+" : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {basket.addons.length ? (
+                <p className="mt-4 text-xs text-slate-500 font-light">
+                  Add-ons: {basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}
+                </p>
+              ) : null}
+
+              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
+                <span className="text-base font-semibold text-slate-900">Estimated total</span>
+                <span className="text-2xl font-bold text-teal-800 tabular-nums">
+                  ₹{basket.totalPrice}
+                  {basket.isFrom ? "+" : ""}
+                </span>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  to="/services"
+                  hash="order-builder"
+                  className="ll-press inline-flex items-center gap-2 rounded-2xl bg-teal-800 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
+                >
+                  Edit basket <ArrowRight className="h-4 w-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => saveBasket(null)}
+                  className="ll-press inline-flex items-center rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Clear basket
+                </button>
+              </div>
+
+              <p className="mt-4 text-xs text-slate-400 font-light">
+                Top up your wallet to cover this order and get 10% extra credit.
+              </p>
+            </Reveal>
+          ) : null}
+
           <Reveal className="bg-white rounded-[2rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-2">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-12 w-12 bg-teal-50 rounded-xl flex items-center justify-center">
