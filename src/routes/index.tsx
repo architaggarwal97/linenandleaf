@@ -98,6 +98,84 @@ const steps = [
   { step: "04", icon: MapPin, title: "Delivered Back", desc: "Returned to your door, crisply pressed." },
 ];
 
+function HowItWorksCarousel() {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const scrollLeft = el.scrollLeft;
+      const width = el.offsetWidth;
+      const newIndex = Math.round(scrollLeft / (width * 0.85));
+      setActiveIndex(Math.max(0, Math.min(newIndex, steps.length - 1)));
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTo = (index: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.offsetWidth * 0.85;
+    el.scrollTo({ left: cardWidth * index, behavior: "smooth" });
+  };
+
+  return (
+    <div className="relative">
+      {/* Right-edge fade on mobile implies more steps to swipe */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#fafafa] to-transparent z-10 md:hidden" />
+
+      <div
+        ref={scrollRef}
+        className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
+        <div className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-0 border-t-2 border-dashed border-teal-200/60 z-0" />
+        {steps.map(({ step, icon: Icon, title, desc }, i) => (
+          <Reveal
+            key={step}
+            delay={i * 80}
+            className="w-[85vw] sm:w-[320px] shrink-0 snap-center md:w-auto md:shrink-none md:snap-none relative z-10 flex flex-col items-center text-center group"
+          >
+            <div className="h-24 w-24 sm:h-28 sm:w-28 bg-white rounded-full flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.06)] mb-6 sm:mb-8 transition-all duration-500 group-hover:-translate-y-2">
+              <span className="text-[0.65rem] sm:text-xs font-bold text-teal-500/70 mb-1 uppercase tracking-wider">
+                {step}
+              </span>
+              <Icon className="h-6 w-6 text-teal-600" />
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-800 mb-2 sm:mb-3">{title}</h3>
+            <p className="text-slate-500 text-sm leading-relaxed font-light px-2">{desc}</p>
+          </Reveal>
+        ))}
+      </div>
+
+      {/* Mobile scroll dots + swipe hint */}
+      <div className="md:hidden flex flex-col items-center gap-3 mt-2">
+        <div className="flex items-center gap-2">
+          {steps.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Go to step ${i + 1}`}
+              onClick={() => scrollTo(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex ? "w-6 bg-teal-600" : "w-2 bg-teal-200"
+              }`}
+            />
+          ))}
+        </div>
+        <div className="flex items-center gap-2 text-teal-600/80">
+          <ChevronRight className="h-4 w-4 animate-pulse" />
+          <span className="text-xs font-medium tracking-wide uppercase">Swipe to see steps</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   return (
     <>
