@@ -131,7 +131,7 @@ function HowItWorksCarousel() {
 
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="relative flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         <div className="hidden lg:block absolute top-14 left-[12%] right-[12%] h-0 border-t-2 border-dashed border-teal-200/60 z-0" />
         {steps.map(({ step, icon: Icon, title, desc }, i) => (
