@@ -35,6 +35,7 @@ function formatCurrency(value: number) {
 }
 
 function WalletPage() {
+  const { basket, ready } = useSavedBasket();
   const [amount, setAmount] = useState<number>(1000);
   const [custom, setCustom] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
