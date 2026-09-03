@@ -20,9 +20,44 @@ const AREA_SERVED = [
   "RK Puram",
   "Netaji Nagar",
   "INA Colony",
+  "Chanakyapuri",
   "Vasant Vihar",
   "Safdarjung Enclave",
+  "South Delhi",
 ].map((name) => ({ "@type": "Place", name }));
+
+/** Price-list JSON-LD for the /services rate card. */
+export function priceCatalogScript(
+  items: Array<{ label: string; price: number; from?: boolean }>,
+) {
+  return {
+    type: "application/ld+json" as const,
+    children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "OfferCatalog",
+      name: "Dry Cleaning & Laundry Price List — Sarojini Nagar, New Delhi",
+      url: `${ORIGIN}/services`,
+      provider: PROVIDER,
+      itemListElement: items.map((item, i) => ({
+        "@type": "Offer",
+        position: i + 1,
+        name: `${item.label} — dry cleaning in Sarojini Nagar, New Delhi`,
+        price: String(item.price),
+        priceCurrency: "INR",
+        availability: "https://schema.org/InStock",
+        url: `${ORIGIN}/services`,
+        areaServed: AREA_SERVED,
+        ...(item.from ? { priceSpecification: { "@type": "PriceSpecification", minPrice: item.price, priceCurrency: "INR" } } : {}),
+        itemOffered: {
+          "@type": "Service",
+          name: item.label,
+          serviceType: "Dry Cleaning",
+          provider: PROVIDER,
+        },
+      })),
+    }),
+  };
+}
 
 export function servicesScript(
   services: Array<{ name: string; description: string; type?: string }>,
