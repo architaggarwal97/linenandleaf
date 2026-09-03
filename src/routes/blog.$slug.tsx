@@ -107,7 +107,8 @@ function BlockView({ block }: { block: Block }) {
 }
 
 function BlogPostPage() {
-  const { post } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const post = getPost(slug)!;
   const others = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
 
   return (
