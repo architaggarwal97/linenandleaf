@@ -6,9 +6,9 @@ import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
 import { RewardsStrip } from "@/components/site/RewardsStrip";
 
-const TITLE = "Linen & Leaf | Eco Friendly Dry Cleaners";
+const TITLE = "Dry Cleaners in Sarojini Nagar, Delhi | Linen & Leaf";
 const DESCRIPTION =
-  "Experience premium garment care with 99% less water. Linen & Leaf offers fast, eco-friendly dry cleaning in South Delhi & Sarojini Nagar. Book a free pickup!";
+  "Eco-friendly dry cleaning in Sarojini Nagar & South Delhi using 99% less water. Doorstep pickup, photo-tracked orders. Book a free pickup on WhatsApp!";
 
 export const Route = createFileRoute("/")({
   head: () => ({
