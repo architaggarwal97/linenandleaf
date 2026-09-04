@@ -30,7 +30,7 @@ export const Route = createFileRoute("/services")({
         services.map((s) => ({ name: s.title, description: s.desc })),
       ),
       priceCatalogScript(
-        ALL_ITEMS.map((i) => ({ label: i.label, price: i.price, from: i.from })),
+        ALL_ITEMS.map((i) => ({ label: i.label, price: i.price, ...(i.from ? { from: true as const } : {}) })),
       ),
     ],
   }),
