@@ -195,14 +195,14 @@ function Home() {
                 99% Less Water.
               </span>
               <br />
-              Cleaner clothes,{" "}
+              Dry cleaning in Sarojini Nagar,{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500 block sm:inline">
                 fully tracked.
               </span>
             </h1>
             <p className="ll-rise ll-d2 text-base sm:text-lg md:text-xl text-slate-500 mb-10 sm:mb-12 max-w-2xl mx-auto leading-relaxed font-light px-2 sm:px-0">
-              Modern, eco-conscious garment care in Sarojini Nagar. Doorstep pickup and delivery, photo checkpoints
-              on every order, and total transparency — minus the guesswork.
+              Low-water dry cleaning and laundry for Sarojini Nagar and South Delhi — doorstep pickup and delivery,
+              photo checkpoints on every order, and total transparency.
             </p>
             <div className="ll-rise ll-d3 flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center w-full px-4 sm:px-0">
               <Link
