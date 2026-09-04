@@ -4,13 +4,13 @@ import { saveBasket } from "@/lib/basket";
 import { MessageCircle, Plus, Minus, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
-import { breadcrumbScript, servicesScript, socialMeta } from "@/lib/seo";
+import { breadcrumbScript, priceCatalogScript, servicesScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
 import { RewardsStrip } from "@/components/site/RewardsStrip";
 
-const TITLE = "Services & Pricing — Linen & Leaf Dry Cleaners";
+const TITLE = "Dry Cleaning Prices in Sarojini Nagar, Delhi | Linen & Leaf";
 const DESCRIPTION =
-  "Dry cleaning, laundry, steam pressing and specialist garment care in Sarojini Nagar. Build your basket and get an exact quote on WhatsApp.";
+  "Itemised dry cleaning, laundry and steam pressing rates for Sarojini Nagar and South Delhi. Low-water cleaning — build your basket for a WhatsApp quote.";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -28,6 +28,9 @@ export const Route = createFileRoute("/services")({
       breadcrumbScript("/services", "Services & Pricing"),
       servicesScript(
         services.map((s) => ({ name: s.title, description: s.desc })),
+      ),
+      priceCatalogScript(
+        ALL_ITEMS.map((i) => ({ label: i.label, price: i.price, ...(i.from ? { from: true as const } : {}) })),
       ),
     ],
   }),
@@ -247,8 +250,8 @@ function ServicesPage() {
     <>
       <PageHero
         eyebrow="Services & Pricing"
-        title="Transparent, itemised garment care."
-        description="We price per garment and confirm the full quote on WhatsApp before we begin — no hidden fees, no surprises at the door."
+        title="Dry cleaning prices in Sarojini Nagar, New Delhi."
+        description="Transparent, itemised rates for dry cleaning, laundry and steam pressing across Sarojini Nagar and South Delhi. We confirm the full quote on WhatsApp before we begin — no hidden fees."
       />
 
       <section className="py-16 md:py-20 bg-[#fafafa]">
