@@ -15,6 +15,8 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { site } from "@/lib/site";
 import { MobileActionBar } from "@/components/site/MobileActionBar";
+import { Wordmark } from "@/components/site/Wordmark";
+import { whatsappLink } from "@/lib/whatsapp";
 
 function NotFoundComponent() {
   return (
