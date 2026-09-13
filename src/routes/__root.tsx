@@ -15,23 +15,36 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { site } from "@/lib/site";
 import { MobileActionBar } from "@/components/site/MobileActionBar";
+import { Wordmark } from "@/components/site/Wordmark";
+import { whatsappLink } from "@/lib/whatsapp";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
+        <div className="mb-6 flex justify-center">
+          <Wordmark variant="light" />
+        </div>
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">
+          Looks like this page went missing in the wash.
+        </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          Don't worry — your favourites are safe with us. Let's get you back to fresh, pressed pages.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Go home
           </Link>
+          <a
+            href={whatsappLink("Hi Linen & Leaf! I was browsing your site and landed on a missing page. Could you help me find what I'm looking for?")}
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Message us on WhatsApp
+          </a>
         </div>
       </div>
     </div>
