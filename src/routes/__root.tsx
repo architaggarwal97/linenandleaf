@@ -22,7 +22,9 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <Wordmark className="mx-auto mb-6 h-10 w-auto text-teal-800" />
+        <div className="mb-6 flex justify-center">
+          <Wordmark variant="light" />
+        </div>
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">
           Looks like this page went missing in the wash.
