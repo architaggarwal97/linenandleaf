@@ -30,5 +30,6 @@ export const navLinks: NavLink[] = [
   },
   { to: "/wallet", label: "Wallet" },
   { to: "/refer", label: "Refer & Earn" },
+  { to: "/corporate", label: "Corporate" },
   { to: "/contact", label: "Book a Pickup" },
 ];
