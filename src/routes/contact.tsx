@@ -24,6 +24,13 @@ type ContactSearch = {
 
 const SLOTS = ["Morning (9 AM – 12 PM)", "Afternoon (12 – 4 PM)", "Evening (4 – 8 PM)"];
 
+const SLOT_KEYS = ["morning", "afternoon", "evening"] as const;
+
+function slotKey(label: string): "morning" | "afternoon" | "evening" | undefined {
+  const i = SLOTS.indexOf(label);
+  return i >= 0 ? SLOT_KEYS[i] : undefined;
+}
+
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>): ContactSearch => ({
     name: typeof search['name'] === "string" ? search['name'] : undefined,
