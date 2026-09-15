@@ -129,27 +129,31 @@ function WalletPage() {
                     <span className="text-sm sm:text-base text-slate-700 font-medium">
                       {line.qty}× {line.label}
                     </span>
-                    <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
-                      ₹{line.qty * line.price}
-                      {line.from ? "+" : ""}
-                    </span>
+                    {line.price > 0 ? (
+                      <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                        ₹{line.qty * line.price}
+                        {line.from ? "+" : ""}
+                      </span>
+                    ) : null}
                   </li>
                 ))}
               </ul>
 
               {basket.addons.length ? (
                 <p className="mt-4 text-xs text-slate-500 font-light">
-                  Add-ons: {basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}
+                  Add-ons: {basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}
                 </p>
               ) : null}
 
-              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
-                <span className="text-base font-semibold text-slate-900">Estimated total</span>
-                <span className="text-2xl font-bold text-teal-800 tabular-nums">
-                  ₹{basket.totalPrice}
-                  {basket.isFrom ? "+" : ""}
-                </span>
-              </div>
+              {basket.totalPrice > 0 ? (
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
+                  <span className="text-base font-semibold text-slate-900">Estimated total</span>
+                  <span className="text-2xl font-bold text-teal-800 tabular-nums">
+                    ₹{basket.totalPrice}
+                    {basket.isFrom ? "+" : ""}
+                  </span>
+                </div>
+              ) : null}
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
