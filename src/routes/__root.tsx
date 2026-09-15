@@ -17,6 +17,7 @@ import { site } from "@/lib/site";
 import { MobileActionBar } from "@/components/site/MobileActionBar";
 import { Wordmark } from "@/components/site/Wordmark";
 import { whatsappLink } from "@/lib/whatsapp";
+import { gaHeadScripts } from "@/lib/analytics";
 
 function NotFoundComponent() {
   return (
@@ -126,6 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
 
     scripts: [
+      ...gaHeadScripts(),
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -205,6 +207,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // gtag auto-tracks only the initial page load — report client-side route changes too.
+  useEffect(() => {
+    return router.history.subscribe(() => {
+      const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+      w.gtag?.("event", "page_view", {
+        page_path: router.state.location.pathname,
+        page_title: document.title,
+      });
+    });
+  }, [router]);
+
 
   return (
     <QueryClientProvider client={queryClient}>
