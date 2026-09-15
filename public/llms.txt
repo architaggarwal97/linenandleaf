@@ -1,0 +1,31 @@
+# Linen & Leaf Dry Cleaners
+
+> Independent eco-friendly dry cleaning and laundry service in Sarojini Nagar Market, New Delhi — low-water cleaning using 99% less water, doorstep pickup, and photo-tagged tracking.
+
+Linen & Leaf is a founder-led dry cleaner serving Sarojini Nagar and South Delhi. The site explains services and pricing, the low-water cleaning process, how pickup and delivery work, and answers common garment-care questions. Booking and inquiries happen via WhatsApp; there are no user accounts.
+
+## Pages
+
+- [Home](/): Overview of the service, eco credentials, and how it works.
+- [Services & Pricing](/services): Garment care services with a basket builder and rate card.
+- [How It Works](/how-it-works): Pickup, cleaning, and delivery process step by step.
+- [Technology & Process](/technology): The low-water cleaning plant and photo-checkpoint tracking.
+- [Service Area](/service-area): Neighborhoods and pincodes served in South Delhi, with a PIN checker.
+- [About](/about): The independent, founder-led story behind the business.
+- [FAQ](/faq): Answers to common questions about services, turnaround, and payments.
+- [Book a Pickup / Contact](/contact): Pickup booking form that hands off to WhatsApp.
+
+## Blog
+
+- [Garment Care Blog](/blog): Tips on fabrics, stains, storage, and eco-friendly cleaning.
+- [How much water does dry cleaning use?](/blog/how-much-water-does-dry-cleaning-use): Why low-water cleaning matters in Delhi.
+- [Is dry cleaning safe for baby clothes?](/blog/dry-cleaning-safe-for-baby-clothes): Gentle care for sensitive garments.
+- [Photo checkpoints and transparency](/blog/photo-checkpoints-transparency): How photo tagging keeps orders accountable.
+- [Bridal lehenga dry cleaning in Delhi](/blog/bridal-lehenga-dry-cleaning-delhi): Caring for bridal and ethnic wear.
+- [Is a dry cleaning subscription worth it?](/blog/dry-cleaning-subscription-worth-it): Regular laundry plans explained.
+
+## Optional
+
+- [Wallet](/wallet): Prepaid wallet top-up with bonus credit, handled manually via WhatsApp.
+- [Refer & Earn](/refer): Referral program where both parties get wallet credit after a first order.
+- [Corporate & Bulk](/corporate): Bulk laundry and dry-cleaning inquiries for offices, hotels, PGs, and boutiques.
