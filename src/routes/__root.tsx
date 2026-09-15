@@ -100,7 +100,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "Linen & Leaf" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-
+      { name: "google-site-verification", content: "W47l4iClzQnXFXy5OQ8l7cl0k1Z8onpqADtrIkXctao" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
