@@ -28,6 +28,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/corporate", changefreq: "monthly", priority: "0.5" },
         ];
 
+        const { posts } = await import("@/lib/blog");
+        for (const post of posts) {
+          entries.push({ path: `/blog/${post.slug}`, changefreq: "monthly", priority: "0.6" });
+        }
+
         const urls = entries.map((e) =>
           [
             `  <url>`,
