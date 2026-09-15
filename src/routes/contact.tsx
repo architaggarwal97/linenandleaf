@@ -228,10 +228,22 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
+                disabled={saving}
+                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-70 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
               >
-                <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
+                {saving ? (
+                  <>
+                    <Loader2 className="h-5 w-5 shrink-0 animate-spin" /> Saving your booking…
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
+                  </>
+                )}
               </button>
+              {saveError ? (
+                <p className="text-sm text-amber-700 bg-amber-50 rounded-2xl px-4 py-3">{saveError}</p>
+              ) : null}
             </form>
           </Reveal>
 
