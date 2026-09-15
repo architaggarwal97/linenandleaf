@@ -36,15 +36,20 @@ function formatCurrency(value: number) {
 
 function basketSummaryText(basket: SavedBasket) {
   const lines = basket.lines
-    .map(
-      (line) =>
-        `- ${line.qty}× ${line.label} @ ₹${line.price}${line.from ? "+" : ""} each = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+    .map((line) =>
+      line.price > 0
+        ? `- ${line.qty}× ${line.label} @ ₹${line.price}${line.from ? "+" : ""} each = ₹${line.qty * line.price}${line.from ? "+" : ""}`
+        : `- ${line.qty}× ${line.label}`,
     )
     .join("\n");
   const addonLine = basket.addons.length
-    ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+    ? `\nAdd-ons: ${basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}`
     : "";
-  return `Hi Linen & Leaf! I'd like to confirm this basket:\n\n${lines}${addonLine}\n\nTotal items: ${basket.totalItems}\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}\n\nPlease confirm pricing and pickup availability.`;
+  const totalLine =
+    basket.totalPrice > 0
+      ? `\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}`
+      : "";
+  return `Hi Linen & Leaf! I'd like to confirm this basket:\n\n${lines}${addonLine}\n\nTotal items: ${basket.totalItems}${totalLine}\n\nPlease confirm pricing and pickup availability.`;
 }
 
 function WalletPage() {

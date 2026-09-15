@@ -28,7 +28,7 @@ export const Route = createFileRoute("/service-area")({
   component: ServiceAreaPage,
 });
 
-const SERVED_PINCODES = ["110023", "110022", "110021", "110029", "110057", "110066"];
+const SERVED_PINCODES = ["110021", "110022", "110023", "110029", "110057"];
 
 const localities = [
   "Sarojini Nagar (including GPRA flats and the market)",
