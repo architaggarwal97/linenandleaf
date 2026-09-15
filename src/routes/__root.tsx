@@ -207,6 +207,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  // gtag auto-tracks only the initial page load — report client-side route changes too.
+  useEffect(() => {
+    return router.history.subscribe(() => {
+      const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+      w.gtag?.("event", "page_view", {
+        page_path: router.state.location.pathname,
+        page_title: document.title,
+      });
+    });
+  }, [router]);
+
 
   return (
     <QueryClientProvider client={queryClient}>
