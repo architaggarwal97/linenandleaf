@@ -127,6 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
 
     scripts: [
+      ...gaHeadScripts(),
       {
         type: "application/ld+json",
         children: JSON.stringify({
