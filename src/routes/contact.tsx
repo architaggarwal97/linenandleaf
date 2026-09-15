@@ -136,6 +136,31 @@ function ContactPage() {
             <p className="text-slate-500 font-light mt-2 mb-8">
               Enter your details below. We'll confirm your slot on WhatsApp.
             </p>
+            {reference ? (
+              <div
+                aria-live="polite"
+                className="mb-8 rounded-2xl border border-teal-200 bg-teal-50 px-5 py-5 text-teal-900"
+              >
+                <p className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-teal-600" /> Pickup request received
+                </p>
+                <p className="mt-2 text-sm font-light">
+                  Your reference:{" "}
+                  <span className="font-display text-lg font-bold tracking-wide">{reference}</span>
+                </p>
+                <p className="mt-2 text-sm font-light">
+                  Save this code — quote it on WhatsApp or over the phone and we'll pull up your order
+                  instantly.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => openWhatsApp(whatsappMessage(reference))}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-green-500 hover:bg-green-400 text-white px-4 py-2.5 text-sm font-medium transition-colors"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" /> Send reference on WhatsApp
+                </button>
+              </div>
+            ) : null}
             <form onSubmit={submit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
