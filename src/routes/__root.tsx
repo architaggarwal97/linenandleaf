@@ -17,6 +17,7 @@ import { site } from "@/lib/site";
 import { MobileActionBar } from "@/components/site/MobileActionBar";
 import { Wordmark } from "@/components/site/Wordmark";
 import { whatsappLink } from "@/lib/whatsapp";
+import { gaHeadScripts } from "@/lib/analytics";
 
 function NotFoundComponent() {
   return (
