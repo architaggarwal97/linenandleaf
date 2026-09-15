@@ -84,15 +84,16 @@ function WalletPage() {
     if (!isValid) return;
     const basketPart = basket
       ? `\n\nI'd like to use this wallet credit toward the following basket:\n${basket.lines
-          .map(
-            (line) =>
-              `- ${line.qty}× ${line.label} = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+          .map((line) =>
+            line.price > 0
+              ? `- ${line.qty}× ${line.label} = ₹${line.qty * line.price}${line.from ? "+" : ""}`
+              : `- ${line.qty}× ${line.label}`,
           )
           .join("\n")}${
           basket.addons.length
-            ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+            ? `\nAdd-ons: ${basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}`
             : ""
-        }\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}`
+        }${basket.totalPrice > 0 ? `\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}` : ""}`
       : "";
     const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.${basketPart}`;
     openWhatsApp(message);
