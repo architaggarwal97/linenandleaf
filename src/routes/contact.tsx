@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle, Phone, MapPin, Clock } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { MessageCircle, Phone, MapPin, Clock, CheckCircle2, Loader2 } from "lucide-react";
+import { createOrder } from "@/lib/orders.functions";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
@@ -21,6 +23,13 @@ type ContactSearch = {
 };
 
 const SLOTS = ["Morning (9 AM – 12 PM)", "Afternoon (12 – 4 PM)", "Evening (4 – 8 PM)"];
+
+const SLOT_KEYS = ["morning", "afternoon", "evening"] as const;
+
+function slotKey(label: string): "morning" | "afternoon" | "evening" | undefined {
+  const i = SLOTS.indexOf(label);
+  return i >= 0 ? SLOT_KEYS[i] : undefined;
+}
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>): ContactSearch => ({
@@ -58,25 +67,59 @@ function ContactPage() {
     slot: search.slot && SLOTS.includes(search.slot) ? search.slot : "",
   });
 
-  const submit = (e: FormEvent) => {
+  const saveOrder = useServerFn(createOrder);
+  const [saving, setSaving] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const whatsappMessage = (ref?: string | null) =>
+    [
+      "Hi Linen & Leaf! I'd like to schedule a pickup.",
+      "",
+      ref ? `*Reference:* ${ref}` : "",
+      `*Name:* ${details.name}`,
+      `*Phone:* ${details.phone}`,
+      `*Address:* ${details.address}`,
+      details.date ? `*Preferred date:* ${details.date}` : "",
+      details.slot ? `*Preferred slot:* ${details.slot}` : "",
+      details.notes ? `*Items / Notes:* ${details.notes}` : "",
+      "",
+      "Please confirm the pickup time.",
+    ]
+      .filter((line, i, arr) => line !== "" || (i > 0 && arr[i - 1] !== ""))
+      .join("\n");
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    openWhatsApp(
-      [
-        "Hi Linen & Leaf! I'd like to schedule a pickup.",
-        "",
-        `*Name:* ${details.name}`,
-        `*Phone:* ${details.phone}`,
-        `*Address:* ${details.address}`,
-        details.date ? `*Preferred date:* ${details.date}` : "",
-        details.slot ? `*Preferred slot:* ${details.slot}` : "",
-        details.notes ? `*Items / Notes:* ${details.notes}` : "",
-        "",
-        "Please confirm the pickup time.",
-      ]
-        .filter((line, i, arr) => line !== "" || (i > 0 && arr[i - 1] !== ""))
-        .join("\n"),
-    );
+    if (saving) return;
+    setSaveError(null);
+    // Opened synchronously so browsers don't block the WhatsApp window.
+    openWhatsApp(whatsappMessage());
+    setSaving(true);
+    try {
+      const notes = [details.notes, details.date ? `Preferred date: ${details.date}` : ""]
+        .filter(Boolean)
+        .join(" | ");
+      const result = await saveOrder({
+        data: {
+          customer_name: details.name,
+          whatsapp_number: details.phone,
+          pickup_address: details.address,
+          preferred_window: slotKey(details.slot),
+          service_notes: notes || undefined,
+        },
+      });
+      setReference(result.orderReference);
+    } catch (err) {
+      console.error(err);
+      setSaveError(
+        "We couldn't save your booking automatically, but your WhatsApp message will still reach us.",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
+
 
   return (
     <>
@@ -93,6 +136,31 @@ function ContactPage() {
             <p className="text-slate-500 font-light mt-2 mb-8">
               Enter your details below. We'll confirm your slot on WhatsApp.
             </p>
+            {reference ? (
+              <div
+                aria-live="polite"
+                className="mb-8 rounded-2xl border border-teal-200 bg-teal-50 px-5 py-5 text-teal-900"
+              >
+                <p className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-teal-600" /> Pickup request received
+                </p>
+                <p className="mt-2 text-sm font-light">
+                  Your reference:{" "}
+                  <span className="font-display text-lg font-bold tracking-wide">{reference}</span>
+                </p>
+                <p className="mt-2 text-sm font-light">
+                  Save this code — quote it on WhatsApp or over the phone and we'll pull up your order
+                  instantly.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => openWhatsApp(whatsappMessage(reference))}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-green-500 hover:bg-green-400 text-white px-4 py-2.5 text-sm font-medium transition-colors"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" /> Send reference on WhatsApp
+                </button>
+              </div>
+            ) : null}
             <form onSubmit={submit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
@@ -185,10 +253,22 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
+                disabled={saving}
+                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-70 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
               >
-                <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
+                {saving ? (
+                  <>
+                    <Loader2 className="h-5 w-5 shrink-0 animate-spin" /> Saving your booking…
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-5 w-5 shrink-0" /> Continue on WhatsApp
+                  </>
+                )}
               </button>
+              {saveError ? (
+                <p className="text-sm text-amber-700 bg-amber-50 rounded-2xl px-4 py-3">{saveError}</p>
+              ) : null}
             </form>
           </Reveal>
 
