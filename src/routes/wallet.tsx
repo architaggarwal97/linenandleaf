@@ -36,15 +36,20 @@ function formatCurrency(value: number) {
 
 function basketSummaryText(basket: SavedBasket) {
   const lines = basket.lines
-    .map(
-      (line) =>
-        `- ${line.qty}× ${line.label} @ ₹${line.price}${line.from ? "+" : ""} each = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+    .map((line) =>
+      line.price > 0
+        ? `- ${line.qty}× ${line.label} @ ₹${line.price}${line.from ? "+" : ""} each = ₹${line.qty * line.price}${line.from ? "+" : ""}`
+        : `- ${line.qty}× ${line.label}`,
     )
     .join("\n");
   const addonLine = basket.addons.length
-    ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+    ? `\nAdd-ons: ${basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}`
     : "";
-  return `Hi Linen & Leaf! I'd like to confirm this basket:\n\n${lines}${addonLine}\n\nTotal items: ${basket.totalItems}\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}\n\nPlease confirm pricing and pickup availability.`;
+  const totalLine =
+    basket.totalPrice > 0
+      ? `\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}`
+      : "";
+  return `Hi Linen & Leaf! I'd like to confirm this basket:\n\n${lines}${addonLine}\n\nTotal items: ${basket.totalItems}${totalLine}\n\nPlease confirm pricing and pickup availability.`;
 }
 
 function WalletPage() {
@@ -79,15 +84,16 @@ function WalletPage() {
     if (!isValid) return;
     const basketPart = basket
       ? `\n\nI'd like to use this wallet credit toward the following basket:\n${basket.lines
-          .map(
-            (line) =>
-              `- ${line.qty}× ${line.label} = ₹${line.qty * line.price}${line.from ? "+" : ""}`,
+          .map((line) =>
+            line.price > 0
+              ? `- ${line.qty}× ${line.label} = ₹${line.qty * line.price}${line.from ? "+" : ""}`
+              : `- ${line.qty}× ${line.label}`,
           )
           .join("\n")}${
           basket.addons.length
-            ? `\nAdd-ons: ${basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}`
+            ? `\nAdd-ons: ${basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}`
             : ""
-        }\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}`
+        }${basket.totalPrice > 0 ? `\nEstimated total: ₹${basket.totalPrice}${basket.isFrom ? "+" : ""}` : ""}`
       : "";
     const message = `Hi Linen & Leaf! I'd like to top up my wallet with ${formatCurrency(activeAmount)}. Please credit ${formatCurrency(credited)} (${formatCurrency(bonus)} bonus). Service area: Sarojini Nagar.${basketPart}`;
     openWhatsApp(message);
@@ -123,27 +129,31 @@ function WalletPage() {
                     <span className="text-sm sm:text-base text-slate-700 font-medium">
                       {line.qty}× {line.label}
                     </span>
-                    <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
-                      ₹{line.qty * line.price}
-                      {line.from ? "+" : ""}
-                    </span>
+                    {line.price > 0 ? (
+                      <span className="text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                        ₹{line.qty * line.price}
+                        {line.from ? "+" : ""}
+                      </span>
+                    ) : null}
                   </li>
                 ))}
               </ul>
 
               {basket.addons.length ? (
                 <p className="mt-4 text-xs text-slate-500 font-light">
-                  Add-ons: {basket.addons.map((a) => `${a.label} (+₹${a.price}/item)`).join(", ")}
+                  Add-ons: {basket.addons.map((a) => (a.price > 0 ? `${a.label} (+₹${a.price}/item)` : a.label)).join(", ")}
                 </p>
               ) : null}
 
-              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
-                <span className="text-base font-semibold text-slate-900">Estimated total</span>
-                <span className="text-2xl font-bold text-teal-800 tabular-nums">
-                  ₹{basket.totalPrice}
-                  {basket.isFrom ? "+" : ""}
-                </span>
-              </div>
+              {basket.totalPrice > 0 ? (
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5">
+                  <span className="text-base font-semibold text-slate-900">Estimated total</span>
+                  <span className="text-2xl font-bold text-teal-800 tabular-nums">
+                    ₹{basket.totalPrice}
+                    {basket.isFrom ? "+" : ""}
+                  </span>
+                </div>
+              ) : null}
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
