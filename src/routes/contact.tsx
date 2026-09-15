@@ -67,25 +67,59 @@ function ContactPage() {
     slot: search.slot && SLOTS.includes(search.slot) ? search.slot : "",
   });
 
-  const submit = (e: FormEvent) => {
+  const saveOrder = useServerFn(createOrder);
+  const [saving, setSaving] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const whatsappMessage = (ref?: string | null) =>
+    [
+      "Hi Linen & Leaf! I'd like to schedule a pickup.",
+      "",
+      ref ? `*Reference:* ${ref}` : "",
+      `*Name:* ${details.name}`,
+      `*Phone:* ${details.phone}`,
+      `*Address:* ${details.address}`,
+      details.date ? `*Preferred date:* ${details.date}` : "",
+      details.slot ? `*Preferred slot:* ${details.slot}` : "",
+      details.notes ? `*Items / Notes:* ${details.notes}` : "",
+      "",
+      "Please confirm the pickup time.",
+    ]
+      .filter((line, i, arr) => line !== "" || (i > 0 && arr[i - 1] !== ""))
+      .join("\n");
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    openWhatsApp(
-      [
-        "Hi Linen & Leaf! I'd like to schedule a pickup.",
-        "",
-        `*Name:* ${details.name}`,
-        `*Phone:* ${details.phone}`,
-        `*Address:* ${details.address}`,
-        details.date ? `*Preferred date:* ${details.date}` : "",
-        details.slot ? `*Preferred slot:* ${details.slot}` : "",
-        details.notes ? `*Items / Notes:* ${details.notes}` : "",
-        "",
-        "Please confirm the pickup time.",
-      ]
-        .filter((line, i, arr) => line !== "" || (i > 0 && arr[i - 1] !== ""))
-        .join("\n"),
-    );
+    if (saving) return;
+    setSaveError(null);
+    // Opened synchronously so browsers don't block the WhatsApp window.
+    openWhatsApp(whatsappMessage());
+    setSaving(true);
+    try {
+      const notes = [details.notes, details.date ? `Preferred date: ${details.date}` : ""]
+        .filter(Boolean)
+        .join(" | ");
+      const result = await saveOrder({
+        data: {
+          customer_name: details.name,
+          whatsapp_number: details.phone,
+          pickup_address: details.address,
+          preferred_window: slotKey(details.slot),
+          service_notes: notes || undefined,
+        },
+      });
+      setReference(result.orderReference);
+    } catch (err) {
+      console.error(err);
+      setSaveError(
+        "We couldn't save your booking automatically, but your WhatsApp message will still reach us.",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
+
 
   return (
     <>
