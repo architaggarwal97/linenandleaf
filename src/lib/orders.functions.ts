@@ -71,6 +71,8 @@ export type TrackOrderResult = {
   status?: OrderStatus;
   orderReference?: string;
   createdAt?: string;
+  pickupPhotoUrl?: string | null;
+  deliveryPhotoUrl?: string | null;
 };
 
 function normalizePhone(value: string): string {
@@ -90,7 +92,9 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
-      .select("id, order_reference, status, created_at, whatsapp_number")
+      .select(
+        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url",
+      )
       .eq("order_reference", data.order_reference)
       .limit(5);
 
@@ -106,11 +110,22 @@ export const trackOrder = createServerFn({ method: "POST" })
     const status = (ORDER_STATUSES as readonly string[]).includes(match.status)
       ? (match.status as OrderStatus)
       : "requested";
+    const stage = ORDER_STATUSES.indexOf(status);
+    const { signOrderPhoto } = await import("@/lib/order-photos.server");
+    const [pickupPhotoUrl, deliveryPhotoUrl] = await Promise.all([
+      stage >= ORDER_STATUSES.indexOf("picked_up")
+        ? signOrderPhoto(match.pickup_photo_url)
+        : null,
+      stage >= ORDER_STATUSES.indexOf("ready") ? signOrderPhoto(match.delivery_photo_url) : null,
+    ]);
+
     return {
       found: true,
       id: match.id,
       status,
       orderReference: match.order_reference,
       createdAt: match.created_at,
+      pickupPhotoUrl,
+      deliveryPhotoUrl,
     };
   });

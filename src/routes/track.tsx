@@ -211,6 +211,32 @@ function TrackPage() {
                           {current ? (
                             <p className="text-xs text-teal-600 font-medium mt-0.5">You're here</p>
                           ) : null}
+                          {stage.key === "picked_up" && result.pickupPhotoUrl ? (
+                            <figure className="mt-3">
+                              <img
+                                src={result.pickupPhotoUrl}
+                                alt={`Your garments photographed at pickup for order ${result.orderReference}`}
+                                loading="lazy"
+                                className="w-full max-w-xs rounded-2xl object-cover shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+                              />
+                              <figcaption className="mt-1.5 text-xs text-slate-500 font-light">
+                                Photographed as we collected your items.
+                              </figcaption>
+                            </figure>
+                          ) : null}
+                          {stage.key === "ready" && result.deliveryPhotoUrl ? (
+                            <figure className="mt-3">
+                              <img
+                                src={result.deliveryPhotoUrl}
+                                alt={`Your garments photographed after cleaning for order ${result.orderReference}`}
+                                loading="lazy"
+                                className="w-full max-w-xs rounded-2xl object-cover shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+                              />
+                              <figcaption className="mt-1.5 text-xs text-slate-500 font-light">
+                                Photographed after cleaning, before it comes back to you.
+                              </figcaption>
+                            </figure>
+                          ) : null}
                         </div>
                       </li>
                     );

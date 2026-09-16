@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Search, RefreshCw, Check, IndianRupee } from "lucide-react";
+import { Loader2, Search, RefreshCw, Check, IndianRupee, Camera } from "lucide-react";
 import {
   ADMIN_STATUSES,
   adminAdvanceStatus,
   adminListOrders,
   adminSetPaid,
+  adminUploadOrderPhoto,
   type AdminOrder,
   type AdminStatus,
 } from "@/lib/admin.functions";
+import { compressImage } from "@/lib/image";
 
 export const Route = createFileRoute("/admin/orders")({
   component: AdminOrdersPage,
@@ -33,12 +35,14 @@ function AdminOrdersPage() {
   const listOrders = useServerFn(adminListOrders);
   const advance = useServerFn(adminAdvanceStatus);
   const setPaid = useServerFn(adminSetPaid);
+  const uploadPhoto = useServerFn(adminUploadOrderPhoto);
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [rowBusy, setRowBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [photoBusy, setPhotoBusy] = useState<string | null>(null);
 
   const refresh = useCallback(
     async (term: string) => {
@@ -86,6 +90,25 @@ function AdminOrdersPage() {
       setError("Could not update payment status.");
     } finally {
       setRowBusy(null);
+    }
+  };
+
+  const onPickPhoto = async (
+    order: AdminOrder,
+    kind: "pickup" | "delivery",
+    file: File | undefined,
+  ) => {
+    if (!file || photoBusy) return;
+    setPhotoBusy(`${order.id}-${kind}`);
+    setError(null);
+    try {
+      const { dataUrl, contentType } = await compressImage(file);
+      applyRow(await uploadPhoto({ data: { id: order.id, kind, dataUrl, contentType } }));
+    } catch (err) {
+      console.error(err);
+      setError("Could not upload that photo. Try again.");
+    } finally {
+      setPhotoBusy(null);
     }
   };
 
@@ -194,6 +217,47 @@ function AdminOrdersPage() {
                   <IndianRupee className="h-4 w-4" />
                   {order.paid ? "Paid · tap to undo" : "Mark paid"}
                 </button>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {(["pickup", "delivery"] as const).map((kind) => {
+                  const url =
+                    kind === "pickup" ? order.pickup_photo_url : order.delivery_photo_url;
+                  const label = kind === "pickup" ? "At pickup" : "After cleaning";
+                  const uploading = photoBusy === `${order.id}-${kind}`;
+                  return (
+                    <label
+                      key={kind}
+                      className="flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-slate-200 p-2 text-center text-xs font-medium text-slate-600 active:scale-[0.98]"
+                    >
+                      {url ? (
+                        <img
+                          src={url}
+                          alt={`${label} photo for ${order.order_reference}`}
+                          className="h-16 w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        <Camera className="h-5 w-5 text-slate-400" />
+                      )}
+                      <span className="flex items-center gap-1">
+                        {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                        {label}
+                        {url ? " · replace" : ""}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="sr-only"
+                        disabled={uploading}
+                        onChange={(e) => {
+                          void onPickPhoto(order, kind, e.target.files?.[0]);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  );
+                })}
               </div>
             </article>
           );

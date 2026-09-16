@@ -18,10 +18,12 @@ export type Database = {
         Row: {
           created_at: string
           customer_name: string
+          delivery_photo_url: string | null
           id: string
           order_reference: string
           paid: boolean
           pickup_address: string
+          pickup_photo_url: string | null
           preferred_window: string | null
           referral_credited_at: string | null
           referred_by_phone: string | null
@@ -32,10 +34,12 @@ export type Database = {
         Insert: {
           created_at?: string
           customer_name: string
+          delivery_photo_url?: string | null
           id?: string
           order_reference?: string
           paid?: boolean
           pickup_address: string
+          pickup_photo_url?: string | null
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null
@@ -46,10 +50,12 @@ export type Database = {
         Update: {
           created_at?: string
           customer_name?: string
+          delivery_photo_url?: string | null
           id?: string
           order_reference?: string
           paid?: boolean
           pickup_address?: string
+          pickup_photo_url?: string | null
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null

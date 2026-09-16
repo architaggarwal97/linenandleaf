@@ -21,7 +21,28 @@ export type AdminOrder = {
   created_at: string;
   pickup_address: string;
   preferred_window: string | null;
+  pickup_photo_url: string | null;
+  delivery_photo_url: string | null;
 };
+
+const ORDER_COLUMNS =
+  "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url";
+
+type OrderRow = Omit<AdminOrder, "status"> & { status: string };
+
+async function toAdminOrder(row: OrderRow): Promise<AdminOrder> {
+  const { signOrderPhoto } = await import("@/lib/order-photos.server");
+  const [pickup, delivery] = await Promise.all([
+    signOrderPhoto(row.pickup_photo_url),
+    signOrderPhoto(row.delivery_photo_url),
+  ]);
+  return {
+    ...row,
+    status: normalizeStatus(row.status),
+    pickup_photo_url: pickup,
+    delivery_photo_url: delivery,
+  };
+}
 
 type AdminSession = { admin?: boolean };
 
@@ -88,9 +109,7 @@ export const adminListOrders = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let query = supabaseAdmin
       .from("orders")
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .order("created_at", { ascending: false })
       .limit(60);
 
@@ -106,7 +125,7 @@ export const adminListOrders = createServerFn({ method: "POST" })
       console.error("Admin order list failed", error);
       throw new Error("Could not load orders.");
     }
-    return (rows ?? []).map((r) => ({ ...r, status: normalizeStatus(r.status) }));
+    return Promise.all((rows ?? []).map((r) => toAdminOrder(r as OrderRow)));
   });
 
 export const adminAdvanceStatus = createServerFn({ method: "POST" })
@@ -132,12 +151,10 @@ export const adminAdvanceStatus = createServerFn({ method: "POST" })
       .from("orders")
       .update({ status: next })
       .eq("id", data.id)
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .single();
     if (error || !row) throw new Error("Could not update the order.");
-    return { ...row, status: normalizeStatus(row.status) };
+    return toAdminOrder(row as OrderRow);
   });
 
 export const adminSetPaid = createServerFn({ method: "POST" })
@@ -153,13 +170,47 @@ export const adminSetPaid = createServerFn({ method: "POST" })
       .from("orders")
       .update({ paid: data.paid })
       .eq("id", data.id)
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .single();
     if (error || !row) throw new Error("Could not update the order.");
-    return { ...row, status: normalizeStatus(row.status) };
+    return toAdminOrder(row as OrderRow);
   });
+
+export const adminUploadOrderPhoto = createServerFn({ method: "POST" })
+  .inputValidator(
+    (input: { id?: unknown; kind?: unknown; dataUrl?: unknown; contentType?: unknown }) => {
+      const id = typeof input?.id === "string" ? input.id : "";
+      const kind = input?.kind === "delivery" ? "delivery" : "pickup";
+      const dataUrl = typeof input?.dataUrl === "string" ? input.dataUrl : "";
+      const contentType =
+        typeof input?.contentType === "string" && input.contentType.startsWith("image/")
+          ? input.contentType
+          : "image/jpeg";
+      if (!id) throw new Error("Missing order id.");
+      if (!dataUrl) throw new Error("Missing photo.");
+      if (dataUrl.length > 9_000_000) throw new Error("That photo is too large.");
+      return { id, kind: kind as "pickup" | "delivery", dataUrl, contentType };
+    },
+  )
+  .handler(async ({ data }): Promise<AdminOrder> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { uploadOrderPhoto } = await import("@/lib/order-photos.server");
+
+    const path = await uploadOrderPhoto(data.id, data.kind, data.dataUrl, data.contentType);
+    const patch =
+      data.kind === "pickup" ? { pickup_photo_url: path } : { delivery_photo_url: path };
+
+    const { data: row, error } = await supabaseAdmin
+      .from("orders")
+      .update(patch)
+      .eq("id", data.id)
+      .select(ORDER_COLUMNS)
+      .single();
+    if (error || !row) throw new Error("Could not save that photo to the order.");
+    return toAdminOrder(row as OrderRow);
+  });
+
 
 // ---------- Dashboard stats ----------
 
