@@ -20,6 +20,7 @@ import { Route as ServiceAreaRouteImport } from './routes/service-area'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TechnologyRouteImport } from './routes/technology'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -79,6 +80,11 @@ const TechnologyRoute = TechnologyRouteImport.update({
   path: '/technology',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
+  '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
+  '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technology': typeof TechnologyRoute
+  '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/technology'
+    | '/track'
     | '/wallet'
     | '/blog/$slug'
     | '/blog/'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/technology'
+    | '/track'
     | '/wallet'
     | '/blog/$slug'
     | '/blog'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/technology'
+    | '/track'
     | '/wallet'
     | '/blog/$slug'
     | '/blog/'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechnologyRoute: typeof TechnologyRoute
+  TrackRoute: typeof TrackRoute
   WalletRoute: typeof WalletRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TechnologyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet': {
       id: '/wallet'
       path: '/wallet'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechnologyRoute: TechnologyRoute,
+  TrackRoute: TrackRoute,
   WalletRoute: WalletRoute,
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
