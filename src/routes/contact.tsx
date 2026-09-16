@@ -84,6 +84,7 @@ function ContactPage() {
       details.date ? `*Preferred date:* ${details.date}` : "",
       details.slot ? `*Preferred slot:* ${details.slot}` : "",
       details.notes ? `*Items / Notes:* ${details.notes}` : "",
+      details.referrer ? `*Referred by:* ${details.referrer}` : "",
       "",
       "Please confirm the pickup time.",
     ]
