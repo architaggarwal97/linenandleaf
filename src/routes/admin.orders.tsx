@@ -42,6 +42,7 @@ function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [rowBusy, setRowBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [photoBusy, setPhotoBusy] = useState<string | null>(null);
 
   const refresh = useCallback(
     async (term: string) => {
