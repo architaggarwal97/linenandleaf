@@ -21,7 +21,28 @@ export type AdminOrder = {
   created_at: string;
   pickup_address: string;
   preferred_window: string | null;
+  pickup_photo_url: string | null;
+  delivery_photo_url: string | null;
 };
+
+const ORDER_COLUMNS =
+  "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url";
+
+type OrderRow = Omit<AdminOrder, "status"> & { status: string };
+
+async function toAdminOrder(row: OrderRow): Promise<AdminOrder> {
+  const { signOrderPhoto } = await import("@/lib/order-photos.server");
+  const [pickup, delivery] = await Promise.all([
+    signOrderPhoto(row.pickup_photo_url),
+    signOrderPhoto(row.delivery_photo_url),
+  ]);
+  return {
+    ...row,
+    status: normalizeStatus(row.status),
+    pickup_photo_url: pickup,
+    delivery_photo_url: delivery,
+  };
+}
 
 type AdminSession = { admin?: boolean };
 
