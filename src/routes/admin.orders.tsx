@@ -35,6 +35,7 @@ function AdminOrdersPage() {
   const listOrders = useServerFn(adminListOrders);
   const advance = useServerFn(adminAdvanceStatus);
   const setPaid = useServerFn(adminSetPaid);
+  const uploadPhoto = useServerFn(adminUploadOrderPhoto);
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
