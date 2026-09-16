@@ -109,9 +109,7 @@ export const adminListOrders = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let query = supabaseAdmin
       .from("orders")
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .order("created_at", { ascending: false })
       .limit(60);
 
