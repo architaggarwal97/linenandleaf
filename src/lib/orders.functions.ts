@@ -62,6 +62,7 @@ export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export type TrackOrderResult = {
   found: boolean;
+  id?: string;
   status?: OrderStatus;
   orderReference?: string;
   createdAt?: string;
@@ -84,7 +85,7 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
-      .select("order_reference, status, created_at, whatsapp_number")
+      .select("id, order_reference, status, created_at, whatsapp_number")
       .eq("order_reference", data.order_reference)
       .limit(5);
 
@@ -102,6 +103,7 @@ export const trackOrder = createServerFn({ method: "POST" })
       : "requested";
     return {
       found: true,
+      id: match.id,
       status,
       orderReference: match.order_reference,
       createdAt: match.created_at,
