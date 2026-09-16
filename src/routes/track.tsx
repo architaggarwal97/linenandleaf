@@ -165,6 +165,13 @@ function TrackPage() {
                       })}`
                     : ""}
                 </p>
+                <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-teal-700 font-medium">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-600" />
+                  </span>
+                  Live updates on — this page refreshes itself as we work on your order.
+                </p>
                 <ol className="mt-6 space-y-0">
                   {STAGES.map((stage, i) => {
                     const done = i < currentIndex;
