@@ -56,3 +56,54 @@ export const createOrder = createServerFn({ method: "POST" })
 
     return { orderReference: row.order_reference as string };
   });
+
+const ORDER_STATUSES = ["requested", "picked_up", "in_process", "ready", "delivered"] as const;
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+
+export type TrackOrderResult = {
+  found: boolean;
+  status?: OrderStatus;
+  orderReference?: string;
+  createdAt?: string;
+};
+
+function normalizePhone(value: string): string {
+  return value.replace(/[^0-9]/g, "").slice(-10);
+}
+
+export const trackOrder = createServerFn({ method: "POST" })
+  .inputValidator((input: { whatsapp_number?: unknown; order_reference?: unknown }) => {
+    const whatsapp_number = clean(input?.whatsapp_number, 30);
+    const order_reference = clean(input?.order_reference, 20).toUpperCase();
+    if (!whatsapp_number || !order_reference) {
+      throw new Error("Please enter your WhatsApp number and order reference.");
+    }
+    return { whatsapp_number, order_reference };
+  })
+  .handler(async ({ data }): Promise<TrackOrderResult> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("orders")
+      .select("order_reference, status, created_at, whatsapp_number")
+      .eq("order_reference", data.order_reference)
+      .limit(5);
+
+    if (error) {
+      console.error("Failed to look up order", error);
+      throw new Error("We couldn't check your order just now. Please try again.");
+    }
+
+    const needle = normalizePhone(data.whatsapp_number);
+    const match = (rows ?? []).find((r) => normalizePhone(r.whatsapp_number) === needle);
+    if (!match) return { found: false };
+
+    const status = (ORDER_STATUSES as readonly string[]).includes(match.status)
+      ? (match.status as OrderStatus)
+      : "requested";
+    return {
+      found: true,
+      status,
+      orderReference: match.order_reference,
+      createdAt: match.created_at,
+    };
+  });
