@@ -1,0 +1,318 @@
+import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { Loader2, Lock, Search, RefreshCw, Check, IndianRupee, LogOut } from "lucide-react";
+import {
+  ADMIN_STATUSES,
+  adminAdvanceStatus,
+  adminListOrders,
+  adminLogin,
+  adminLogout,
+  adminSessionStatus,
+  adminSetPaid,
+  type AdminOrder,
+  type AdminStatus,
+} from "@/lib/admin.functions";
+
+export const Route = createFileRoute("/admin/orders")({
+  head: () => ({
+    meta: [
+      { title: "Staff Orders — Linen & Leaf" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  component: AdminOrdersPage;
+});
+
+const LABELS: Record<AdminStatus, string> = {
+  requested: "Requested",
+  picked_up: "Picked Up",
+  in_process: "In Process",
+  ready: "Ready",
+  delivered: "Delivered",
+};
+
+function nextLabel(status: AdminStatus): string | null {
+  const i = ADMIN_STATUSES.indexOf(status);
+  const next = ADMIN_STATUSES[i + 1];
+  return next ? LABELS[next] : null;
+}
+
+function AdminOrdersPage() {
+  const checkSession = useServerFn(adminSessionStatus);
+  const login = useServerFn(adminLogin);
+  const logout = useServerFn(adminLogout);
+  const listOrders = useServerFn(adminListOrders);
+  const advance = useServerFn(adminAdvanceStatus);
+  const setPaid = useServerFn(adminSetPaid);
+
+  const [ready, setReady] = useState(false);
+  const [authed, setAuthed] = useState(false);
+  const [configured, setConfigured] = useState(true);
+  const [pin, setPin] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [busyAuth, setBusyAuth] = useState(false);
+
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [rowBusy, setRowBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(
+    async (term: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        setOrders(await listOrders({ data: { search: term } }));
+      } catch (err) {
+        console.error(err);
+        setError("Could not load orders. Pull down and try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [listOrders],
+  );
+
+  useEffect(() => {
+    let active = true;
+    checkSession()
+      .then((res) => {
+        if (!active) return;
+        setAuthed(res.authed);
+        setConfigured(res.configured);
+        setReady(true);
+        if (res.authed) void refresh("");
+      })
+      .catch(() => {
+        if (active) setReady(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [checkSession, refresh]);
+
+  const submitPin = async (e: FormEvent) => {
+    e.preventDefault();
+    if (busyAuth) return;
+    setBusyAuth(true);
+    setAuthError(null);
+    try {
+      const res = await login({ data: { pin } });
+      if (res.ok) {
+        setAuthed(true);
+        setPin("");
+        void refresh("");
+      } else if (res.reason === "unconfigured") {
+        setConfigured(false);
+        setAuthError("Staff PIN is not set up yet.");
+      } else {
+        setAuthError("Incorrect PIN.");
+      }
+    } catch (err) {
+      console.error(err);
+      setAuthError("Something went wrong. Try again.");
+    } finally {
+      setBusyAuth(false);
+    }
+  };
+
+  const applyRow = (row: AdminOrder) =>
+    setOrders((prev) => prev.map((o) => (o.id === row.id ? row : o)));
+
+  const onAdvance = async (order: AdminOrder) => {
+    if (rowBusy || order.status === "delivered") return;
+    setRowBusy(order.id);
+    try {
+      applyRow(await advance({ data: { id: order.id } }));
+    } catch (err) {
+      console.error(err);
+      setError("Could not update that order.");
+    } finally {
+      setRowBusy(null);
+    }
+  };
+
+  const onTogglePaid = async (order: AdminOrder) => {
+    if (rowBusy) return;
+    setRowBusy(order.id);
+    try {
+      applyRow(await setPaid({ data: { id: order.id, paid: !order.paid } }));
+    } catch (err) {
+      console.error(err);
+      setError("Could not update payment status.");
+    } finally {
+      setRowBusy(null);
+    }
+  };
+
+  if (!ready) {
+    return (
+      <div className="min-h-[60vh] grid place-items-center">
+        <Loader2 className="h-6 w-6 animate-spin text-teal-600" />
+      </div>
+    );
+  }
+
+  if (!authed) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <form
+          onSubmit={submitPin}
+          className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+        >
+          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-teal-50 text-teal-700">
+            <Lock className="h-5 w-5" />
+          </div>
+          <h1 className="text-center font-display text-xl font-bold text-slate-800">Staff access</h1>
+          <p className="mt-2 text-center text-sm text-slate-500">
+            Enter the shared staff PIN to manage orders.
+          </p>
+          <input
+            type="password"
+            inputMode="numeric"
+            autoComplete="current-password"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            placeholder="PIN"
+            className="mt-6 w-full rounded-2xl border border-slate-200 px-4 py-4 text-center text-lg tracking-[0.3em] outline-none focus:border-teal-500"
+          />
+          {authError ? <p className="mt-3 text-center text-sm text-rose-600">{authError}</p> : null}
+          {!configured ? (
+            <p className="mt-3 text-center text-xs text-slate-500">
+              Ask the owner to add the staff PIN in the project settings.
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            disabled={busyAuth}
+            className="mt-5 w-full rounded-2xl bg-teal-700 px-4 py-4 text-base font-semibold text-white transition hover:bg-teal-800 disabled:opacity-60"
+          >
+            {busyAuth ? "Checking…" : "Unlock"}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-6">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold text-slate-800">Orders</h1>
+        <button
+          type="button"
+          onClick={async () => {
+            await logout();
+            setAuthed(false);
+            setOrders([]);
+          }}
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-2 text-sm text-slate-600"
+        >
+          <LogOut className="h-4 w-4" /> Lock
+        </button>
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void refresh(search);
+        }}
+        className="sticky top-2 z-10 mt-4 flex gap-2"
+      >
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Reference, phone or name"
+            className="w-full rounded-2xl border border-slate-200 bg-white/90 py-4 pl-11 pr-4 text-base shadow-sm outline-none backdrop-blur focus:border-teal-500"
+          />
+        </div>
+        <button
+          type="submit"
+          className="grid h-[56px] w-[56px] place-items-center rounded-2xl bg-teal-700 text-white"
+          aria-label="Refresh orders"
+        >
+          {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <RefreshCw className="h-5 w-5" />}
+        </button>
+      </form>
+
+      {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
+
+      <div className="mt-5 space-y-4">
+        {!loading && orders.length === 0 ? (
+          <p className="rounded-2xl bg-white p-6 text-center text-sm text-slate-500 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+            No orders found.
+          </p>
+        ) : null}
+
+        {orders.map((order) => {
+          const busy = rowBusy === order.id;
+          const next = nextLabel(order.status);
+          return (
+            <article
+              key={order.id}
+              className="rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-mono text-sm font-bold text-teal-700">{order.order_reference}</p>
+                  <p className="truncate text-base font-semibold text-slate-800">
+                    {order.customer_name}
+                  </p>
+                  <a
+                    href={`tel:${order.whatsapp_number}`}
+                    className="text-sm text-slate-500 underline-offset-2 hover:underline"
+                  >
+                    {order.whatsapp_number}
+                  </a>
+                </div>
+                <span className="shrink-0 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
+                  {LABELS[order.status]}
+                </span>
+              </div>
+
+              <p className="mt-2 text-xs text-slate-400">
+                {new Date(order.created_at).toLocaleString("en-IN")}
+                {order.preferred_window ? ` · ${order.preferred_window}` : ""}
+              </p>
+
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  disabled={busy || !next}
+                  onClick={() => void onAdvance(order)}
+                  className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-teal-700 text-base font-semibold text-white transition active:scale-[0.98] disabled:bg-slate-200 disabled:text-slate-500"
+                >
+                  {busy ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : next ? (
+                    <>Mark {next}</>
+                  ) : (
+                    <>
+                      <Check className="h-5 w-5" /> Completed
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void onTogglePaid(order)}
+                  className={`flex h-14 items-center justify-center gap-2 rounded-2xl text-base font-semibold transition active:scale-[0.98] ${
+                    order.paid
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "border border-slate-200 text-slate-600"
+                  }`}
+                >
+                  <IndianRupee className="h-4 w-4" />
+                  {order.paid ? "Paid · tap to undo" : "Mark paid"}
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
