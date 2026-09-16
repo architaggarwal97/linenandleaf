@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Search, RefreshCw, Check, IndianRupee } from "lucide-react";
+import { Loader2, Search, RefreshCw, Check, IndianRupee, Camera } from "lucide-react";
 import {
   ADMIN_STATUSES,
   adminAdvanceStatus,
   adminListOrders,
   adminSetPaid,
+  adminUploadOrderPhoto,
   type AdminOrder,
   type AdminStatus,
 } from "@/lib/admin.functions";
+import { compressImage } from "@/lib/image";
 
 export const Route = createFileRoute("/admin/orders")({
   component: AdminOrdersPage,
