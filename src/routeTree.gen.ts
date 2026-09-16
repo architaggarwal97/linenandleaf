@@ -22,6 +22,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TechnologyRouteImport } from './routes/technology'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
@@ -90,6 +91,11 @@ const WalletRoute = WalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/admin/orders',
+  path: '/admin/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/technology': typeof TechnologyRoute
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/technology': typeof TechnologyRoute
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
 }
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/technology': typeof TechnologyRoute
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/technology'
     | '/track'
     | '/wallet'
+    | '/admin/orders'
     | '/blog/$slug'
     | '/blog/'
   fileRoutesByTo: FileRoutesByTo
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/technology'
     | '/track'
     | '/wallet'
+    | '/admin/orders'
     | '/blog/$slug'
     | '/blog'
   id:
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/technology'
     | '/track'
     | '/wallet'
+    | '/admin/orders'
     | '/blog/$slug'
     | '/blog/'
   fileRoutesById: FileRoutesById
@@ -221,6 +233,7 @@ export interface RootRouteChildren {
   TechnologyRoute: typeof TechnologyRoute
   TrackRoute: typeof TrackRoute
   WalletRoute: typeof WalletRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/admin/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -349,6 +369,7 @@ const rootRouteChildren: RootRouteChildren = {
   TechnologyRoute: TechnologyRoute,
   TrackRoute: TrackRoute,
   WalletRoute: WalletRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
