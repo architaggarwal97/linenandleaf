@@ -28,12 +28,15 @@ export const createOrder = createServerFn({ method: "POST" })
       ? (rawWindow as (typeof WINDOWS)[number])
       : undefined;
     const notes = clean(input?.service_notes, 1000);
+    const referrer = clean(input?.referred_by_phone, 30).replace(/[^\d+]/g, "");
     return {
       customer_name,
       whatsapp_number,
       pickup_address,
       preferred_window,
       service_notes: notes || undefined,
+      referred_by_phone:
+        referrer.replace(/\D/g, "").length >= 10 ? referrer : undefined,
     };
   })
   .handler(async ({ data }) => {
