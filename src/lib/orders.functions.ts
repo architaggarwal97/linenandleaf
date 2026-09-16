@@ -6,6 +6,7 @@ export type CreateOrderInput = {
   pickup_address: string;
   preferred_window?: "morning" | "afternoon" | "evening" | undefined;
   service_notes?: string | undefined;
+  referred_by_phone?: string | undefined;
 };
 
 const WINDOWS = ["morning", "afternoon", "evening"] as const;
