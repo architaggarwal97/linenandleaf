@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { PackageSearch, Loader2, Check, MessageCircle } from "lucide-react";
 import { trackOrder, type TrackOrderResult, type OrderStatus } from "@/lib/orders.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -63,6 +64,31 @@ function TrackPage() {
       setLoading(false);
     }
   };
+
+  // Live updates: once an order is found, subscribe to changes on that one row.
+  // If the connection drops, we simply keep showing the last known status.
+  const orderId = result?.found ? result.id : undefined;
+  useEffect(() => {
+    if (!orderId) return;
+    const channel = supabase
+      .channel(`track-order-${orderId}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${orderId}` },
+        (payload) => {
+          const next = (payload.new as { status?: string } | null)?.status;
+          if (!next || !STAGES.some((s) => s.key === next)) return;
+          setResult((prev) =>
+            prev?.found ? { ...prev, status: next as OrderStatus } : prev,
+          );
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orderId]);
 
   const currentIndex =
     result?.found && result.status ? STAGES.findIndex((s) => s.key === result.status) : -1;
@@ -138,6 +164,13 @@ function TrackPage() {
                         year: "numeric",
                       })}`
                     : ""}
+                </p>
+                <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-teal-700 font-medium">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-600" />
+                  </span>
+                  Live updates on — this page refreshes itself as we work on your order.
                 </p>
                 <ol className="mt-6 space-y-0">
                   {STAGES.map((stage, i) => {
