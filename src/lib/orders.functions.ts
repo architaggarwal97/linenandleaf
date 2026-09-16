@@ -92,7 +92,9 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
-      .select("id, order_reference, status, created_at, whatsapp_number")
+      .select(
+        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url",
+      )
       .eq("order_reference", data.order_reference)
       .limit(5);
 
