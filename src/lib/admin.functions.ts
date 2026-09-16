@@ -125,7 +125,7 @@ export const adminListOrders = createServerFn({ method: "POST" })
       console.error("Admin order list failed", error);
       throw new Error("Could not load orders.");
     }
-    return (rows ?? []).map((r) => ({ ...r, status: normalizeStatus(r.status) }));
+    return Promise.all((rows ?? []).map((r) => toAdminOrder(r as OrderRow)));
   });
 
 export const adminAdvanceStatus = createServerFn({ method: "POST" })
