@@ -198,11 +198,12 @@ export const adminUploadOrderPhoto = createServerFn({ method: "POST" })
     const { uploadOrderPhoto } = await import("@/lib/order-photos.server");
 
     const path = await uploadOrderPhoto(data.id, data.kind, data.dataUrl, data.contentType);
-    const column = data.kind === "pickup" ? "pickup_photo_url" : "delivery_photo_url";
+    const patch =
+      data.kind === "pickup" ? { pickup_photo_url: path } : { delivery_photo_url: path };
 
     const { data: row, error } = await supabaseAdmin
       .from("orders")
-      .update({ [column]: path })
+      .update(patch)
       .eq("id", data.id)
       .select(ORDER_COLUMNS)
       .single();
