@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { PackageSearch, Loader2, Check, MessageCircle } from "lucide-react";
 import { trackOrder, type TrackOrderResult, type OrderStatus } from "@/lib/orders.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { whatsappLink } from "@/lib/whatsapp";
