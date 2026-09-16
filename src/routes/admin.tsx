@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Lock, LogOut, LayoutDashboard, ClipboardList, Wallet } from "lucide-react";
+import {
+  Loader2,
+  Lock,
+  LogOut,
+  LayoutDashboard,
+  ClipboardList,
+  Wallet,
+  Gift,
+} from "lucide-react";
 import { adminLogin, adminLogout, adminSessionStatus } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
