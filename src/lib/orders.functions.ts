@@ -110,11 +110,22 @@ export const trackOrder = createServerFn({ method: "POST" })
     const status = (ORDER_STATUSES as readonly string[]).includes(match.status)
       ? (match.status as OrderStatus)
       : "requested";
+    const stage = ORDER_STATUSES.indexOf(status);
+    const { signOrderPhoto } = await import("@/lib/order-photos.server");
+    const [pickupPhotoUrl, deliveryPhotoUrl] = await Promise.all([
+      stage >= ORDER_STATUSES.indexOf("picked_up")
+        ? signOrderPhoto(match.pickup_photo_url)
+        : null,
+      stage >= ORDER_STATUSES.indexOf("ready") ? signOrderPhoto(match.delivery_photo_url) : null,
+    ]);
+
     return {
       found: true,
       id: match.id,
       status,
       orderReference: match.order_reference,
       createdAt: match.created_at,
+      pickupPhotoUrl,
+      deliveryPhotoUrl,
     };
   });
