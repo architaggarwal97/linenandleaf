@@ -65,6 +65,31 @@ function TrackPage() {
     }
   };
 
+  // Live updates: once an order is found, subscribe to changes on that one row.
+  // If the connection drops, we simply keep showing the last known status.
+  const orderId = result?.found ? result.id : undefined;
+  useEffect(() => {
+    if (!orderId) return;
+    const channel = supabase
+      .channel(`track-order-${orderId}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${orderId}` },
+        (payload) => {
+          const next = (payload.new as { status?: string } | null)?.status;
+          if (!next || !STAGES.some((s) => s.key === next)) return;
+          setResult((prev) =>
+            prev?.found ? { ...prev, status: next as OrderStatus } : prev,
+          );
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [orderId]);
+
   const currentIndex =
     result?.found && result.status ? STAGES.findIndex((s) => s.key === result.status) : -1;
 
