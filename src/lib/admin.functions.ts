@@ -170,13 +170,46 @@ export const adminSetPaid = createServerFn({ method: "POST" })
       .from("orders")
       .update({ paid: data.paid })
       .eq("id", data.id)
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .single();
     if (error || !row) throw new Error("Could not update the order.");
-    return { ...row, status: normalizeStatus(row.status) };
+    return toAdminOrder(row as OrderRow);
   });
+
+export const adminUploadOrderPhoto = createServerFn({ method: "POST" })
+  .inputValidator(
+    (input: { id?: unknown; kind?: unknown; dataUrl?: unknown; contentType?: unknown }) => {
+      const id = typeof input?.id === "string" ? input.id : "";
+      const kind = input?.kind === "delivery" ? "delivery" : "pickup";
+      const dataUrl = typeof input?.dataUrl === "string" ? input.dataUrl : "";
+      const contentType =
+        typeof input?.contentType === "string" && input.contentType.startsWith("image/")
+          ? input.contentType
+          : "image/jpeg";
+      if (!id) throw new Error("Missing order id.");
+      if (!dataUrl) throw new Error("Missing photo.");
+      if (dataUrl.length > 9_000_000) throw new Error("That photo is too large.");
+      return { id, kind: kind as "pickup" | "delivery", dataUrl, contentType };
+    },
+  )
+  .handler(async ({ data }): Promise<AdminOrder> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { uploadOrderPhoto } = await import("@/lib/order-photos.server");
+
+    const path = await uploadOrderPhoto(data.id, data.kind, data.dataUrl, data.contentType);
+    const column = data.kind === "pickup" ? "pickup_photo_url" : "delivery_photo_url";
+
+    const { data: row, error } = await supabaseAdmin
+      .from("orders")
+      .update({ [column]: path })
+      .eq("id", data.id)
+      .select(ORDER_COLUMNS)
+      .single();
+    if (error || !row) throw new Error("Could not save that photo to the order.");
+    return toAdminOrder(row as OrderRow);
+  });
+
 
 // ---------- Dashboard stats ----------
 
