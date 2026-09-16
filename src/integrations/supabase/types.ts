@@ -53,6 +53,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_entries: {
+        Row: {
+          amount: number
+          bonus: number
+          created_at: string
+          customer_name: string
+          entry_type: string
+          id: string
+          note: string | null
+          updated_at: string
+          whatsapp_number: string
+        }
+        Insert: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          customer_name?: string
+          entry_type?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+          whatsapp_number: string
+        }
+        Update: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          customer_name?: string
+          entry_type?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+          whatsapp_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

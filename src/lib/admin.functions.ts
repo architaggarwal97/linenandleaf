@@ -160,3 +160,197 @@ export const adminSetPaid = createServerFn({ method: "POST" })
     if (error || !row) throw new Error("Could not update the order.");
     return { ...row, status: normalizeStatus(row.status) };
   });
+
+// ---------- Dashboard stats ----------
+
+export type AdminStats = {
+  total: number;
+  active: number;
+  unpaid: number;
+  today: number;
+  byStatus: Record<AdminStatus, number>;
+  walletCustomers: number;
+  walletBalance: number;
+};
+
+export const adminStats = createServerFn({ method: "POST" }).handler(
+  async (): Promise<AdminStats> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: orders, error } = await supabaseAdmin
+      .from("orders")
+      .select("status, paid, created_at")
+      .limit(1000);
+    if (error) throw new Error("Could not load stats.");
+
+    const byStatus = ADMIN_STATUSES.reduce(
+      (acc, s) => ({ ...acc, [s]: 0 }),
+      {} as Record<AdminStatus, number>,
+    );
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    let unpaid = 0;
+    let today = 0;
+    for (const row of orders ?? []) {
+      const status = normalizeStatus(row.status);
+      byStatus[status] += 1;
+      if (!row.paid) unpaid += 1;
+      if (new Date(row.created_at) >= startOfDay) today += 1;
+    }
+
+    const { data: entries } = await supabaseAdmin
+      .from("wallet_entries")
+      .select("whatsapp_number, entry_type, amount, bonus")
+      .limit(2000);
+
+    const numbers = new Set<string>();
+    let walletBalance = 0;
+    for (const e of entries ?? []) {
+      numbers.add(e.whatsapp_number);
+      walletBalance += entryDelta(e.entry_type, Number(e.amount), Number(e.bonus));
+    }
+
+    return {
+      total: (orders ?? []).length,
+      active: byStatus.requested + byStatus.picked_up + byStatus.in_process + byStatus.ready,
+      unpaid,
+      today,
+      byStatus,
+      walletCustomers: numbers.size,
+      walletBalance,
+    };
+  },
+);
+
+// ---------- Wallet credits ----------
+
+export type WalletEntry = {
+  id: string;
+  created_at: string;
+  customer_name: string;
+  whatsapp_number: string;
+  entry_type: "topup" | "spend" | "adjustment";
+  amount: number;
+  bonus: number;
+  note: string | null;
+};
+
+export type WalletCustomer = {
+  whatsapp_number: string;
+  customer_name: string;
+  balance: number;
+  lastActivity: string;
+  entries: WalletEntry[];
+};
+
+function entryDelta(type: string, amount: number, bonus: number): number {
+  if (type === "spend") return -Math.abs(amount);
+  if (type === "adjustment") return amount;
+  return Math.abs(amount) + Math.abs(bonus);
+}
+
+function toEntry(row: Record<string, unknown>): WalletEntry {
+  const type = String(row["entry_type"]);
+  return {
+    id: String(row["id"]),
+    created_at: String(row["created_at"]),
+    customer_name: String(row["customer_name"] ?? ""),
+    whatsapp_number: String(row["whatsapp_number"]),
+    entry_type: type === "spend" || type === "adjustment" ? type : "topup",
+    amount: Number(row["amount"] ?? 0),
+    bonus: Number(row["bonus"] ?? 0),
+    note: (row["note"] as string | null) ?? null,
+  };
+}
+
+export const adminListWallets = createServerFn({ method: "POST" })
+  .inputValidator((input: { search?: unknown }) => ({
+    search: typeof input?.search === "string" ? input.search.trim().slice(0, 40) : "",
+  }))
+  .handler(async ({ data }): Promise<WalletCustomer[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    let query = supabaseAdmin
+      .from("wallet_entries")
+      .select("id, created_at, customer_name, whatsapp_number, entry_type, amount, bonus, note")
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    if (data.search) {
+      const term = data.search.replace(/[%,()]/g, "");
+      query = query.or(`whatsapp_number.ilike.%${term}%,customer_name.ilike.%${term}%`);
+    }
+
+    const { data: rows, error } = await query;
+    if (error) {
+      console.error("Wallet list failed", error);
+      throw new Error("Could not load wallet credits.");
+    }
+
+    const map = new Map<string, WalletCustomer>();
+    for (const raw of rows ?? []) {
+      const entry = toEntry(raw as Record<string, unknown>);
+      const existing = map.get(entry.whatsapp_number);
+      const delta = entryDelta(entry.entry_type, entry.amount, entry.bonus);
+      if (existing) {
+        existing.balance += delta;
+        existing.entries.push(entry);
+        if (!existing.customer_name && entry.customer_name) {
+          existing.customer_name = entry.customer_name;
+        }
+      } else {
+        map.set(entry.whatsapp_number, {
+          whatsapp_number: entry.whatsapp_number,
+          customer_name: entry.customer_name,
+          balance: delta,
+          lastActivity: entry.created_at,
+          entries: [entry],
+        });
+      }
+    }
+    return [...map.values()].sort((a, b) => b.lastActivity.localeCompare(a.lastActivity));
+  });
+
+export const adminAddWalletEntry = createServerFn({ method: "POST" })
+  .inputValidator(
+    (input: {
+      whatsapp_number?: unknown;
+      customer_name?: unknown;
+      entry_type?: unknown;
+      amount?: unknown;
+      bonus?: unknown;
+      note?: unknown;
+    }) => {
+      const number = String(input?.whatsapp_number ?? "").replace(/[^\d+]/g, "").slice(0, 20);
+      if (number.replace(/\D/g, "").length < 10) throw new Error("Enter a valid phone number.");
+      const type = String(input?.entry_type ?? "topup");
+      const amount = Number(input?.amount ?? 0);
+      if (!Number.isFinite(amount) || amount === 0) throw new Error("Enter an amount.");
+      const bonus = Number(input?.bonus ?? 0);
+      return {
+        whatsapp_number: number,
+        customer_name: String(input?.customer_name ?? "").trim().slice(0, 80),
+        entry_type: ["topup", "spend", "adjustment"].includes(type) ? type : "topup",
+        amount: Math.round(amount * 100) / 100,
+        bonus: Number.isFinite(bonus) ? Math.round(Math.abs(bonus) * 100) / 100 : 0,
+        note: String(input?.note ?? "").trim().slice(0, 200) || null,
+      };
+    },
+  )
+  .handler(async ({ data }): Promise<WalletEntry> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("wallet_entries")
+      .insert(data)
+      .select("id, created_at, customer_name, whatsapp_number, entry_type, amount, bonus, note")
+      .single();
+    if (error || !row) {
+      console.error("Wallet insert failed", error);
+      throw new Error("Could not save that wallet entry.");
+    }
+    return toEntry(row as Record<string, unknown>);
+  });
