@@ -151,12 +151,10 @@ export const adminAdvanceStatus = createServerFn({ method: "POST" })
       .from("orders")
       .update({ status: next })
       .eq("id", data.id)
-      .select(
-        "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window",
-      )
+      .select(ORDER_COLUMNS)
       .single();
     if (error || !row) throw new Error("Could not update the order.");
-    return { ...row, status: normalizeStatus(row.status) };
+    return toAdminOrder(row as OrderRow);
   });
 
 export const adminSetPaid = createServerFn({ method: "POST" })
