@@ -49,6 +49,7 @@ export const createOrder = createServerFn({ method: "POST" })
         pickup_address: data.pickup_address,
         preferred_window: data.preferred_window ?? null,
         service_notes: data.service_notes ?? null,
+        referred_by_phone: data.referred_by_phone ?? null,
       })
       .select("order_reference")
       .single();
