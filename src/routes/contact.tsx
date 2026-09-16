@@ -152,13 +152,21 @@ function ContactPage() {
                   Save this code — quote it on WhatsApp or over the phone and we'll pull up your order
                   instantly.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => openWhatsApp(whatsappMessage(reference))}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-green-500 hover:bg-green-400 text-white px-4 py-2.5 text-sm font-medium transition-colors"
-                >
-                  <MessageCircle className="h-4 w-4 shrink-0" /> Send reference on WhatsApp
-                </button>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => openWhatsApp(whatsappMessage(reference))}
+                    className="inline-flex items-center gap-2 rounded-xl bg-green-500 hover:bg-green-400 text-white px-4 py-2.5 text-sm font-medium transition-colors"
+                  >
+                    <MessageCircle className="h-4 w-4 shrink-0" /> Send reference on WhatsApp
+                  </button>
+                  <Link
+                    to="/track"
+                    className="inline-flex items-center gap-2 rounded-xl border border-teal-300 text-teal-700 hover:bg-teal-100 px-4 py-2.5 text-sm font-medium transition-colors"
+                  >
+                    Track this order
+                  </Link>
+                </div>
               </div>
             ) : null}
             <form onSubmit={submit} className="space-y-5">
