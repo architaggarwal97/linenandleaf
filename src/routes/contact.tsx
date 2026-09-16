@@ -65,6 +65,7 @@ function ContactPage() {
     notes: search.items ?? "",
     date: search.date ?? "",
     slot: search.slot && SLOTS.includes(search.slot) ? search.slot : "",
+    referrer: "",
   });
 
   const saveOrder = useServerFn(createOrder);
