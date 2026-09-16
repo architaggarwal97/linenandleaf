@@ -21,7 +21,7 @@ export const Route = createFileRoute("/admin/orders")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: AdminOrdersPage;
+  component: AdminOrdersPage,
 });
 
 const LABELS: Record<AdminStatus, string> = {
