@@ -71,6 +71,8 @@ export type TrackOrderResult = {
   status?: OrderStatus;
   orderReference?: string;
   createdAt?: string;
+  pickupPhotoUrl?: string | null;
+  deliveryPhotoUrl?: string | null;
 };
 
 function normalizePhone(value: string): string {
