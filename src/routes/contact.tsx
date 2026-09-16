@@ -109,6 +109,7 @@ function ContactPage() {
           pickup_address: details.address,
           preferred_window: slotKey(details.slot),
           service_notes: notes || undefined,
+          referred_by_phone: details.referrer || undefined,
         },
       });
       setReference(result.orderReference);
