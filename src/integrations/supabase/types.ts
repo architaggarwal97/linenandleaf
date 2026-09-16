@@ -23,6 +23,8 @@ export type Database = {
           paid: boolean
           pickup_address: string
           preferred_window: string | null
+          referral_credited_at: string | null
+          referred_by_phone: string | null
           service_notes: string | null
           status: string
           whatsapp_number: string
@@ -35,6 +37,8 @@ export type Database = {
           paid?: boolean
           pickup_address: string
           preferred_window?: string | null
+          referral_credited_at?: string | null
+          referred_by_phone?: string | null
           service_notes?: string | null
           status?: string
           whatsapp_number: string
@@ -47,6 +51,8 @@ export type Database = {
           paid?: boolean
           pickup_address?: string
           preferred_window?: string | null
+          referral_credited_at?: string | null
+          referred_by_phone?: string | null
           service_notes?: string | null
           status?: string
           whatsapp_number?: string

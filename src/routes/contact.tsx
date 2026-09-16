@@ -65,6 +65,7 @@ function ContactPage() {
     notes: search.items ?? "",
     date: search.date ?? "",
     slot: search.slot && SLOTS.includes(search.slot) ? search.slot : "",
+    referrer: "",
   });
 
   const saveOrder = useServerFn(createOrder);
@@ -83,6 +84,7 @@ function ContactPage() {
       details.date ? `*Preferred date:* ${details.date}` : "",
       details.slot ? `*Preferred slot:* ${details.slot}` : "",
       details.notes ? `*Items / Notes:* ${details.notes}` : "",
+      details.referrer ? `*Referred by:* ${details.referrer}` : "",
       "",
       "Please confirm the pickup time.",
     ]
@@ -107,6 +109,7 @@ function ContactPage() {
           pickup_address: details.address,
           preferred_window: slotKey(details.slot),
           service_notes: notes || undefined,
+          referred_by_phone: details.referrer || undefined,
         },
       });
       setReference(result.orderReference);
@@ -258,6 +261,23 @@ function ContactPage() {
                   className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-slate-700 resize-none"
                   placeholder="e.g. 3 shirts, 1 suit, 1 saree"
                 />
+              </div>
+              <div>
+                <label htmlFor="referrer" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Referred by <span className="text-slate-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  id="referrer"
+                  type="tel"
+                  value={details.referrer}
+                  onChange={(e) => setDetails({ ...details, referrer: e.target.value })}
+                  className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 text-slate-700"
+                  placeholder="Friend's WhatsApp number"
+                />
+                <p className="mt-1.5 text-xs text-slate-500">
+                  Add your friend's number and you both get ₹100 in your wallet once this first order
+                  is delivered.
+                </p>
               </div>
               <button
                 type="submit"

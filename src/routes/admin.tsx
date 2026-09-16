@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Lock, LogOut, LayoutDashboard, ClipboardList, Wallet } from "lucide-react";
+import {
+  Loader2,
+  Lock,
+  LogOut,
+  LayoutDashboard,
+  ClipboardList,
+  Wallet,
+  Gift,
+} from "lucide-react";
 import { adminLogin, adminLogout, adminSessionStatus } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -18,6 +26,7 @@ const TABS = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/orders", label: "Orders", icon: ClipboardList, exact: false },
   { to: "/admin/wallet", label: "Wallet", icon: Wallet, exact: false },
+  { to: "/admin/referrals", label: "Referrals", icon: Gift, exact: false },
 ] as const;
 
 function AdminLayout() {
@@ -145,7 +154,7 @@ function AdminLayout() {
       <Outlet />
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/90 backdrop-blur-xl">
-        <div className="mx-auto grid max-w-2xl grid-cols-3">
+        <div className="mx-auto grid max-w-2xl grid-cols-4">
           {TABS.map((tab) => {
             const active = tab.exact ? pathname === tab.to : pathname.startsWith(tab.to);
             const Icon = tab.icon;
