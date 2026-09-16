@@ -93,6 +93,25 @@ function AdminOrdersPage() {
     }
   };
 
+  const onPickPhoto = async (
+    order: AdminOrder,
+    kind: "pickup" | "delivery",
+    file: File | undefined,
+  ) => {
+    if (!file || photoBusy) return;
+    setPhotoBusy(`${order.id}-${kind}`);
+    setError(null);
+    try {
+      const { dataUrl, contentType } = await compressImage(file);
+      applyRow(await uploadPhoto({ data: { id: order.id, kind, dataUrl, contentType } }));
+    } catch (err) {
+      console.error(err);
+      setError("Could not upload that photo. Try again.");
+    } finally {
+      setPhotoBusy(null);
+    }
+  };
+
   return (
     <div className="mt-5">
       <h1 className="font-display text-2xl font-bold text-slate-800">Orders</h1>
