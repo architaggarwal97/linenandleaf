@@ -51,12 +51,26 @@ export const createOrder = createServerFn({ method: "POST" })
         service_notes: data.service_notes ?? null,
         referred_by_phone: data.referred_by_phone ?? null,
       })
-      .select("order_reference")
+      .select("order_reference, whatsapp_number")
       .single();
 
     if (error) {
       console.error("Failed to create order", error);
       throw new Error("Could not save your booking. Please try again.");
+    }
+
+    if (data.referred_by_phone) {
+      const referring = data.referred_by_phone.replace(/\D/g, "").slice(-10);
+      const referred = String(row.whatsapp_number).replace(/\D/g, "").slice(-10);
+      if (referring.length === 10 && referred.length === 10 && referring !== referred) {
+        const { error: referralError } = await supabaseAdmin
+          .from("referrals")
+          .upsert(
+            { referring_phone: referring, referred_phone: referred, status: "pending" },
+            { onConflict: "referred_phone", ignoreDuplicates: true },
+          );
+        if (referralError) console.error("Referral capture failed", referralError);
+      }
     }
 
     return { orderReference: row.order_reference as string };
