@@ -49,7 +49,7 @@ const faqs = [
   },
   {
     q: "How do I pay?",
-    a: "Pay by UPI to our Paytm UPI ID 9818661308@ptyes, or in cash. Payment is collected after you approve the quote and before delivery.",
+    a: "We accept UPI, cash, and most major wallets. Payment is collected after you approve the final quote. You can also sign in to your Linen & Leaf wallet at checkout to pay from a prepaid balance, which earns a 10% bonus on top-ups.",
   },
 ];
 
