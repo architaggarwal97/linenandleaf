@@ -41,6 +41,8 @@ function AdminOrdersPage() {
   const setPaid = useServerFn(adminSetPaid);
   const uploadPhoto = useServerFn(adminUploadOrderPhoto);
   const saveAmount = useServerFn(adminSetOrderAmount);
+  const findReferral = useServerFn(adminPendingReferral);
+  const completeReferral = useServerFn(adminCompleteReferral);
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
