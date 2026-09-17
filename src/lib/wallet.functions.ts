@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 export type WalletTransaction = {
   id: string;
   created_at: string;
-  type: "topup" | "deduction";
+  type: "topup" | "deduction" | "cashback" | "referral";
   status: "pending" | "confirmed" | "cancelled";
   amount: number;
   bonus: number;
