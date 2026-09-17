@@ -112,6 +112,8 @@ function AdminWalletPage() {
         </button>
       </div>
 
+      <AdminTopUps />
+
       {open ? (
         <form
           onSubmit={submit}
