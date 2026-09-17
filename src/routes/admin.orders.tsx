@@ -71,14 +71,46 @@ function AdminOrdersPage() {
   const applyRow = (row: AdminOrder) =>
     setOrders((prev) => prev.map((o) => (o.id === row.id ? row : o)));
 
+  const nextStatus = (order: AdminOrder): AdminStatus | undefined =>
+    ADMIN_STATUSES[ADMIN_STATUSES.indexOf(order.status) + 1];
+
   const onAdvance = async (order: AdminOrder) => {
     if (rowBusy || order.status === "delivered") return;
+    const next = nextStatus(order);
+    if ((next === "ready" || next === "delivered") && order.order_amount === null) {
+      setAmountPrompt(order.id);
+      setAmountValue("");
+      return;
+    }
     setRowBusy(order.id);
     try {
       applyRow(await advance({ data: { id: order.id } }));
     } catch (err) {
       console.error(err);
       setError("Could not update that order.");
+    } finally {
+      setRowBusy(null);
+    }
+  };
+
+  const onSaveAmount = async (order: AdminOrder) => {
+    const amount = Number(amountValue);
+    if (!amount || amount <= 0 || rowBusy) return;
+    setRowBusy(order.id);
+    setError(null);
+    try {
+      const saved = await saveAmount({ data: { id: order.id, amount } });
+      const next = nextStatus(saved);
+      applyRow(
+        next === "ready" || next === "delivered"
+          ? await advance({ data: { id: saved.id } })
+          : saved,
+      );
+      setAmountPrompt(null);
+      setAmountValue("");
+    } catch (err) {
+      console.error(err);
+      setError("Could not save that amount.");
     } finally {
       setRowBusy(null);
     }
