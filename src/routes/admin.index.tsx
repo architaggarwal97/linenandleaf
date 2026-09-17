@@ -32,6 +32,9 @@ function AdminOverview() {
   const loadFeed = useServerFn(adminSheetFeed);
   const [feed, setFeed] = useState<SheetFeed | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const loadNotifications = useServerFn(adminListPendingNotifications);
+  const markNotified = useServerFn(adminMarkNotified);
+  const [pending, setPending] = useState<PendingNotification[] | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -40,14 +43,16 @@ function AdminOverview() {
       if (typeof document !== "undefined" && document.hidden) return;
       setSyncing(true);
       try {
-        const [nextStats, nextFeed] = await Promise.all([
+        const [nextStats, nextFeed, nextPending] = await Promise.all([
           loadStats(),
           loadFeed().catch(() => null),
+          loadNotifications().catch(() => null),
         ]);
         if (!active) return;
         setStats(nextStats);
         setError(null);
         if (nextFeed) setFeed(nextFeed);
+        if (nextPending) setPending(nextPending);
       } catch {
         if (active && !stats) setError("Could not load the dashboard.");
       } finally {
