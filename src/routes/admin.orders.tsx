@@ -301,6 +301,33 @@ function AdminOrdersPage() {
                 </form>
               ) : null}
 
+              {referralPrompt?.orderId === order.id ? (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-sm font-medium text-amber-900">
+                    This completes a referral from {referralPrompt.referring_phone} — credit ₹100
+                    to both?
+                  </p>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void onCreditReferral()}
+                      className="h-14 flex-1 rounded-2xl bg-teal-700 text-base font-semibold text-white disabled:bg-slate-200 disabled:text-slate-500"
+                    >
+                      {busy ? "Crediting…" : "Credit ₹100 each"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReferralPrompt(null)}
+                      className="h-14 rounded-2xl border border-slate-200 px-5 text-base font-medium text-slate-600"
+                    >
+                      Later
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              {referralNote && order.status === "delivered" ? null : null}
 
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
