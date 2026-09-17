@@ -806,3 +806,53 @@ export const adminCompleteReferral = createServerFn({ method: "POST" })
     }
     return { ok: true as const, result: String(result ?? "completed") };
   });
+
+export type SheetFeedEntry = {
+  key: string;
+  title: string;
+  subtitle: string;
+  meta: string;
+};
+
+export type SheetFeed = {
+  orders: SheetFeedEntry[];
+  topUps: SheetFeedEntry[];
+  referrals: SheetFeedEntry[];
+  available: boolean;
+  fetchedAt: string;
+};
+
+function feedFrom(tab: string, rows: string[][], limit = 8): SheetFeedEntry[] {
+  const body = rows.slice(1).filter((r) => r.some((c) => (c ?? "").trim() !== ""));
+  return body
+    .slice(-limit)
+    .reverse()
+    .map((row, i) => ({
+      key: `${tab}-${body.length - i}`,
+      title: (row[1] ?? row[0] ?? "—").trim() || "—",
+      subtitle: (row[2] ?? "").trim(),
+      meta: (row[0] ?? "").trim(),
+    }));
+}
+
+export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
+  async (): Promise<SheetFeed> => {
+    await requireAdmin();
+    const { readSheetTabs } = await import("@/lib/sheets.server");
+    const [orders, topUps, referrals] = await readSheetTabs([
+      "Orders",
+      "Top-ups",
+      "Referrals",
+    ]);
+    const available = Boolean(
+      orders?.rows.length || topUps?.rows.length || referrals?.rows.length,
+    );
+    return {
+      orders: feedFrom("orders", orders?.rows ?? []),
+      topUps: feedFrom("topups", topUps?.rows ?? []),
+      referrals: feedFrom("referrals", referrals?.rows ?? []),
+      available,
+      fetchedAt: new Date().toISOString(),
+    };
+  },
+);
