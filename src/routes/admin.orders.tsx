@@ -83,6 +83,33 @@ function AdminOrdersPage() {
   const nextStatus = (order: AdminOrder): AdminStatus | undefined =>
     ADMIN_STATUSES[ADMIN_STATUSES.indexOf(order.status) + 1];
 
+  const afterUpdate = async (row: AdminOrder) => {
+    applyRow(row);
+    if (row.status !== "delivered") return;
+    try {
+      const referral = await findReferral({ data: { phone: row.whatsapp_number } });
+      if (referral) setReferralPrompt({ ...referral, orderId: row.id });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onCreditReferral = async () => {
+    if (!referralPrompt) return;
+    setRowBusy(referralPrompt.orderId);
+    setError(null);
+    try {
+      await completeReferral({ data: { id: referralPrompt.id } });
+      setReferralNote(`Referral bonus credited to both numbers.`);
+      setReferralPrompt(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not credit that referral.");
+    } finally {
+      setRowBusy(null);
+    }
+  };
+
   const onAdvance = async (order: AdminOrder) => {
     if (rowBusy || order.status === "delivered") return;
     const next = nextStatus(order);
@@ -93,7 +120,7 @@ function AdminOrdersPage() {
     }
     setRowBusy(order.id);
     try {
-      applyRow(await advance({ data: { id: order.id } }));
+      await afterUpdate(await advance({ data: { id: order.id } }));
     } catch (err) {
       console.error(err);
       setError("Could not update that order.");
