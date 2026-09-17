@@ -13,10 +13,20 @@ export type WalletTransaction = {
   note: string | null;
 };
 
+export type WalletReferral = {
+  id: string;
+  status: "pending" | "completed";
+  role: "referrer" | "referred";
+  other_phone: string;
+  created_at: string;
+  completed_at: string | null;
+};
+
 export type WalletState = {
   phone: string | null;
   balance: number;
   transactions: WalletTransaction[];
+  referrals: WalletReferral[];
 };
 
 type WalletSession = { phone?: string };
