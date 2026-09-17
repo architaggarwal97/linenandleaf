@@ -327,8 +327,6 @@ function AdminOrdersPage() {
                 </div>
               ) : null}
 
-              {referralNote && order.status === "delivered" ? null : null}
-
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
                   type="button"
