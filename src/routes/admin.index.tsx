@@ -69,6 +69,16 @@ function AdminOverview() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadStats, loadFeed]);
 
+  const notify = async (n: PendingNotification) => {
+    window.open(n.whatsappUrl, "_blank", "noopener");
+    setPending((prev) => (prev ?? []).filter((p) => p.id !== n.id));
+    try {
+      await markNotified({ data: { id: n.id } });
+    } catch {
+      setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
   if (error) return <p className="mt-8 text-sm text-rose-600">{error}</p>;
 
   if (!stats) {
