@@ -221,7 +221,50 @@ function AdminOrdersPage() {
               <p className="mt-2 text-xs text-slate-400">
                 {new Date(order.created_at).toLocaleString("en-IN")}
                 {order.preferred_window ? ` · ${order.preferred_window}` : ""}
+                {order.order_amount !== null
+                  ? ` · ₹${Math.round(order.order_amount).toLocaleString("en-IN")}`
+                  : ""}
+                {order.cashback_amount ? ` · cashback ₹${order.cashback_amount}` : ""}
               </p>
+
+              {amountPrompt === order.id ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void onSaveAmount(order);
+                  }}
+                  className="mt-4 rounded-2xl border border-teal-200 bg-teal-50/60 p-3"
+                >
+                  <label className="text-sm font-medium text-teal-900">
+                    Final order amount (₹)
+                  </label>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={amountValue}
+                      onChange={(e) => setAmountValue(e.target.value.replace(/\D/g, ""))}
+                      inputMode="numeric"
+                      autoFocus
+                      placeholder="e.g. 1200"
+                      className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-4 text-base outline-none focus:border-teal-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={busy || !Number(amountValue)}
+                      className="h-14 shrink-0 rounded-2xl bg-teal-700 px-5 text-base font-semibold text-white disabled:bg-slate-200 disabled:text-slate-500"
+                    >
+                      {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : "Save"}
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAmountPrompt(null)}
+                    className="mt-2 text-sm text-slate-500 underline-offset-2 hover:underline"
+                  >
+                    Cancel
+                  </button>
+                </form>
+              ) : null}
+
 
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
