@@ -756,3 +756,53 @@ export const adminCreditWalletBalance = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not credit the wallet.");
     return { phone: data.phone, balance: Number(balance) };
   });
+
+// ---------- Referral tracking (referrals table) ----------
+
+export type PendingReferral = {
+  id: string;
+  referring_phone: string;
+  referred_phone: string;
+  created_at: string;
+};
+
+export const adminPendingReferral = createServerFn({ method: "POST" })
+  .inputValidator((input: { phone?: unknown }) => ({
+    phone: typeof input?.phone === "string" ? input.phone.replace(/\D/g, "").slice(-10) : "",
+  }))
+  .handler(async ({ data }): Promise<PendingReferral | null> => {
+    await requireAdmin();
+    if (data.phone.length !== 10) return null;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("referrals")
+      .select("id, referring_phone, referred_phone, created_at")
+      .eq("referred_phone", data.phone)
+      .eq("status", "pending")
+      .maybeSingle();
+    if (error) {
+      console.error("Pending referral lookup failed", error);
+      return null;
+    }
+    return (row as PendingReferral | null) ?? null;
+  });
+
+export const adminCompleteReferral = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing referral id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: result, error } = await supabaseAdmin.rpc("referral_complete", {
+      _referral_id: data.id,
+      _credit: REFERRAL_CREDIT,
+    });
+    if (error) {
+      console.error("Referral completion failed", error);
+      throw new Error("Could not credit that referral.");
+    }
+    return { ok: true as const, result: String(result ?? "completed") };
+  });
