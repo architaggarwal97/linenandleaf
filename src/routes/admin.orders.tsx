@@ -137,7 +137,7 @@ function AdminOrdersPage() {
     try {
       const saved = await saveAmount({ data: { id: order.id, amount } });
       const next = nextStatus(saved);
-      applyRow(
+      await afterUpdate(
         next === "ready" || next === "delivered"
           ? await advance({ data: { id: saved.id } })
           : saved,
