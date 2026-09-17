@@ -52,6 +52,10 @@ function AdminOrdersPage() {
   const [photoBusy, setPhotoBusy] = useState<string | null>(null);
   const [amountPrompt, setAmountPrompt] = useState<string | null>(null);
   const [amountValue, setAmountValue] = useState("");
+  const [referralPrompt, setReferralPrompt] = useState<
+    (PendingReferral & { orderId: string }) | null
+  >(null);
+  const [referralNote, setReferralNote] = useState<string | null>(null);
 
   const refresh = useCallback(
     async (term: string) => {
