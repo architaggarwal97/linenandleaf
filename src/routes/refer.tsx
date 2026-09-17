@@ -4,6 +4,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { whatsappLink, openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
+import { ReferralForm } from "@/components/site/ReferralForm";
 
 const TITLE = "Refer & Earn ₹100 — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -97,6 +98,12 @@ function ReferPage() {
               <p className="mt-5 text-xs text-teal-300/60">
                 No codes, no links to copy — your friend just mentions you when they book.
               </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={175}>
+            <div className="mt-10">
+              <ReferralForm />
             </div>
           </Reveal>
 
