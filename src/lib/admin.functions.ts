@@ -879,6 +879,7 @@ export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
     if (orderEntries.length) {
       const refs = orderEntries.map((e) => e.reference).filter((v): v is string => Boolean(v));
       if (refs.length) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: liveRows } = await supabaseAdmin
           .from("orders")
           .select("order_reference, status, paid, order_amount, cashback_amount")
