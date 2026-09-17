@@ -320,6 +320,19 @@ function WalletPage() {
                   </p>
                 </div>
               </div>
+              <div className="mb-4 flex justify-center">
+                <figure className="text-center">
+                  <img
+                    src={site.upiQrUrl}
+                    alt={`Scan to pay ${site.upiPayeeName} on UPI (${site.upiId})`}
+                    className="mx-auto w-44 sm:w-52 rounded-xl border border-slate-200 shadow-sm"
+                    loading="lazy"
+                  />
+                  <figcaption className="mt-2 text-xs text-slate-400 font-medium">
+                    Scan with any UPI app to pay
+                  </figcaption>
+                </figure>
+              </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="button"
