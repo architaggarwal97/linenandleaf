@@ -16,10 +16,13 @@ export type Database = {
     Tables: {
       orders: {
         Row: {
+          cashback_amount: number | null
+          cashback_credited_at: string | null
           created_at: string
           customer_name: string
           delivery_photo_url: string | null
           id: string
+          order_amount: number | null
           order_reference: string
           paid: boolean
           pickup_address: string
@@ -32,10 +35,13 @@ export type Database = {
           whatsapp_number: string
         }
         Insert: {
+          cashback_amount?: number | null
+          cashback_credited_at?: string | null
           created_at?: string
           customer_name: string
           delivery_photo_url?: string | null
           id?: string
+          order_amount?: number | null
           order_reference?: string
           paid?: boolean
           pickup_address: string
@@ -48,10 +54,13 @@ export type Database = {
           whatsapp_number: string
         }
         Update: {
+          cashback_amount?: number | null
+          cashback_credited_at?: string | null
           created_at?: string
           customer_name?: string
           delivery_photo_url?: string | null
           id?: string
+          order_amount?: number | null
           order_reference?: string
           paid?: boolean
           pickup_address?: string
@@ -199,6 +208,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      order_apply_cashback: { Args: { _order_id: string }; Returns: number }
       wallet_credit: {
         Args: { _amount: number; _bonus: number; _note: string; _phone: string }
         Returns: number
