@@ -85,6 +85,16 @@ function WalletPage() {
     openWhatsApp(basketSummaryText(basket));
   };
 
+  const copyUpi = async () => {
+    try {
+      await navigator.clipboard.writeText(site.upiId);
+      setUpiCopied(true);
+      setTimeout(() => setUpiCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable — the ID is still visible to copy manually.
+    }
+  };
+
   const topUp = () => {
     if (!isValid) return;
     if (wallet.loggedIn) {
