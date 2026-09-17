@@ -5,12 +5,15 @@ import { Loader2, Search, RefreshCw, Check, IndianRupee, Camera } from "lucide-r
 import {
   ADMIN_STATUSES,
   adminAdvanceStatus,
+  adminCompleteReferral,
   adminListOrders,
+  adminPendingReferral,
   adminSetOrderAmount,
   adminSetPaid,
   adminUploadOrderPhoto,
   type AdminOrder,
   type AdminStatus,
+  type PendingReferral,
 } from "@/lib/admin.functions";
 import { compressImage } from "@/lib/image";
 
