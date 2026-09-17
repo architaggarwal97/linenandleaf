@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Wallet, MessageCircle, Info, ArrowRight, ShoppingBag } from "lucide-react";
+import { Wallet, MessageCircle, Info, ArrowRight, ShoppingBag, Smartphone, Copy, Check } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
@@ -8,6 +8,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { useSavedBasket, saveBasket, type SavedBasket } from "@/lib/basket";
 import { useWallet } from "@/lib/wallet-client";
 import { WalletAccount } from "@/components/site/WalletAccount";
+import { site, upiPaymentLink } from "@/lib/site";
 
 const TITLE = "Wallet — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -59,6 +60,7 @@ function WalletPage() {
   const [amount, setAmount] = useState<number>(1000);
   const [custom, setCustom] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
+  const [upiCopied, setUpiCopied] = useState(false);
   const wallet = useWallet();
 
   const activeAmount = isCustom ? Number(custom) || 0 : amount;
