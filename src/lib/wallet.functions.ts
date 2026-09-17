@@ -81,7 +81,7 @@ function toTransaction(row: Record<string, unknown>): WalletTransaction {
 async function loadState(phone: string): Promise<WalletState> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const [{ data: balanceRow }, { data: rows }] = await Promise.all([
+  const [{ data: balanceRow }, { data: rows }, { data: referralRows }] = await Promise.all([
     supabaseAdmin.from("wallet_balances").select("balance").eq("phone", phone).maybeSingle(),
     supabaseAdmin
       .from("wallet_transactions")
@@ -89,10 +89,29 @@ async function loadState(phone: string): Promise<WalletState> {
       .eq("phone", phone)
       .order("created_at", { ascending: false })
       .limit(50),
+    supabaseAdmin
+      .from("referrals")
+      .select("id, status, referring_phone, referred_phone, created_at, completed_at")
+      .or(`referring_phone.eq.${phone},referred_phone.eq.${phone}`)
+      .order("created_at", { ascending: false })
+      .limit(50),
   ]);
+
+  const referrals: WalletReferral[] = (referralRows ?? []).map((r) => {
+    const isReferrer = r.referring_phone === phone;
+    return {
+      id: r.id,
+      status: r.status === "completed" ? "completed" : "pending",
+      role: isReferrer ? "referrer" : "referred",
+      other_phone: isReferrer ? r.referred_phone : r.referring_phone,
+      created_at: r.created_at,
+      completed_at: r.completed_at,
+    };
+  });
 
   return {
     phone,
+    referrals,
     balance: Number(balanceRow?.balance ?? 0),
     transactions: (rows ?? []).map((r) => toTransaction(r as Record<string, unknown>)),
   };
