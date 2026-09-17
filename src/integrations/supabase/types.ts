@@ -74,6 +74,33 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          referred_phone: string
+          referring_phone: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_phone: string
+          referring_phone: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_phone?: string
+          referring_phone?: string
+          status?: string
+        }
+        Relationships: []
+      }
       wallet_balances: {
         Row: {
           balance: number
@@ -209,6 +236,10 @@ export type Database = {
     }
     Functions: {
       order_apply_cashback: { Args: { _order_id: string }; Returns: number }
+      referral_complete: {
+        Args: { _credit?: number; _referral_id: string }
+        Returns: string
+      }
       wallet_credit: {
         Args: { _amount: number; _bonus: number; _note: string; _phone: string }
         Returns: number
