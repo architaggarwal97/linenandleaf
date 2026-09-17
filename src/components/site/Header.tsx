@@ -94,13 +94,13 @@ export function Header() {
                     {link.label}
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-300 ${
-                        aboutOpen ? "rotate-180" : ""
+                        openMenu === link.to ? "rotate-180" : ""
                       }`}
                     />
                   </Link>
                   <div
                     className={`absolute left-1/2 -translate-x-1/2 top-full pt-2 transition-all duration-200 ${
-                      aboutOpen
+                      openMenu === link.to
                         ? "opacity-100 translate-y-0 visible"
                         : "opacity-0 -translate-y-2 invisible"
                     }`}
