@@ -8,8 +8,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const aboutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const menuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
   const { location } = useRouterState();
@@ -51,13 +51,13 @@ export function Header() {
   const isParentActive = (link: (typeof links)[number]) =>
     isActive(link.to) || (link.children?.some((c) => isActive(c.to)) ?? false);
 
-  const openAbout = () => {
-    if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current);
-    setAboutOpen(true);
+  const openMenuFor = (to: string) => {
+    if (menuTimeoutRef.current) clearTimeout(menuTimeoutRef.current);
+    setOpenMenu(to);
   };
 
-  const closeAbout = () => {
-    aboutTimeoutRef.current = setTimeout(() => setAboutOpen(false), 150);
+  const closeMenu = () => {
+    menuTimeoutRef.current = setTimeout(() => setOpenMenu(null), 150);
   };
 
   return (
@@ -78,10 +78,10 @@ export function Header() {
                 <div
                   key={link.to}
                   className="relative after:absolute after:top-full after:left-0 after:right-0 after:h-3 after:bg-transparent after:content-['']"
-                  onMouseEnter={openAbout}
-                  onMouseLeave={closeAbout}
-                  onFocus={openAbout}
-                  onBlur={closeAbout}
+                  onMouseEnter={() => openMenuFor(link.to)}
+                  onMouseLeave={closeMenu}
+                  onFocus={() => openMenuFor(link.to)}
+                  onBlur={closeMenu}
                 >
                   <Link
                     to={link.to}
@@ -94,13 +94,13 @@ export function Header() {
                     {link.label}
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-300 ${
-                        aboutOpen ? "rotate-180" : ""
+                        openMenu === link.to ? "rotate-180" : ""
                       }`}
                     />
                   </Link>
                   <div
                     className={`absolute left-1/2 -translate-x-1/2 top-full pt-2 transition-all duration-200 ${
-                      aboutOpen
+                      openMenu === link.to
                         ? "opacity-100 translate-y-0 visible"
                         : "opacity-0 -translate-y-2 invisible"
                     }`}
