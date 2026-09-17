@@ -190,6 +190,14 @@ function ContactPage() {
                   Save this code — quote it on WhatsApp or over the phone and we'll pull up your order
                   instantly.
                 </p>
+                <ol className="mt-3 space-y-1 text-sm font-light list-decimal pl-5">
+                  <li>We confirm your slot on WhatsApp within working hours.</li>
+                  <li>Our rider collects your items from your door — free pickup.</li>
+                  <li>Follow progress anytime on the Track Order page using this reference.</li>
+                  <li>
+                    Pay on delivery by UPI ({site.upiId}) or from your Linen &amp; Leaf wallet.
+                  </li>
+                </ol>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"

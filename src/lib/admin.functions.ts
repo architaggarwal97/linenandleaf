@@ -812,6 +812,12 @@ export type SheetFeedEntry = {
   title: string;
   subtitle: string;
   meta: string;
+  reference?: string;
+  status?: string;
+  amount?: number | null;
+  cashback?: number | null;
+  paid?: boolean;
+  whatsappUrl?: string;
 };
 
 export type SheetFeed = {
@@ -822,7 +828,7 @@ export type SheetFeed = {
   fetchedAt: string;
 };
 
-type RowMapper = (row: string[]) => { title: string; subtitle: string };
+type RowMapper = (row: string[]) => { title: string; subtitle: string } & Partial<SheetFeedEntry>;
 
 function feedFrom(tab: string, rows: string[][], map: RowMapper, limit = 8): SheetFeedEntry[] {
   const body = rows.slice(1).filter((r) => r.some((c) => (c ?? "").trim() !== ""));
@@ -830,8 +836,9 @@ function feedFrom(tab: string, rows: string[][], map: RowMapper, limit = 8): She
     .slice(-limit)
     .reverse()
     .map((row, i) => {
-      const { title, subtitle } = map(row);
+      const { title, subtitle, ...rest } = map(row);
       return {
+        ...rest,
         key: `${tab}-${body.length - i}`,
         title: title || "—",
         subtitle,
@@ -852,11 +859,45 @@ export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
     const available = Boolean(
       orders?.rows.length || topUps?.rows.length || referrals?.rows.length,
     );
-    return {
-      orders: feedFrom("orders", orders?.rows ?? [], (r) => ({
-        title: `${(r[1] ?? "").trim()} · ${(r[2] ?? "").trim()}`.replace(/^ · | · $/, ""),
+    const orderEntries = feedFrom("orders", orders?.rows ?? [], (r) => {
+      const reference = (r[1] ?? "").trim();
+      const phone = (r[3] ?? "").replace(/\D/g, "");
+      return {
+        title: `${reference} · ${(r[2] ?? "").trim()}`.replace(/^ · | · $/, ""),
         subtitle: [(r[3] ?? "").trim(), (r[5] ?? "").trim()].filter(Boolean).join(" · "),
-      })),
+        reference,
+        ...(phone.length >= 10
+          ? {
+              whatsappUrl: `https://wa.me/${phone.length === 10 ? `91${phone}` : phone}?text=${encodeURIComponent(
+                `Hi! This is Linen & Leaf. Your pickup is confirmed.\nReference: ${reference}\n\nNext steps:\n1. Our rider collects your items at the chosen slot.\n2. We share updates as cleaning progresses — track anytime at https://linenandleaf.lovable.app/track\n3. Pay on delivery by UPI (9818661308@ptyes) or from your wallet.`,
+              )}`,
+            }
+          : {}),
+      };
+    });
+
+    if (orderEntries.length) {
+      const refs = orderEntries.map((e) => e.reference).filter((v): v is string => Boolean(v));
+      if (refs.length) {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: liveRows } = await supabaseAdmin
+          .from("orders")
+          .select("order_reference, status, paid, order_amount, cashback_amount")
+          .in("order_reference", refs);
+        const byRef = new Map((liveRows ?? []).map((row) => [row.order_reference, row]));
+        for (const entry of orderEntries) {
+          const live = entry.reference ? byRef.get(entry.reference) : undefined;
+          if (!live) continue;
+          entry.status = live.status;
+          entry.paid = live.paid;
+          entry.amount = live.order_amount;
+          entry.cashback = live.cashback_amount;
+        }
+      }
+    }
+
+    return {
+      orders: orderEntries,
       topUps: feedFrom("topups", topUps?.rows ?? [], (r) => ({
         title: `₹${(r[2] ?? "").trim()} top-up`,
         subtitle: [(r[1] ?? "").trim(), r[3] ? `bonus ₹${r[3]}` : ""]
