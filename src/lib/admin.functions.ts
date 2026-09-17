@@ -913,3 +913,79 @@ export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
     };
   },
 );
+
+// ---------- Pending wallet notifications (cashback / referral bonuses) ----------
+
+export type PendingNotification = {
+  id: string;
+  phone: string;
+  amount: number;
+  kind: "cashback" | "referral";
+  note: string | null;
+  created_at: string;
+  balance: number;
+  whatsappUrl: string;
+};
+
+export const adminListPendingNotifications = createServerFn({ method: "POST" }).handler(
+  async (): Promise<PendingNotification[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("wallet_transactions")
+      .select("id, phone, amount, bonus, note, created_at, type, resulting_balance")
+      .is("notified_at", null)
+      .in("type", ["cashback", "referral"])
+      .eq("status", "confirmed")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error("Could not load pending notifications.");
+
+    const phones = [...new Set((rows ?? []).map((r) => r.phone))];
+    const balances = new Map<string, number>();
+    if (phones.length) {
+      const { data: balanceRows } = await supabaseAdmin
+        .from("wallet_balances")
+        .select("phone, balance")
+        .in("phone", phones);
+      for (const b of balanceRows ?? []) balances.set(b.phone, Number(b.balance));
+    }
+
+    return (rows ?? []).map((r) => {
+      const kind = r.type === "referral" ? ("referral" as const) : ("cashback" as const);
+      const amount = Number(r.amount ?? 0) + Number(r.bonus ?? 0);
+      const balance = balances.get(r.phone) ?? Number(r.resulting_balance ?? 0);
+      const reason = kind === "referral" ? "a referral bonus" : "cashback";
+      const text = `Good news — you just earned ₹${amount} ${reason} on your Linen & Leaf wallet! Current balance: ₹${balance}.`;
+      return {
+        id: r.id,
+        phone: r.phone,
+        amount,
+        kind,
+        note: r.note,
+        created_at: r.created_at,
+        balance,
+        whatsappUrl: `https://wa.me/91${r.phone}?text=${encodeURIComponent(text)}`,
+      };
+    });
+  },
+);
+
+export const adminMarkNotified = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing transaction id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("wallet_transactions")
+      .update({ notified_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .is("notified_at", null);
+    if (error) throw new Error("Could not mark that as notified.");
+    return { ok: true as const };
+  });
