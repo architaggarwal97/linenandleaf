@@ -9,7 +9,7 @@ import {
   type WalletState,
 } from "@/lib/wallet.functions";
 
-const EMPTY: WalletState = { phone: null, balance: 0, transactions: [] };
+const EMPTY: WalletState = { phone: null, balance: 0, transactions: [], referrals: [] };
 
 export function useWallet() {
   const load = useServerFn(walletStateFn);

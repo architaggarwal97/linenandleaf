@@ -210,7 +210,7 @@ export const walletLogout = createServerFn({ method: "POST" }).handler(async () 
 export const walletState = createServerFn({ method: "GET" }).handler(
   async (): Promise<WalletState> => {
     const phone = await currentPhone();
-    if (!phone) return { phone: null, balance: 0, transactions: [] };
+    if (!phone) return { phone: null, balance: 0, transactions: [], referrals: [] };
     return loadState(phone);
   },
 );
