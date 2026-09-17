@@ -8,8 +8,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
-  const aboutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const menuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const links = navLinks.filter((l) => l.to !== "/" && l.to !== "/contact");
   const { location } = useRouterState();
@@ -51,13 +51,13 @@ export function Header() {
   const isParentActive = (link: (typeof links)[number]) =>
     isActive(link.to) || (link.children?.some((c) => isActive(c.to)) ?? false);
 
-  const openAbout = () => {
-    if (aboutTimeoutRef.current) clearTimeout(aboutTimeoutRef.current);
-    setAboutOpen(true);
+  const openMenuFor = (to: string) => {
+    if (menuTimeoutRef.current) clearTimeout(menuTimeoutRef.current);
+    setOpenMenu(to);
   };
 
-  const closeAbout = () => {
-    aboutTimeoutRef.current = setTimeout(() => setAboutOpen(false), 150);
+  const closeMenu = () => {
+    menuTimeoutRef.current = setTimeout(() => setOpenMenu(null), 150);
   };
 
   return (
