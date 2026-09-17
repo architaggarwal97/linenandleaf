@@ -1,0 +1,2 @@
+REVOKE ALL ON FUNCTION public.wallet_credit_typed(text, numeric, numeric, text, text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.wallet_credit_typed(text, numeric, numeric, text, text) TO service_role;

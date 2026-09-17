@@ -201,6 +201,7 @@ export type Database = {
           created_at: string
           id: string
           note: string | null
+          notified_at: string | null
           phone: string
           resulting_balance: number | null
           status: string
@@ -212,6 +213,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string | null
+          notified_at?: string | null
           phone: string
           resulting_balance?: number | null
           status?: string
@@ -223,6 +225,7 @@ export type Database = {
           created_at?: string
           id?: string
           note?: string | null
+          notified_at?: string | null
           phone?: string
           resulting_balance?: number | null
           status?: string
@@ -242,6 +245,16 @@ export type Database = {
       }
       wallet_credit: {
         Args: { _amount: number; _bonus: number; _note: string; _phone: string }
+        Returns: number
+      }
+      wallet_credit_typed: {
+        Args: {
+          _amount: number
+          _bonus: number
+          _note: string
+          _phone: string
+          _type: string
+        }
         Returns: number
       }
       wallet_deduct: {
