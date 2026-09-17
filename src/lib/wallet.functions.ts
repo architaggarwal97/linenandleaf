@@ -57,7 +57,11 @@ async function currentPhone(): Promise<string | null> {
 }
 
 function toTransaction(row: Record<string, unknown>): WalletTransaction {
-  const type = String(row["type"]) === "deduction" ? "deduction" : "topup";
+  const rawType = String(row["type"]);
+  const type: WalletTransaction["type"] =
+    rawType === "deduction" || rawType === "cashback" || rawType === "referral"
+      ? rawType
+      : "topup";
   const rawStatus = String(row["status"]);
   const status =
     rawStatus === "pending" || rawStatus === "cancelled"
