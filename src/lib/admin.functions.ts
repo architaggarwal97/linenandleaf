@@ -23,10 +23,12 @@ export type AdminOrder = {
   preferred_window: string | null;
   pickup_photo_url: string | null;
   delivery_photo_url: string | null;
+  order_amount: number | null;
+  cashback_amount: number | null;
 };
 
 const ORDER_COLUMNS =
-  "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url";
+  "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url, order_amount, cashback_amount";
 
 type OrderRow = Omit<AdminOrder, "status"> & { status: string };
 
