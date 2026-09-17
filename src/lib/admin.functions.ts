@@ -822,17 +822,22 @@ export type SheetFeed = {
   fetchedAt: string;
 };
 
-function feedFrom(tab: string, rows: string[][], limit = 8): SheetFeedEntry[] {
+type RowMapper = (row: string[]) => { title: string; subtitle: string };
+
+function feedFrom(tab: string, rows: string[][], map: RowMapper, limit = 8): SheetFeedEntry[] {
   const body = rows.slice(1).filter((r) => r.some((c) => (c ?? "").trim() !== ""));
   return body
     .slice(-limit)
     .reverse()
-    .map((row, i) => ({
-      key: `${tab}-${body.length - i}`,
-      title: (row[1] ?? row[0] ?? "—").trim() || "—",
-      subtitle: (row[2] ?? "").trim(),
-      meta: (row[0] ?? "").trim(),
-    }));
+    .map((row, i) => {
+      const { title, subtitle } = map(row);
+      return {
+        key: `${tab}-${body.length - i}`,
+        title: title || "—",
+        subtitle,
+        meta: (row[0] ?? "").trim(),
+      };
+    });
 }
 
 export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
@@ -848,9 +853,20 @@ export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
       orders?.rows.length || topUps?.rows.length || referrals?.rows.length,
     );
     return {
-      orders: feedFrom("orders", orders?.rows ?? []),
-      topUps: feedFrom("topups", topUps?.rows ?? []),
-      referrals: feedFrom("referrals", referrals?.rows ?? []),
+      orders: feedFrom("orders", orders?.rows ?? [], (r) => ({
+        title: `${(r[1] ?? "").trim()} · ${(r[2] ?? "").trim()}`.replace(/^ · | · $/, ""),
+        subtitle: [(r[3] ?? "").trim(), (r[5] ?? "").trim()].filter(Boolean).join(" · "),
+      })),
+      topUps: feedFrom("topups", topUps?.rows ?? [], (r) => ({
+        title: `₹${(r[2] ?? "").trim()} top-up`,
+        subtitle: [(r[1] ?? "").trim(), r[3] ? `bonus ₹${r[3]}` : ""]
+          .filter(Boolean)
+          .join(" · "),
+      })),
+      referrals: feedFrom("referrals", referrals?.rows ?? [], (r) => ({
+        title: `${(r[1] ?? "").trim()} → ${(r[3] ?? "").trim()}`,
+        subtitle: [(r[2] ?? "").trim(), (r[4] ?? "").trim()].filter(Boolean).join(" · "),
+      })),
       available,
       fetchedAt: new Date().toISOString(),
     };
