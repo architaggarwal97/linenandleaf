@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, ArrowRight } from "lucide-react";
-import { adminStats, type AdminStats } from "@/lib/admin.functions";
+import { Loader2, ArrowRight, RefreshCw } from "lucide-react";
+import {
+  adminStats,
+  adminSheetFeed,
+  type AdminStats,
+  type SheetFeed,
+  type SheetFeedEntry,
+} from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
@@ -20,16 +26,40 @@ function AdminOverview() {
   const loadStats = useServerFn(adminStats);
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const loadFeed = useServerFn(adminSheetFeed);
+  const [feed, setFeed] = useState<SheetFeed | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     let active = true;
-    loadStats()
-      .then((res) => active && setStats(res))
-      .catch(() => active && setError("Could not load the dashboard."));
+
+    const refresh = async () => {
+      if (typeof document !== "undefined" && document.hidden) return;
+      setSyncing(true);
+      try {
+        const [nextStats, nextFeed] = await Promise.all([
+          loadStats(),
+          loadFeed().catch(() => null),
+        ]);
+        if (!active) return;
+        setStats(nextStats);
+        setError(null);
+        if (nextFeed) setFeed(nextFeed);
+      } catch {
+        if (active && !stats) setError("Could not load the dashboard.");
+      } finally {
+        if (active) setSyncing(false);
+      }
+    };
+
+    void refresh();
+    const timer = setInterval(() => void refresh(), 15000);
     return () => {
       active = false;
+      clearInterval(timer);
     };
-  }, [loadStats]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadStats, loadFeed]);
 
   if (error) return <p className="mt-8 text-sm text-rose-600">{error}</p>;
 
@@ -98,6 +128,70 @@ function AdminOverview() {
           Manage wallet credits <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
+
+      <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-slate-800">Live sheet activity</p>
+          <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${syncing ? "animate-spin text-teal-600" : ""}`}
+            />
+            {feed
+              ? `updated ${new Date(feed.fetchedAt).toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}`
+              : "syncing"}
+          </span>
+        </div>
+
+        {!feed ? (
+          <p className="mt-3 text-sm text-slate-500">Loading recent activity…</p>
+        ) : !feed.available ? (
+          <p className="mt-3 text-sm text-slate-500">
+            No sheet activity yet. New bookings, top-ups and referrals will appear here
+            automatically.
+          </p>
+        ) : (
+          <div className="mt-4 space-y-5">
+            <FeedGroup label="New bookings" entries={feed.orders} />
+            <FeedGroup label="Top-up requests" entries={feed.topUps} />
+            <FeedGroup label="Referrals" entries={feed.referrals} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FeedGroup({ label, entries }: { label: string; entries: SheetFeedEntry[] }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      {entries.length === 0 ? (
+        <p className="mt-2 text-sm text-slate-400">Nothing yet.</p>
+      ) : (
+        <ul className="mt-2 space-y-2">
+          {entries.map((e) => (
+            <li key={e.key} className="rounded-2xl bg-slate-50 px-4 py-3">
+              <p className="text-sm font-semibold text-slate-800">{e.title}</p>
+              {e.subtitle ? (
+                <p className="mt-0.5 text-xs text-slate-500">{e.subtitle}</p>
+              ) : null}
+              {e.meta ? (
+                <p className="mt-0.5 text-[11px] text-slate-400">
+                  {new Date(e.meta).toLocaleString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
