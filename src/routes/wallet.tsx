@@ -6,6 +6,8 @@ import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
 import { useSavedBasket, saveBasket, type SavedBasket } from "@/lib/basket";
+import { useWallet } from "@/lib/wallet-client";
+import { WalletAccount } from "@/components/site/WalletAccount";
 
 const TITLE = "Wallet — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -57,6 +59,7 @@ function WalletPage() {
   const [amount, setAmount] = useState<number>(1000);
   const [custom, setCustom] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
+  const wallet = useWallet();
 
   const activeAmount = isCustom ? Number(custom) || 0 : amount;
   const bonus = Math.round(activeAmount * 0.1);
@@ -82,6 +85,9 @@ function WalletPage() {
 
   const topUp = () => {
     if (!isValid) return;
+    if (wallet.loggedIn) {
+      void wallet.requestTopUp(activeAmount).catch((err) => console.error(err));
+    }
     const basketPart = basket
       ? `\n\nI'd like to use this wallet credit toward the following basket:\n${basket.lines
           .map((line) =>
@@ -109,6 +115,8 @@ function WalletPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <WalletAccount wallet={wallet} />
+
           {ready && basket ? (
             <Reveal className="mb-8 bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
               <div className="flex items-center gap-3 mb-6">
@@ -291,7 +299,9 @@ function WalletPage() {
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <Info className="h-5 w-5 shrink-0 text-slate-400 mt-0.5" />
               <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
-                No login required. Top-up is confirmed over WhatsApp.
+                {wallet.loggedIn
+                  ? "Your request is logged as pending. We credit your balance (plus the 10% bonus) as soon as the payment lands."
+                  : "Sign in above to track your balance. Top-up is confirmed over WhatsApp."}
               </p>
             </div>
           </Reveal>

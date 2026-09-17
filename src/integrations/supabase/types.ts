@@ -65,6 +65,30 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_balances: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wallet_entries: {
         Row: {
           amount: number
@@ -101,12 +125,88 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_login_codes: {
+        Row: {
+          attempts: number
+          code: string
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+        }
+        Insert: {
+          attempts?: number
+          code?: string
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          phone: string
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          bonus: number
+          created_at: string
+          id: string
+          note: string | null
+          phone: string
+          resulting_balance: number | null
+          status: string
+          type: string
+        }
+        Insert: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          phone: string
+          resulting_balance?: number | null
+          status?: string
+          type?: string
+        }
+        Update: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          phone?: string
+          resulting_balance?: number | null
+          status?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      wallet_credit: {
+        Args: { _amount: number; _bonus: number; _note: string; _phone: string }
+        Returns: number
+      }
+      wallet_deduct: {
+        Args: { _amount: number; _note: string; _phone: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

@@ -544,3 +544,171 @@ export const adminCreditReferral = createServerFn({ method: "POST" })
       eligible: false,
     };
   });
+
+// ---------- Wallet balances (real ledger) ----------
+
+export type PendingTopUp = {
+  id: string;
+  phone: string;
+  amount: number;
+  bonus: number;
+  created_at: string;
+  note: string | null;
+  balance: number;
+};
+
+export type LoginCodeRequest = {
+  id: string;
+  phone: string;
+  code: string;
+  created_at: string;
+  expires_at: string;
+};
+
+export const adminListPendingTopUps = createServerFn({ method: "POST" }).handler(
+  async (): Promise<PendingTopUp[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("wallet_transactions")
+      .select("id, phone, amount, bonus, created_at, note")
+      .eq("status", "pending")
+      .eq("type", "topup")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error("Could not load top-up requests.");
+
+    const phones = [...new Set((rows ?? []).map((r) => r.phone))];
+    const balances = new Map<string, number>();
+    if (phones.length) {
+      const { data: balanceRows } = await supabaseAdmin
+        .from("wallet_balances")
+        .select("phone, balance")
+        .in("phone", phones);
+      for (const b of balanceRows ?? []) balances.set(b.phone, Number(b.balance));
+    }
+
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      phone: r.phone,
+      amount: Number(r.amount),
+      bonus: Number(r.bonus),
+      created_at: r.created_at,
+      note: r.note,
+      balance: balances.get(r.phone) ?? 0,
+    }));
+  },
+);
+
+export const adminConfirmTopUp = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown; amount?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    const amount = Math.round(Number(input?.amount ?? 0));
+    if (!id) throw new Error("Missing request id.");
+    if (!Number.isFinite(amount) || amount <= 0) throw new Error("Enter the amount received.");
+    return { id, amount };
+  })
+  .handler(async ({ data }): Promise<{ phone: string; balance: number }> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: pending, error: readError } = await supabaseAdmin
+      .from("wallet_transactions")
+      .select("id, phone, status")
+      .eq("id", data.id)
+      .single();
+    if (readError || !pending) throw new Error("Request not found.");
+    if (pending.status !== "pending") throw new Error("This request was already handled.");
+
+    // Claim the request first so a double tap can't credit twice.
+    const { data: claimed, error: claimError } = await supabaseAdmin
+      .from("wallet_transactions")
+      .update({ status: "cancelled", note: "Confirmed by staff" })
+      .eq("id", data.id)
+      .eq("status", "pending")
+      .select("id")
+      .maybeSingle();
+    if (claimError || !claimed) throw new Error("This request was already handled.");
+
+    const bonus = Math.round(data.amount * 0.1);
+    const { data: balance, error } = await supabaseAdmin.rpc("wallet_credit", {
+      _phone: pending.phone,
+      _amount: data.amount,
+      _bonus: bonus,
+      _note: `Top-up confirmed (₹${data.amount} + ₹${bonus} bonus)`,
+    });
+    if (error) {
+      console.error("Top-up credit failed", error);
+      throw new Error("Could not credit the wallet.");
+    }
+
+    // The confirmed credit is its own ledger row; drop the claimed request.
+    await supabaseAdmin.from("wallet_transactions").delete().eq("id", data.id);
+
+    return { phone: pending.phone, balance: Number(balance) };
+  });
+
+export const adminCancelTopUp = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing request id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("wallet_transactions")
+      .update({ status: "cancelled" })
+      .eq("id", data.id)
+      .eq("status", "pending");
+    if (error) throw new Error("Could not cancel that request.");
+    return { ok: true as const };
+  });
+
+export const adminListLoginCodes = createServerFn({ method: "POST" }).handler(
+  async (): Promise<LoginCodeRequest[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("wallet_login_codes")
+      .select("id, phone, code, created_at, expires_at")
+      .is("consumed_at", null)
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (error) throw new Error("Could not load sign-in codes.");
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      phone: r.phone,
+      code: r.code,
+      created_at: r.created_at,
+      expires_at: r.expires_at,
+    }));
+  },
+);
+
+export const adminCreditWalletBalance = createServerFn({ method: "POST" })
+  .inputValidator((input: { phone?: unknown; amount?: unknown; bonus?: unknown; note?: unknown }) => {
+    const phone =
+      typeof input?.phone === "string" ? input.phone.replace(/\D/g, "").slice(-10) : "";
+    const amount = Math.round(Number(input?.amount ?? 0));
+    const bonus = Math.round(Number(input?.bonus ?? 0));
+    const note = typeof input?.note === "string" ? input.note.trim().slice(0, 200) : "";
+    if (phone.length !== 10) throw new Error("Enter a valid 10-digit number.");
+    if (!Number.isFinite(amount) || amount < 0) throw new Error("Enter a valid amount.");
+    return { phone, amount, bonus: Number.isFinite(bonus) && bonus > 0 ? bonus : 0, note };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: balance, error } = await supabaseAdmin.rpc("wallet_credit", {
+      _phone: data.phone,
+      _amount: data.amount,
+      _bonus: data.bonus,
+      _note: data.note || "Manual credit",
+    });
+    if (error) throw new Error("Could not credit the wallet.");
+    return { phone: data.phone, balance: Number(balance) };
+  });

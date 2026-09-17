@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageCircle, Phone, MapPin, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
+import { walletPayForOrder } from "@/lib/wallet.functions";
+import { useWallet } from "@/lib/wallet-client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
@@ -69,6 +71,39 @@ function ContactPage() {
   });
 
   const saveOrder = useServerFn(createOrder);
+  const wallet = useWallet();
+  const payWallet = useServerFn(walletPayForOrder);
+  const [payAmount, setPayAmount] = useState("");
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+  const [payMessage, setPayMessage] = useState<string | null>(null);
+
+  const payFromWallet = async () => {
+    const amount = Number(payAmount);
+    if (!amount || paying) return;
+    setPaying(true);
+    setPayError(null);
+    try {
+      const res = await payWallet({
+        data: { amount, note: reference ? `Order ${reference}` : "Order payment" },
+      });
+      if (!res.ok) {
+        setPayError("That's more than your wallet balance.");
+        if (res.state) await wallet.refresh();
+      } else {
+        await wallet.refresh();
+        setPayMessage(
+          `₹${amount.toLocaleString("en-IN")} paid from your wallet. New balance ₹${Math.round(
+            res.state?.balance ?? 0,
+          ).toLocaleString("en-IN")}.`,
+        );
+      }
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : "Could not take that payment.");
+    } finally {
+      setPaying(false);
+    }
+  };
   const [saving, setSaving] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -170,6 +205,41 @@ function ContactPage() {
                     Track this order
                   </Link>
                 </div>
+
+                {wallet.loggedIn && wallet.state.balance > 0 ? (
+                  <div className="mt-5 rounded-2xl border border-teal-200 bg-white/70 p-4">
+                    <p className="text-sm font-medium text-teal-900">
+                      Pay from your wallet — balance ₹
+                      {Math.round(wallet.state.balance).toLocaleString("en-IN")}
+                    </p>
+                    {payMessage ? (
+                      <p className="mt-2 text-sm font-light text-teal-800">{payMessage}</p>
+                    ) : (
+                      <>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            value={payAmount}
+                            onChange={(e) => setPayAmount(e.target.value.replace(/\D/g, ""))}
+                            inputMode="numeric"
+                            placeholder="Amount to pay"
+                            className="w-full rounded-xl border border-teal-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                          />
+                          <button
+                            type="button"
+                            disabled={paying || !Number(payAmount)}
+                            onClick={() => void payFromWallet()}
+                            className="shrink-0 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                          >
+                            {paying ? "Paying…" : "Pay"}
+                          </button>
+                        </div>
+                        {payError ? (
+                          <p className="mt-2 text-sm text-rose-600">{payError}</p>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
+                ) : null}
               </div>
             ) : null}
             <form onSubmit={submit} className="space-y-5">

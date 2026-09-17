@@ -1,0 +1,1 @@
+ALTER TABLE public.wallet_login_codes ADD COLUMN code text NOT NULL DEFAULT '';
