@@ -355,7 +355,7 @@ function Home() {
               Prepay and get 10% more to spend.
             </h2>
             <p className="text-teal-100/80 text-base sm:text-lg max-w-2xl mx-auto font-light mb-8 leading-relaxed">
-              Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order.
+              Add money to your Linen & Leaf wallet and we'll credit a 10% bonus on top — usable on every service, every order. Sign in with your WhatsApp number to check your balance or top up.
             </p>
             <Link
               to="/wallet"
@@ -364,7 +364,7 @@ function Home() {
               Top Up Now <ArrowRight className="h-5 w-5" />
             </Link>
             <p className="mt-6 text-xs sm:text-sm text-teal-200/60 font-light">
-              No login required. Top-up is confirmed over WhatsApp.
+              Your wallet balance, top-ups and rewards all live in one place.
             </p>
           </Reveal>
         </div>
