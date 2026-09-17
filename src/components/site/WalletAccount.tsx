@@ -23,6 +23,8 @@ function money(value: number) {
 const TYPE_LABEL: Record<string, string> = {
   topup: "Top-up",
   deduction: "Paid from wallet",
+  cashback: "Cashback earned",
+  referral: "Referral bonus",
 };
 
 export function WalletAccount({ wallet }: Props) {
