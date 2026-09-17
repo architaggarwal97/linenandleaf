@@ -170,6 +170,41 @@ function ContactPage() {
                     Track this order
                   </Link>
                 </div>
+
+                {wallet.loggedIn && wallet.state.balance > 0 ? (
+                  <div className="mt-5 rounded-2xl border border-teal-200 bg-white/70 p-4">
+                    <p className="text-sm font-medium text-teal-900">
+                      Pay from your wallet — balance ₹
+                      {Math.round(wallet.state.balance).toLocaleString("en-IN")}
+                    </p>
+                    {payMessage ? (
+                      <p className="mt-2 text-sm font-light text-teal-800">{payMessage}</p>
+                    ) : (
+                      <>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            value={payAmount}
+                            onChange={(e) => setPayAmount(e.target.value.replace(/\D/g, ""))}
+                            inputMode="numeric"
+                            placeholder="Amount to pay"
+                            className="w-full rounded-xl border border-teal-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                          />
+                          <button
+                            type="button"
+                            disabled={paying || !Number(payAmount)}
+                            onClick={() => void payFromWallet()}
+                            className="shrink-0 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                          >
+                            {paying ? "Paying…" : "Pay"}
+                          </button>
+                        </div>
+                        {payError ? (
+                          <p className="mt-2 text-sm text-rose-600">{payError}</p>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
+                ) : null}
               </div>
             ) : null}
             <form onSubmit={submit} className="space-y-5">
