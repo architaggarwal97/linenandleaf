@@ -31,9 +31,14 @@ export type NavLink = {
 
 export const navLinks: NavLink[] = [
   { to: "/", label: "Home" },
-  { to: "/services", label: "Services & Pricing" },
-  { to: "/how-it-works", label: "How It Works" },
-  { to: "/technology", label: "Technology & Process" },
+  {
+    to: "/technology",
+    label: "Technology & Process",
+    children: [
+      { to: "/services", label: "Services & Pricing" },
+      { to: "/how-it-works", label: "How It Works" },
+    ],
+  },
   { to: "/service-area", label: "Service Area" },
   {
     to: "/about",
