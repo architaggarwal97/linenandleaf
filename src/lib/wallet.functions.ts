@@ -241,6 +241,15 @@ export const walletRequestTopUp = createServerFn({ method: "POST" })
       throw new Error("Could not record your top-up request.");
     }
 
+    // Mirror the request to the Google Sheet (non-blocking).
+    const { appendSheetRow } = await import("@/lib/sheets.server");
+    void appendSheetRow("Top-ups", [
+      new Date().toISOString(),
+      phone,
+      data.amount,
+      Math.round(data.amount * 0.1),
+    ]);
+
     return loadState(phone);
   });
 

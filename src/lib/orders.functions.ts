@@ -59,6 +59,19 @@ export const createOrder = createServerFn({ method: "POST" })
       throw new Error("Could not save your booking. Please try again.");
     }
 
+    // Mirror the booking to the Google Sheet (non-blocking).
+    const { appendSheetRow } = await import("@/lib/sheets.server");
+    void appendSheetRow("Orders", [
+      new Date().toISOString(),
+      row.order_reference as string,
+      data.customer_name,
+      data.whatsapp_number,
+      data.pickup_address,
+      data.preferred_window ?? "",
+      data.service_notes ?? "",
+      data.referred_by_phone ?? "",
+    ]);
+
     if (data.referred_by_phone) {
       const referring = data.referred_by_phone.replace(/\D/g, "").slice(-10);
       const referred = String(row.whatsapp_number).replace(/\D/g, "").slice(-10);
