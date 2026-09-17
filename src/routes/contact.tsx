@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageCircle, Phone, MapPin, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { createOrder } from "@/lib/orders.functions";
+import { walletPayForOrder } from "@/lib/wallet.functions";
+import { useWallet } from "@/lib/wallet-client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { openWhatsApp, whatsappLink } from "@/lib/whatsapp";
