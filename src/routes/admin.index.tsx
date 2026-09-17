@@ -154,7 +154,7 @@ function AdminOverview() {
           </p>
         ) : (
           <div className="mt-4 space-y-5">
-            <FeedGroup label="New bookings" entries={feed.orders} />
+            <FeedGroup label="New bookings" entries={feed.orders} details />
             <FeedGroup label="Top-up requests" entries={feed.topUps} />
             <FeedGroup label="Referrals" entries={feed.referrals} />
           </div>
