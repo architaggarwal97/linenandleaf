@@ -156,7 +156,49 @@ export const adminAdvanceStatus = createServerFn({ method: "POST" })
       .select(ORDER_COLUMNS)
       .single();
     if (error || !row) throw new Error("Could not update the order.");
+
+    if (next === "delivered") {
+      return applyCashbackAndReload(data.id, row as OrderRow);
+    }
     return toAdminOrder(row as OrderRow);
+  });
+
+async function applyCashbackAndReload(id: string, fallback: OrderRow): Promise<AdminOrder> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin.rpc("order_apply_cashback", { _order_id: id });
+  if (error) {
+    console.error("Cashback failed", error);
+    return toAdminOrder(fallback);
+  }
+  const { data: fresh } = await supabaseAdmin
+    .from("orders")
+    .select(ORDER_COLUMNS)
+    .eq("id", id)
+    .single();
+  return toAdminOrder((fresh ?? fallback) as OrderRow);
+}
+
+export const adminSetOrderAmount = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown; amount?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing order id.");
+    const amount = Math.round(Number(input?.amount ?? 0));
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000) {
+      throw new Error("Enter a valid order amount.");
+    }
+    return { id, amount };
+  })
+  .handler(async ({ data }): Promise<AdminOrder> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("orders")
+      .update({ order_amount: data.amount })
+      .eq("id", data.id)
+      .select(ORDER_COLUMNS)
+      .single();
+    if (error || !row) throw new Error("Could not save the order amount.");
+    return applyCashbackAndReload(data.id, row as OrderRow);
   });
 
 export const adminSetPaid = createServerFn({ method: "POST" })
