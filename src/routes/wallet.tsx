@@ -59,6 +59,7 @@ function WalletPage() {
   const [amount, setAmount] = useState<number>(1000);
   const [custom, setCustom] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
+  const wallet = useWallet();
 
   const activeAmount = isCustom ? Number(custom) || 0 : amount;
   const bonus = Math.round(activeAmount * 0.1);
@@ -84,6 +85,9 @@ function WalletPage() {
 
   const topUp = () => {
     if (!isValid) return;
+    if (wallet.loggedIn) {
+      void wallet.requestTopUp(activeAmount).catch((err) => console.error(err));
+    }
     const basketPart = basket
       ? `\n\nI'd like to use this wallet credit toward the following basket:\n${basket.lines
           .map((line) =>
