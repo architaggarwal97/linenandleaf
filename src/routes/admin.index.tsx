@@ -100,6 +100,53 @@ function AdminOverview() {
     <div className="mt-5">
       <h1 className="font-display text-2xl font-bold text-slate-800">Overview</h1>
 
+      <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-slate-800">Pending notifications</p>
+          {pending && pending.length > 0 ? (
+            <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+              {pending.length} waiting
+            </span>
+          ) : null}
+        </div>
+
+        {!pending ? (
+          <p className="mt-3 text-sm text-slate-500">Loading…</p>
+        ) : pending.length === 0 ? (
+          <p className="mt-3 text-sm text-slate-500">
+            Everyone has been told about their cashback and referral bonuses.
+          </p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {pending.map((n) => (
+              <li key={n.id} className="rounded-2xl bg-slate-50 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-800">+91 {n.phone}</p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      ₹{n.amount.toLocaleString("en-IN")} ·{" "}
+                      {n.kind === "referral" ? "Referral bonus" : "Cashback"} · balance ₹
+                      {n.balance.toLocaleString("en-IN")}
+                    </p>
+                    {n.note ? (
+                      <p className="mt-0.5 text-[11px] text-slate-400">{n.note}</p>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void notify(n)}
+                    className="shrink-0 rounded-full bg-green-500 px-3 py-2 text-[11px] font-semibold text-white"
+                  >
+                    Notify via WhatsApp
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+
       <div className="mt-4 grid grid-cols-2 gap-3">
         {cards.map((c) => (
           <div
