@@ -218,6 +218,11 @@ function AdminOrdersPage() {
       </form>
 
       {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
+      {referralNote ? (
+        <p className="mt-4 rounded-2xl bg-teal-50 px-4 py-3 text-sm text-teal-800">
+          {referralNote}
+        </p>
+      ) : null}
 
       <div className="mt-5 space-y-4">
         {!loading && orders.length === 0 ? (
