@@ -859,11 +859,44 @@ export const adminSheetFeed = createServerFn({ method: "POST" }).handler(
     const available = Boolean(
       orders?.rows.length || topUps?.rows.length || referrals?.rows.length,
     );
-    return {
-      orders: feedFrom("orders", orders?.rows ?? [], (r) => ({
-        title: `${(r[1] ?? "").trim()} · ${(r[2] ?? "").trim()}`.replace(/^ · | · $/, ""),
+    const orderEntries = feedFrom("orders", orders?.rows ?? [], (r) => {
+      const reference = (r[1] ?? "").trim();
+      const phone = (r[3] ?? "").replace(/\D/g, "");
+      return {
+        title: `${reference} · ${(r[2] ?? "").trim()}`.replace(/^ · | · $/, ""),
         subtitle: [(r[3] ?? "").trim(), (r[5] ?? "").trim()].filter(Boolean).join(" · "),
-      })),
+        reference,
+        ...(phone.length >= 10
+          ? {
+              whatsappUrl: `https://wa.me/${phone.length === 10 ? `91${phone}` : phone}?text=${encodeURIComponent(
+                `Hi! This is Linen & Leaf. Your pickup is confirmed.\nReference: ${reference}\n\nNext steps:\n1. Our rider collects your items at the chosen slot.\n2. We share updates as cleaning progresses — track anytime at https://linenandleaf.lovable.app/track\n3. Pay on delivery by UPI (9818661308@ptyes) or from your wallet.`,
+              )}`,
+            }
+          : {}),
+      };
+    });
+
+    if (orderEntries.length) {
+      const refs = orderEntries.map((e) => e.reference).filter((v): v is string => Boolean(v));
+      if (refs.length) {
+        const { data: liveRows } = await supabaseAdmin
+          .from("orders")
+          .select("order_reference, status, paid, order_amount, cashback_amount")
+          .in("order_reference", refs);
+        const byRef = new Map((liveRows ?? []).map((row) => [row.order_reference, row]));
+        for (const entry of orderEntries) {
+          const live = entry.reference ? byRef.get(entry.reference) : undefined;
+          if (!live) continue;
+          entry.status = live.status;
+          entry.paid = live.paid;
+          entry.amount = live.order_amount;
+          entry.cashback = live.cashback_amount;
+        }
+      }
+    }
+
+    return {
+      orders: orderEntries,
       topUps: feedFrom("topups", topUps?.rows ?? [], (r) => ({
         title: `₹${(r[2] ?? "").trim()} top-up`,
         subtitle: [(r[1] ?? "").trim(), r[3] ? `bonus ₹${r[3]}` : ""]
