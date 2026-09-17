@@ -69,6 +69,39 @@ function ContactPage() {
   });
 
   const saveOrder = useServerFn(createOrder);
+  const wallet = useWallet();
+  const payWallet = useServerFn(walletPayForOrder);
+  const [payAmount, setPayAmount] = useState("");
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+  const [payMessage, setPayMessage] = useState<string | null>(null);
+
+  const payFromWallet = async () => {
+    const amount = Number(payAmount);
+    if (!amount || paying) return;
+    setPaying(true);
+    setPayError(null);
+    try {
+      const res = await payWallet({
+        data: { amount, note: reference ? `Order ${reference}` : "Order payment" },
+      });
+      if (!res.ok) {
+        setPayError("That's more than your wallet balance.");
+        if (res.state) await wallet.refresh();
+      } else {
+        await wallet.refresh();
+        setPayMessage(
+          `₹${amount.toLocaleString("en-IN")} paid from your wallet. New balance ₹${Math.round(
+            res.state?.balance ?? 0,
+          ).toLocaleString("en-IN")}.`,
+        );
+      }
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : "Could not take that payment.");
+    } finally {
+      setPaying(false);
+    }
+  };
   const [saving, setSaving] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
