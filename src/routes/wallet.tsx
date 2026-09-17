@@ -307,13 +307,61 @@ function WalletPage() {
               {basket ? "Top Up & Confirm Basket via WhatsApp" : "Top Up via WhatsApp"}
             </button>
 
+            {/* Pay via UPI */}
+            <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-5 sm:p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+                  <Smartphone className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-semibold text-slate-900">Or pay by UPI</p>
+                  <p className="text-xs sm:text-sm text-slate-500 font-light">
+                    Paytm, GPay, PhonePe or any UPI app — to our Paytm UPI ID.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={() => void copyUpi()}
+                  className="flex flex-1 items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-left transition-colors hover:border-teal-300"
+                  aria-label={`Copy UPI ID ${site.upiId}`}
+                >
+                  <span>
+                    <span className="block text-xs text-slate-400 font-medium">UPI ID</span>
+                    <span className="block font-mono text-base font-semibold text-slate-900">{site.upiId}</span>
+                  </span>
+                  {upiCopied ? (
+                    <Check className="h-5 w-5 shrink-0 text-teal-600" />
+                  ) : (
+                    <Copy className="h-5 w-5 shrink-0 text-slate-400" />
+                  )}
+                </button>
+                <a
+                  href={upiPaymentLink(isValid ? activeAmount : undefined, "Linen & Leaf wallet top-up")}
+                  className={`flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all ${
+                    isValid
+                      ? "bg-teal-700 text-white hover:bg-teal-800"
+                      : "bg-teal-700/60 text-white/80"
+                  }`}
+                >
+                  <Smartphone className="h-4 w-4" />
+                  Open UPI app{isValid ? ` · ${formatCurrency(activeAmount)}` : ""}
+                </a>
+              </div>
+              <p className="mt-3 text-xs text-slate-400 font-light">
+                Send the payment, then confirm below or on WhatsApp — we credit your balance (plus the 10% bonus) as
+                soon as it lands.
+              </p>
+            </div>
+
             {/* Terms */}
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <Info className="h-5 w-5 shrink-0 text-slate-400 mt-0.5" />
               <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
                 {wallet.loggedIn
-                  ? "Your request is logged as pending. We credit your balance (plus the 10% bonus) as soon as the payment lands."
-                  : "Sign in above to track your balance. Top-up is confirmed over WhatsApp."}
+                  ? "Your request is logged as pending. Pay by UPI or cash on pickup — we credit your balance (plus the 10% bonus) as soon as the payment lands."
+                  : "Sign in above to track your balance. Pay by UPI to the ID above, or confirm over WhatsApp."}
               </p>
             </div>
           </Reveal>
