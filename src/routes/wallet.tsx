@@ -115,6 +115,8 @@ function WalletPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <WalletAccount wallet={wallet} />
+
           {ready && basket ? (
             <Reveal className="mb-8 bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
               <div className="flex items-center gap-3 mb-6">
@@ -297,7 +299,9 @@ function WalletPage() {
             <div className="mt-6 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
               <Info className="h-5 w-5 shrink-0 text-slate-400 mt-0.5" />
               <p className="text-xs sm:text-sm text-slate-500 font-light leading-relaxed">
-                No login required. Top-up is confirmed over WhatsApp.
+                {wallet.loggedIn
+                  ? "Your request is logged as pending. We credit your balance (plus the 10% bonus) as soon as the payment lands."
+                  : "Sign in above to track your balance. Top-up is confirmed over WhatsApp."}
               </p>
             </div>
           </Reveal>
