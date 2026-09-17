@@ -7,6 +7,7 @@ import {
   adminListWallets,
   type WalletCustomer,
 } from "@/lib/admin.functions";
+import { AdminTopUps } from "@/components/site/AdminTopUps";
 
 export const Route = createFileRoute("/admin/wallet")({
   component: AdminWalletPage,
