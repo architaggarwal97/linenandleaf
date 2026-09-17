@@ -828,7 +828,7 @@ export type SheetFeed = {
   fetchedAt: string;
 };
 
-type RowMapper = (row: string[]) => { title: string; subtitle: string };
+type RowMapper = (row: string[]) => { title: string; subtitle: string } & Partial<SheetFeedEntry>;
 
 function feedFrom(tab: string, rows: string[][], map: RowMapper, limit = 8): SheetFeedEntry[] {
   const body = rows.slice(1).filter((r) => r.some((c) => (c ?? "").trim() !== ""));
@@ -836,8 +836,9 @@ function feedFrom(tab: string, rows: string[][], map: RowMapper, limit = 8): She
     .slice(-limit)
     .reverse()
     .map((row, i) => {
-      const { title, subtitle } = map(row);
+      const { title, subtitle, ...rest } = map(row);
       return {
+        ...rest,
         key: `${tab}-${body.length - i}`,
         title: title || "—",
         subtitle,
