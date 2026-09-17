@@ -37,6 +37,7 @@ function AdminOrdersPage() {
   const advance = useServerFn(adminAdvanceStatus);
   const setPaid = useServerFn(adminSetPaid);
   const uploadPhoto = useServerFn(adminUploadOrderPhoto);
+  const saveAmount = useServerFn(adminSetOrderAmount);
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
@@ -44,6 +45,8 @@ function AdminOrdersPage() {
   const [rowBusy, setRowBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [photoBusy, setPhotoBusy] = useState<string | null>(null);
+  const [amountPrompt, setAmountPrompt] = useState<string | null>(null);
+  const [amountValue, setAmountValue] = useState("");
 
   const refresh = useCallback(
     async (term: string) => {
