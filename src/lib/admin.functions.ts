@@ -812,6 +812,12 @@ export type SheetFeedEntry = {
   title: string;
   subtitle: string;
   meta: string;
+  reference?: string;
+  status?: string;
+  amount?: number | null;
+  cashback?: number | null;
+  paid?: boolean;
+  whatsappUrl?: string;
 };
 
 export type SheetFeed = {
