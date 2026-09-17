@@ -6,6 +6,8 @@ import { openWhatsApp } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
 import { Reveal } from "@/components/site/Reveal";
 import { useSavedBasket, saveBasket, type SavedBasket } from "@/lib/basket";
+import { useWallet } from "@/lib/wallet-client";
+import { WalletAccount } from "@/components/site/WalletAccount";
 
 const TITLE = "Wallet — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
