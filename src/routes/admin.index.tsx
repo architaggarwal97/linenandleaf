@@ -164,7 +164,15 @@ function AdminOverview() {
   );
 }
 
-function FeedGroup({ label, entries }: { label: string; entries: SheetFeedEntry[] }) {
+function FeedGroup({
+  label,
+  entries,
+  details = false,
+}: {
+  label: string;
+  entries: SheetFeedEntry[];
+  details?: boolean;
+}) {
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
