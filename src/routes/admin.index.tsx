@@ -196,6 +196,44 @@ function FeedGroup({
                   })}
                 </p>
               ) : null}
+              {details ? (
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  {e.status ? (
+                    <span className="rounded-full bg-teal-100 px-2.5 py-1 text-[11px] font-semibold text-teal-800">
+                      {STATUS_LABELS[e.status] ?? e.status}
+                    </span>
+                  ) : null}
+                  {typeof e.amount === "number" ? (
+                    <span className="rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                      ₹{e.amount.toLocaleString("en-IN")}
+                    </span>
+                  ) : null}
+                  {typeof e.cashback === "number" && e.cashback > 0 ? (
+                    <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+                      Cashback ₹{e.cashback.toLocaleString("en-IN")}
+                    </span>
+                  ) : null}
+                  {e.status ? (
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                        e.paid ? "bg-green-100 text-green-800" : "bg-rose-100 text-rose-700"
+                      }`}
+                    >
+                      {e.paid ? "Paid" : "Unpaid"}
+                    </span>
+                  ) : null}
+                  {e.whatsappUrl ? (
+                    <a
+                      href={e.whatsappUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-white"
+                    >
+                      Send confirmation
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>
