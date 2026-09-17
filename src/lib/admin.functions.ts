@@ -624,7 +624,7 @@ export const adminConfirmTopUp = createServerFn({ method: "POST" })
     // Claim the request first so a double tap can't credit twice.
     const { data: claimed, error: claimError } = await supabaseAdmin
       .from("wallet_transactions")
-      .update({ status: "cancelled", note: "Superseded by confirmed top-up" })
+      .update({ status: "cancelled", note: "Confirmed by staff" })
       .eq("id", data.id)
       .eq("status", "pending")
       .select("id")
@@ -642,6 +642,9 @@ export const adminConfirmTopUp = createServerFn({ method: "POST" })
       console.error("Top-up credit failed", error);
       throw new Error("Could not credit the wallet.");
     }
+
+    // The confirmed credit is its own ledger row; drop the claimed request.
+    await supabaseAdmin.from("wallet_transactions").delete().eq("id", data.id);
 
     return { phone: pending.phone, balance: Number(balance) };
   });
