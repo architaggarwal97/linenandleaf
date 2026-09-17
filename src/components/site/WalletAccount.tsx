@@ -214,6 +214,41 @@ export function WalletAccount({ wallet }: Props) {
           </ul>
         )}
       </div>
+
+      {state.referrals.length > 0 ? (
+        <div className="mt-6 border-t border-slate-100 pt-5">
+          <p className="text-sm font-semibold text-slate-800">Your referrals</p>
+          <ul className="mt-3 divide-y divide-slate-100">
+            {state.referrals.map((r) => (
+              <li key={r.id} className="flex items-start justify-between gap-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-700">
+                    {r.role === "referrer"
+                      ? `You referred +91 ${r.other_phone}`
+                      : `Referred by +91 ${r.other_phone}`}
+                  </p>
+                  <p className="text-xs font-light text-slate-400">
+                    {r.status === "completed"
+                      ? `₹100 credited on ${new Date(
+                          r.completed_at ?? r.created_at,
+                        ).toLocaleDateString("en-IN")}`
+                      : "Pending — credited after the first order is delivered"}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+                    r.status === "completed"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-amber-50 text-amber-700"
+                  }`}
+                >
+                  {r.status === "completed" ? "Completed" : "Pending"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </Reveal>
   );
 }

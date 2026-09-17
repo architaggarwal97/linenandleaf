@@ -5,12 +5,15 @@ import { Loader2, Search, RefreshCw, Check, IndianRupee, Camera } from "lucide-r
 import {
   ADMIN_STATUSES,
   adminAdvanceStatus,
+  adminCompleteReferral,
   adminListOrders,
+  adminPendingReferral,
   adminSetOrderAmount,
   adminSetPaid,
   adminUploadOrderPhoto,
   type AdminOrder,
   type AdminStatus,
+  type PendingReferral,
 } from "@/lib/admin.functions";
 import { compressImage } from "@/lib/image";
 
@@ -38,6 +41,8 @@ function AdminOrdersPage() {
   const setPaid = useServerFn(adminSetPaid);
   const uploadPhoto = useServerFn(adminUploadOrderPhoto);
   const saveAmount = useServerFn(adminSetOrderAmount);
+  const findReferral = useServerFn(adminPendingReferral);
+  const completeReferral = useServerFn(adminCompleteReferral);
 
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
@@ -47,6 +52,10 @@ function AdminOrdersPage() {
   const [photoBusy, setPhotoBusy] = useState<string | null>(null);
   const [amountPrompt, setAmountPrompt] = useState<string | null>(null);
   const [amountValue, setAmountValue] = useState("");
+  const [referralPrompt, setReferralPrompt] = useState<
+    (PendingReferral & { orderId: string }) | null
+  >(null);
+  const [referralNote, setReferralNote] = useState<string | null>(null);
 
   const refresh = useCallback(
     async (term: string) => {
@@ -74,6 +83,33 @@ function AdminOrdersPage() {
   const nextStatus = (order: AdminOrder): AdminStatus | undefined =>
     ADMIN_STATUSES[ADMIN_STATUSES.indexOf(order.status) + 1];
 
+  const afterUpdate = async (row: AdminOrder) => {
+    applyRow(row);
+    if (row.status !== "delivered") return;
+    try {
+      const referral = await findReferral({ data: { phone: row.whatsapp_number } });
+      if (referral) setReferralPrompt({ ...referral, orderId: row.id });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onCreditReferral = async () => {
+    if (!referralPrompt) return;
+    setRowBusy(referralPrompt.orderId);
+    setError(null);
+    try {
+      await completeReferral({ data: { id: referralPrompt.id } });
+      setReferralNote(`Referral bonus credited to both numbers.`);
+      setReferralPrompt(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not credit that referral.");
+    } finally {
+      setRowBusy(null);
+    }
+  };
+
   const onAdvance = async (order: AdminOrder) => {
     if (rowBusy || order.status === "delivered") return;
     const next = nextStatus(order);
@@ -84,7 +120,7 @@ function AdminOrdersPage() {
     }
     setRowBusy(order.id);
     try {
-      applyRow(await advance({ data: { id: order.id } }));
+      await afterUpdate(await advance({ data: { id: order.id } }));
     } catch (err) {
       console.error(err);
       setError("Could not update that order.");
@@ -101,7 +137,7 @@ function AdminOrdersPage() {
     try {
       const saved = await saveAmount({ data: { id: order.id, amount } });
       const next = nextStatus(saved);
-      applyRow(
+      await afterUpdate(
         next === "ready" || next === "delivered"
           ? await advance({ data: { id: saved.id } })
           : saved,
@@ -182,6 +218,11 @@ function AdminOrdersPage() {
       </form>
 
       {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
+      {referralNote ? (
+        <p className="mt-4 rounded-2xl bg-teal-50 px-4 py-3 text-sm text-teal-800">
+          {referralNote}
+        </p>
+      ) : null}
 
       <div className="mt-5 space-y-4">
         {!loading && orders.length === 0 ? (
@@ -265,6 +306,31 @@ function AdminOrdersPage() {
                 </form>
               ) : null}
 
+              {referralPrompt?.orderId === order.id ? (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-sm font-medium text-amber-900">
+                    This completes a referral from {referralPrompt.referring_phone} — credit ₹100
+                    to both?
+                  </p>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void onCreditReferral()}
+                      className="h-14 flex-1 rounded-2xl bg-teal-700 text-base font-semibold text-white disabled:bg-slate-200 disabled:text-slate-500"
+                    >
+                      {busy ? "Crediting…" : "Credit ₹100 each"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReferralPrompt(null)}
+                      className="h-14 rounded-2xl border border-slate-200 px-5 text-base font-medium text-slate-600"
+                    >
+                      Later
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
