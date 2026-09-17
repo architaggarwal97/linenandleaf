@@ -8,6 +8,7 @@ export const site = {
   whatsappTelHref: "tel:+918800446635",
   upiId: "9818661308@ptyes",
   upiPayeeName: "Linen & Leaf",
+  upiQrUrl: "/__l5e/assets-v1/6bcf8b39-91e4-449b-8a78-3ac24391f12e/paytm-upi-qr.jpg",
 };
 
 /** Builds a UPI deep link that opens any UPI app (Paytm, GPay, PhonePe) prefilled. */
