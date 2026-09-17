@@ -128,6 +128,7 @@ export type Database = {
       wallet_login_codes: {
         Row: {
           attempts: number
+          code: string
           code_hash: string
           consumed_at: string | null
           created_at: string
@@ -137,6 +138,7 @@ export type Database = {
         }
         Insert: {
           attempts?: number
+          code?: string
           code_hash: string
           consumed_at?: string | null
           created_at?: string
@@ -146,6 +148,7 @@ export type Database = {
         }
         Update: {
           attempts?: number
+          code?: string
           code_hash?: string
           consumed_at?: string | null
           created_at?: string
