@@ -78,10 +78,10 @@ export function Header() {
                 <div
                   key={link.to}
                   className="relative after:absolute after:top-full after:left-0 after:right-0 after:h-3 after:bg-transparent after:content-['']"
-                  onMouseEnter={openAbout}
-                  onMouseLeave={closeAbout}
-                  onFocus={openAbout}
-                  onBlur={closeAbout}
+                  onMouseEnter={() => openMenuFor(link.to)}
+                  onMouseLeave={closeMenu}
+                  onFocus={() => openMenuFor(link.to)}
+                  onBlur={closeMenu}
                 >
                   <Link
                     to={link.to}
