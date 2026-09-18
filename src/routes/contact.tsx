@@ -208,6 +208,13 @@ function ContactPage() {
                   </button>
                   <Link
                     to="/track"
+                    search={{
+                      ref: reference,
+                      tel:
+                        details.phone.replace(/\D/g, "").length >= 10
+                          ? `+91${details.phone.replace(/\D/g, "").slice(-10)}`
+                          : undefined,
+                    }}
                     className="inline-flex items-center gap-2 rounded-xl border border-teal-300 text-teal-700 hover:bg-teal-100 px-4 py-2.5 text-sm font-medium transition-colors"
                   >
                     Track this order
