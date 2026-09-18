@@ -208,6 +208,7 @@ function ContactPage() {
                   </button>
                   <Link
                     to="/track"
+                    search={{ ref: reference, phone: details.phone }}
                     className="inline-flex items-center gap-2 rounded-xl border border-teal-300 text-teal-700 hover:bg-teal-100 px-4 py-2.5 text-sm font-medium transition-colors"
                   >
                     Track this order
