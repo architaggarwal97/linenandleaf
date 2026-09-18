@@ -1,0 +1,1 @@
+DELETE FROM public.orders WHERE order_reference = 'LL-0007'; DELETE FROM public.wallet_login_codes WHERE phone = '9876543210'; DELETE FROM public.wallet_balances WHERE phone = '9876543210'; DELETE FROM public.wallet_transactions WHERE phone = '9876543210';
