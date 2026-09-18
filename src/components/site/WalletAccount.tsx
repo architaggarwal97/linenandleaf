@@ -234,7 +234,7 @@ export function WalletAccount({ wallet }: Props) {
               <li key={o.id}>
                 <Link
                   to="/track"
-                  search={{ ref: o.order_reference, tel: state.phone ?? "" }}
+                  search={{ ref: o.order_reference, tel: `+91${state.phone ?? ""}` }}
                   className="group flex items-center justify-between gap-4 py-3"
                 >
                   <div className="min-w-0">

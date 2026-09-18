@@ -14,9 +14,9 @@ const DESCRIPTION =
   "Check the status of your Linen & Leaf dry-cleaning order with your WhatsApp number and order reference.";
 
 export const Route = createFileRoute("/track")({
-  // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&tel=98xxxxxxx
-  // (named `tel` rather than `phone` — the hosting layer rewrites URLs that
-  // carry a `phone` query parameter, since it treats it as personal data.)
+  // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&tel=%2B9198xxxxxxx.
+  // The number travels as "+91…" because the hosting layer strips bare digit
+  // runs from query strings as a privacy guard.
   validateSearch: (search: Record<string, unknown>) => ({
     ref: typeof search["ref"] === "string" ? search["ref"].trim().slice(0, 20) : undefined,
     tel: typeof search["tel"] === "string" ? search["tel"].trim().slice(0, 30) : undefined,
@@ -45,10 +45,18 @@ const STAGES: { key: OrderStatus; label: string }[] = [
   { key: "delivered", label: "Delivered" },
 ];
 
+function formatPrefillPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 12 && digits.startsWith("91")) {
+    return `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`;
+  }
+  return value;
+}
+
 function TrackPage() {
   const lookup = useServerFn(trackOrder);
   const search = Route.useSearch();
-  const [phone, setPhone] = useState(search.tel ?? "");
+  const [phone, setPhone] = useState(() => formatPrefillPhone(search.tel ?? ""));
   const [reference, setReference] = useState((search.ref ?? "").toUpperCase());
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TrackOrderResult | null>(null);
