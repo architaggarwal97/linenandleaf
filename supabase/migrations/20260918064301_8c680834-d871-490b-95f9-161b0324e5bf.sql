@@ -1,0 +1,1 @@
+INSERT INTO public.orders (customer_name, whatsapp_number, pickup_address, status, order_amount) VALUES ('QA Test', '9876543210', 'Test address, Sarojini Nagar', 'in_process', 999) RETURNING order_reference;
