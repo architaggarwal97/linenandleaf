@@ -14,10 +14,12 @@ const DESCRIPTION =
   "Check the status of your Linen & Leaf dry-cleaning order with your WhatsApp number and order reference.";
 
 export const Route = createFileRoute("/track")({
-  // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&phone=98xxxxxxx
+  // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&tel=98xxxxxxx
+  // (named `tel` rather than `phone` — the hosting layer rewrites URLs that
+  // carry a `phone` query parameter, since it treats it as personal data.)
   validateSearch: (search: Record<string, unknown>) => ({
     ref: typeof search["ref"] === "string" ? search["ref"].trim().slice(0, 20) : undefined,
-    phone: typeof search["phone"] === "string" ? search["phone"].trim().slice(0, 30) : undefined,
+    tel: typeof search["tel"] === "string" ? search["tel"].trim().slice(0, 30) : undefined,
   }),
   head: () => ({
     meta: [
@@ -46,7 +48,7 @@ const STAGES: { key: OrderStatus; label: string }[] = [
 function TrackPage() {
   const lookup = useServerFn(trackOrder);
   const search = Route.useSearch();
-  const [phone, setPhone] = useState(search.phone ?? "");
+  const [phone, setPhone] = useState(search.tel ?? "");
   const [reference, setReference] = useState((search.ref ?? "").toUpperCase());
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TrackOrderResult | null>(null);
@@ -80,9 +82,9 @@ function TrackPage() {
   const autoRan = useRef(false);
   useEffect(() => {
     if (autoRan.current) return;
-    if (!search.phone || !search.ref) return;
+    if (!search.tel || !search.ref) return;
     autoRan.current = true;
-    void runLookup(search.phone, search.ref.toUpperCase());
+    void runLookup(search.tel, search.ref.toUpperCase());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
