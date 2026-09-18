@@ -22,11 +22,20 @@ export type WalletReferral = {
   completed_at: string | null;
 };
 
+export type WalletOrder = {
+  id: string;
+  order_reference: string;
+  created_at: string;
+  status: string;
+  order_amount: number | null;
+};
+
 export type WalletState = {
   phone: string | null;
   balance: number;
   transactions: WalletTransaction[];
   referrals: WalletReferral[];
+  orders: WalletOrder[];
 };
 
 type WalletSession = { phone?: string };
@@ -85,21 +94,27 @@ function toTransaction(row: Record<string, unknown>): WalletTransaction {
 async function loadState(phone: string): Promise<WalletState> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const [{ data: balanceRow }, { data: rows }, { data: referralRows }] = await Promise.all([
-    supabaseAdmin.from("wallet_balances").select("balance").eq("phone", phone).maybeSingle(),
-    supabaseAdmin
-      .from("wallet_transactions")
-      .select("id, created_at, type, status, amount, bonus, resulting_balance, note")
-      .eq("phone", phone)
-      .order("created_at", { ascending: false })
-      .limit(50),
-    supabaseAdmin
-      .from("referrals")
-      .select("id, status, referring_phone, referred_phone, created_at, completed_at")
-      .or(`referring_phone.eq.${phone},referred_phone.eq.${phone}`)
-      .order("created_at", { ascending: false })
-      .limit(50),
-  ]);
+  const [{ data: balanceRow }, { data: rows }, { data: referralRows }, { data: orderRows }] =
+    await Promise.all([
+      supabaseAdmin.from("wallet_balances").select("balance").eq("phone", phone).maybeSingle(),
+      supabaseAdmin
+        .from("wallet_transactions")
+        .select("id, created_at, type, status, amount, bonus, resulting_balance, note")
+        .eq("phone", phone)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabaseAdmin
+        .from("referrals")
+        .select("id, status, referring_phone, referred_phone, created_at, completed_at")
+        .or(`referring_phone.eq.${phone},referred_phone.eq.${phone}`)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabaseAdmin
+        .from("orders")
+        .select("id, order_reference, status, created_at, order_amount, whatsapp_number")
+        .order("created_at", { ascending: false })
+        .limit(200),
+    ]);
 
   const referrals: WalletReferral[] = (referralRows ?? []).map((r) => {
     const isReferrer = r.referring_phone === phone;
@@ -113,11 +128,26 @@ async function loadState(phone: string): Promise<WalletState> {
     };
   });
 
+  // Orders store the number exactly as the customer typed it, so match on the
+  // normalized 10-digit form (same rule the tracking page uses).
+  const orders: WalletOrder[] = (orderRows ?? [])
+    .filter((o) => String(o.whatsapp_number ?? "").replace(/\D/g, "").slice(-10) === phone)
+    .slice(0, 20)
+    .map((o) => ({
+      id: o.id,
+      order_reference: o.order_reference,
+      created_at: o.created_at,
+      status: String(o.status),
+      order_amount:
+        o.order_amount === null || o.order_amount === undefined ? null : Number(o.order_amount),
+    }));
+
   return {
     phone,
     referrals,
     balance: Number(balanceRow?.balance ?? 0),
     transactions: (rows ?? []).map((r) => toTransaction(r as Record<string, unknown>)),
+    orders,
   };
 }
 
@@ -214,7 +244,8 @@ export const walletLogout = createServerFn({ method: "POST" }).handler(async () 
 export const walletState = createServerFn({ method: "GET" }).handler(
   async (): Promise<WalletState> => {
     const phone = await currentPhone();
-    if (!phone) return { phone: null, balance: 0, transactions: [], referrals: [] };
+    if (!phone)
+      return { phone: null, balance: 0, transactions: [], referrals: [], orders: [] };
     return loadState(phone);
   },
 );
