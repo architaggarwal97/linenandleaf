@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { PackageSearch, Loader2, Check, MessageCircle } from "lucide-react";
@@ -14,6 +14,11 @@ const DESCRIPTION =
   "Check the status of your Linen & Leaf dry-cleaning order with your WhatsApp number and order reference.";
 
 export const Route = createFileRoute("/track")({
+  // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&phone=98xxxxxxx
+  validateSearch: (search: Record<string, unknown>) => ({
+    ref: typeof search.ref === "string" ? search.ref.trim().slice(0, 20) : undefined,
+    phone: typeof search.phone === "string" ? search.phone.trim().slice(0, 30) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -40,21 +45,20 @@ const STAGES: { key: OrderStatus; label: string }[] = [
 
 function TrackPage() {
   const lookup = useServerFn(trackOrder);
-  const [phone, setPhone] = useState("");
-  const [reference, setReference] = useState("");
+  const search = Route.useSearch();
+  const [phone, setPhone] = useState(search.phone ?? "");
+  const [reference, setReference] = useState((search.ref ?? "").toUpperCase());
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TrackOrderResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
+  const runLookup = async (nextPhone: string, nextRef: string) => {
     setError(null);
     setResult(null);
     setLoading(true);
     try {
       const res = await lookup({
-        data: { whatsapp_number: phone, order_reference: reference },
+        data: { whatsapp_number: nextPhone, order_reference: nextRef },
       });
       setResult(res);
     } catch (err) {
@@ -64,6 +68,23 @@ function TrackPage() {
       setLoading(false);
     }
   };
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    void runLookup(phone, reference);
+  };
+
+  // Arriving with both a reference and phone pre-filled (from the wallet's
+  // order list) runs the lookup once, so nothing needs re-entering.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (autoRan.current) return;
+    if (!search.phone || !search.ref) return;
+    autoRan.current = true;
+    void runLookup(search.phone, search.ref.toUpperCase());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Live updates: once an order is found, subscribe to changes on that one row.
   // If the connection drops, we simply keep showing the last known status.

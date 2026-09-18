@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { Loader2, LogOut, RefreshCw, Wallet } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { openWhatsApp } from "@/lib/whatsapp";
@@ -25,6 +26,14 @@ const TYPE_LABEL: Record<string, string> = {
   deduction: "Paid from wallet",
   cashback: "Cashback earned",
   referral: "Referral bonus",
+};
+
+const ORDER_STATUS_LABEL: Record<string, string> = {
+  requested: "Requested",
+  picked_up: "Picked Up",
+  in_process: "In Process",
+  ready: "Ready",
+  delivered: "Delivered",
 };
 
 export function WalletAccount({ wallet }: Props) {
@@ -216,6 +225,49 @@ export function WalletAccount({ wallet }: Props) {
           </ul>
         )}
       </div>
+
+      {state.orders.length > 0 ? (
+        <div className="mt-6 border-t border-slate-100 pt-5">
+          <p className="text-sm font-semibold text-slate-800">Your orders</p>
+          <ul className="mt-3 divide-y divide-slate-100">
+            {state.orders.map((o) => (
+              <li key={o.id}>
+                <Link
+                  to="/track"
+                  search={{ ref: o.order_reference, phone: state.phone ?? "" }}
+                  className="group flex items-center justify-between gap-4 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-700 transition-colors group-hover:text-teal-700">
+                      {o.order_reference}
+                    </p>
+                    <p className="text-xs font-light text-slate-400">
+                      {new Date(o.created_at).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    {o.order_amount !== null ? (
+                      <span className="text-sm font-semibold tabular-nums text-slate-600">
+                        ₹{Math.round(o.order_amount).toLocaleString("en-IN")}
+                      </span>
+                    ) : null}
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      {ORDER_STATUS_LABEL[o.status] ?? o.status}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs font-light text-slate-400">
+            Tap an order to see its full status on the tracking page.
+          </p>
+        </div>
+      ) : null}
 
       {state.referrals.length > 0 ? (
         <div className="mt-6 border-t border-slate-100 pt-5">
