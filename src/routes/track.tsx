@@ -16,8 +16,8 @@ const DESCRIPTION =
 export const Route = createFileRoute("/track")({
   // Optional pre-fill from the wallet's order history: /track?ref=LL-0001&phone=98xxxxxxx
   validateSearch: (search: Record<string, unknown>) => ({
-    ref: typeof search.ref === "string" ? search.ref.trim().slice(0, 20) : undefined,
-    phone: typeof search.phone === "string" ? search.phone.trim().slice(0, 30) : undefined,
+    ref: typeof search["ref"] === "string" ? search["ref"].trim().slice(0, 20) : undefined,
+    phone: typeof search["phone"] === "string" ? search["phone"].trim().slice(0, 30) : undefined,
   }),
   head: () => ({
     meta: [
