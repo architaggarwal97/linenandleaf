@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, ArrowRight, RefreshCw } from "lucide-react";
+import { Loader2, ArrowRight, RefreshCw, AlertTriangle } from "lucide-react";
 import {
   adminStats,
   adminSheetFeed,
   adminListPendingNotifications,
   adminMarkNotified,
+  adminListAwaitingReferrals,
+  adminCompleteReferral,
+  adminListCreditFailures,
+  adminRetryCreditFailure,
+  adminDismissCreditFailure,
   type AdminStats,
+  type AwaitingReferral,
+  type CreditFailure,
   type PendingNotification,
   type SheetFeed,
   type SheetFeedEntry,
 } from "@/lib/admin.functions";
+
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
