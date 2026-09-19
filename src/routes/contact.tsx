@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageCircle, Phone, MapPin, Clock, CheckCircle2, Loader2 } from "lucide-react";
@@ -108,6 +108,11 @@ function ContactPage() {
   const [reference, setReference] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // The button stays disabled until hydration finishes, so a tap on a slow
+  // connection can't fire a native form GET and silently lose the booking.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   const whatsappMessage = (ref?: string | null) =>
     [
       "Hi Linen & Leaf! I'd like to schedule a pickup.",
@@ -128,7 +133,7 @@ function ContactPage() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (saving) return;
+    if (saving || !hydrated) return;
     setSaveError(null);
     // Opened synchronously so browsers don't block the WhatsApp window.
     openWhatsApp(whatsappMessage());
@@ -366,10 +371,14 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                disabled={saving}
-                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-70 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
+                disabled={saving || !hydrated}
+                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-70 disabled:hover:translate-y-0 text-white px-6 py-4 rounded-2xl text-base sm:text-lg font-medium transition-all duration-300 shadow-lg shadow-green-500/20 hover:-translate-y-1 mt-4"
               >
-                {saving ? (
+                {!hydrated ? (
+                  <>
+                    <Loader2 className="h-5 w-5 shrink-0 animate-spin" /> Loading…
+                  </>
+                ) : saving ? (
                   <>
                     <Loader2 className="h-5 w-5 shrink-0 animate-spin" /> Saving your booking…
                   </>
