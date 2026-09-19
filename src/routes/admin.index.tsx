@@ -43,6 +43,14 @@ function AdminOverview() {
   const loadNotifications = useServerFn(adminListPendingNotifications);
   const markNotified = useServerFn(adminMarkNotified);
   const [pending, setPending] = useState<PendingNotification[] | null>(null);
+  const loadAwaiting = useServerFn(adminListAwaitingReferrals);
+  const completeReferral = useServerFn(adminCompleteReferral);
+  const [awaiting, setAwaiting] = useState<AwaitingReferral[] | null>(null);
+  const loadFailures = useServerFn(adminListCreditFailures);
+  const retryFailure = useServerFn(adminRetryCreditFailure);
+  const dismissFailure = useServerFn(adminDismissCreditFailure);
+  const [failures, setFailures] = useState<CreditFailure[] | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -51,16 +59,20 @@ function AdminOverview() {
       if (typeof document !== "undefined" && document.hidden) return;
       setSyncing(true);
       try {
-        const [nextStats, nextFeed, nextPending] = await Promise.all([
+        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures] = await Promise.all([
           loadStats(),
           loadFeed().catch(() => null),
           loadNotifications().catch(() => null),
+          loadAwaiting().catch(() => null),
+          loadFailures().catch(() => null),
         ]);
         if (!active) return;
         setStats(nextStats);
         setError(null);
         if (nextFeed) setFeed(nextFeed);
         if (nextPending) setPending(nextPending);
+        if (nextAwaiting) setAwaiting(nextAwaiting);
+        if (nextFailures) setFailures(nextFailures);
       } catch {
         if (active && !stats) setError("Could not load the dashboard.");
       } finally {
@@ -86,6 +98,39 @@ function AdminOverview() {
       setPending(await loadNotifications().catch(() => null));
     }
   };
+
+  const creditReferral = async (r: AwaitingReferral) => {
+    setBusyId(r.id);
+    try {
+      await completeReferral({ data: { id: r.id } });
+    } catch {
+      /* failure is recorded server-side and shows in the problems card */
+    } finally {
+      setBusyId(null);
+      setAwaiting(await loadAwaiting().catch(() => null));
+      setFailures(await loadFailures().catch(() => null));
+      setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
+  const retry = async (f: CreditFailure) => {
+    setBusyId(f.id);
+    try {
+      await retryFailure({ data: { id: f.id } });
+    } catch {
+      /* stays listed */
+    } finally {
+      setBusyId(null);
+      setFailures(await loadFailures().catch(() => null));
+      setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
+  const dismiss = async (f: CreditFailure) => {
+    setFailures((prev) => (prev ?? []).filter((p) => p.id !== f.id));
+    await dismissFailure({ data: { id: f.id } }).catch(() => null);
+  };
+
 
   if (error) return <p className="mt-8 text-sm text-rose-600">{error}</p>;
 
