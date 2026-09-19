@@ -25,7 +25,6 @@ import { Route as TrackRouteImport } from './routes/track'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
-import { Route as AdminReferralsRouteImport } from './routes/admin.referrals'
 import { Route as AdminWalletRouteImport } from './routes/admin.wallet'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -110,11 +109,6 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminReferralsRoute = AdminReferralsRouteImport.update({
-  id: '/referrals',
-  path: '/referrals',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminWalletRoute = AdminWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -147,7 +141,6 @@ export interface FileRoutesByFullPath {
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -168,7 +161,6 @@ export interface FileRoutesByTo {
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -191,7 +183,6 @@ export interface FileRoutesById {
   '/track': typeof TrackRoute
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
-  '/admin/referrals': typeof AdminReferralsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -215,7 +206,6 @@ export interface FileRouteTypes {
     | '/track'
     | '/wallet'
     | '/admin/orders'
-    | '/admin/referrals'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin/'
@@ -236,7 +226,6 @@ export interface FileRouteTypes {
     | '/track'
     | '/wallet'
     | '/admin/orders'
-    | '/admin/referrals'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin'
@@ -258,7 +247,6 @@ export interface FileRouteTypes {
     | '/track'
     | '/wallet'
     | '/admin/orders'
-    | '/admin/referrals'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin/'
@@ -398,13 +386,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/referrals': {
-      id: '/admin/referrals'
-      path: '/referrals'
-      fullPath: '/admin/referrals'
-      preLoaderRoute: typeof AdminReferralsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/wallet': {
       id: '/admin/wallet'
       path: '/wallet'
@@ -431,14 +412,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
-  AdminReferralsRoute: typeof AdminReferralsRoute
   AdminWalletRoute: typeof AdminWalletRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
-  AdminReferralsRoute: AdminReferralsRoute,
   AdminWalletRoute: AdminWalletRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

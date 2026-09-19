@@ -168,8 +168,17 @@ async function applyCashbackAndReload(id: string, fallback: OrderRow): Promise<A
   const { error } = await supabaseAdmin.rpc("order_apply_cashback", { _order_id: id });
   if (error) {
     console.error("Cashback failed", error);
+    await recordCreditFailure({
+      kind: "cashback",
+      order_id: id,
+      order_reference: fallback.order_reference,
+      phone: String(fallback.whatsapp_number ?? "").replace(/\D/g, "").slice(-10),
+      amount: fallback.order_amount,
+      message: error.message ?? "Unknown error",
+    });
     return toAdminOrder(fallback);
   }
+  await clearCreditFailures({ order_id: id });
   const { data: fresh } = await supabaseAdmin
     .from("orders")
     .select(ORDER_COLUMNS)
@@ -177,6 +186,7 @@ async function applyCashbackAndReload(id: string, fallback: OrderRow): Promise<A
     .single();
   return toAdminOrder((fresh ?? fallback) as OrderRow);
 }
+
 
 export const adminSetOrderAmount = createServerFn({ method: "POST" })
   .inputValidator((input: { id?: unknown; amount?: unknown }) => {
@@ -454,140 +464,6 @@ export const adminAddWalletEntry = createServerFn({ method: "POST" })
 
 export const REFERRAL_CREDIT = 100;
 
-export type AdminReferral = {
-  id: string;
-  order_reference: string;
-  created_at: string;
-  status: AdminStatus;
-  friend_name: string;
-  friend_phone: string;
-  referrer_phone: string;
-  credited_at: string | null;
-  eligible: boolean;
-  first_order: boolean;
-};
-
-const REFERRAL_COLUMNS =
-  "id, order_reference, created_at, status, customer_name, whatsapp_number, referred_by_phone, referral_credited_at";
-
-function normalizeDigits(value: string): string {
-  return value.replace(/\D/g, "").slice(-10);
-}
-
-export const adminListReferrals = createServerFn({ method: "POST" }).handler(
-  async (): Promise<AdminReferral[]> => {
-    await requireAdmin();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: rows, error } = await supabaseAdmin
-      .from("orders")
-      .select(REFERRAL_COLUMNS)
-      .not("referred_by_phone", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(100);
-    if (error) {
-      console.error("Referral list failed", error);
-      throw new Error("Could not load referrals.");
-    }
-
-    const { data: allOrders } = await supabaseAdmin
-      .from("orders")
-      .select("whatsapp_number, created_at")
-      .limit(2000);
-
-    const earliest = new Map<string, string>();
-    for (const o of allOrders ?? []) {
-      const key = normalizeDigits(o.whatsapp_number);
-      const current = earliest.get(key);
-      if (!current || o.created_at < current) earliest.set(key, o.created_at);
-    }
-
-    return (rows ?? []).map((r) => {
-      const status = normalizeStatus(r.status);
-      const firstOrder = earliest.get(normalizeDigits(r.whatsapp_number)) === r.created_at;
-      return {
-        id: r.id,
-        order_reference: r.order_reference,
-        created_at: r.created_at,
-        status,
-        friend_name: r.customer_name,
-        friend_phone: r.whatsapp_number,
-        referrer_phone: r.referred_by_phone ?? "",
-        credited_at: r.referral_credited_at,
-        first_order: firstOrder,
-        eligible: status === "delivered" && !r.referral_credited_at && firstOrder,
-      };
-    });
-  },
-);
-
-export const adminCreditReferral = createServerFn({ method: "POST" })
-  .inputValidator((input: { id?: unknown }) => {
-    const id = typeof input?.id === "string" ? input.id : "";
-    if (!id) throw new Error("Missing order id.");
-    return { id };
-  })
-  .handler(async ({ data }): Promise<AdminReferral> => {
-    await requireAdmin();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: order, error: readError } = await supabaseAdmin
-      .from("orders")
-      .select(REFERRAL_COLUMNS)
-      .eq("id", data.id)
-      .single();
-    if (readError || !order) throw new Error("Order not found.");
-    if (!order.referred_by_phone) throw new Error("This order has no referrer.");
-    if (order.referral_credited_at) throw new Error("This referral is already credited.");
-    if (normalizeStatus(order.status) !== "delivered") {
-      throw new Error("Credit the reward only after the first order is delivered.");
-    }
-
-    const note = `Referral reward — order ${order.order_reference}`;
-    const { error: walletError } = await supabaseAdmin.from("wallet_entries").insert([
-      {
-        whatsapp_number: order.whatsapp_number,
-        customer_name: order.customer_name,
-        entry_type: "adjustment",
-        amount: REFERRAL_CREDIT,
-        bonus: 0,
-        note: `${note} (referred friend)`,
-      },
-      {
-        whatsapp_number: order.referred_by_phone,
-        customer_name: "",
-        entry_type: "adjustment",
-        amount: REFERRAL_CREDIT,
-        bonus: 0,
-        note: `${note} (referrer)`,
-      },
-    ]);
-    if (walletError) {
-      console.error("Referral credit failed", walletError);
-      throw new Error("Could not credit the wallets.");
-    }
-
-    const creditedAt = new Date().toISOString();
-    const { error: stampError } = await supabaseAdmin
-      .from("orders")
-      .update({ referral_credited_at: creditedAt })
-      .eq("id", data.id)
-      .is("referral_credited_at", null);
-    if (stampError) console.error("Referral stamp failed", stampError);
-
-    return {
-      id: order.id,
-      order_reference: order.order_reference,
-      created_at: order.created_at,
-      status: normalizeStatus(order.status),
-      friend_name: order.customer_name,
-      friend_phone: order.whatsapp_number,
-      referrer_phone: order.referred_by_phone,
-      credited_at: creditedAt,
-      first_order: true,
-      eligible: false,
-    };
-  });
 
 // ---------- Wallet balances (real ledger) ----------
 
@@ -787,6 +663,49 @@ export const adminPendingReferral = createServerFn({ method: "POST" })
     return (row as PendingReferral | null) ?? null;
   });
 
+export type AwaitingReferral = PendingReferral & {
+  order_id: string | null;
+  order_reference: string | null;
+};
+
+/** Pending referrals whose referred customer already has a delivered order. */
+export const adminListAwaitingReferrals = createServerFn({ method: "POST" }).handler(
+  async (): Promise<AwaitingReferral[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("referrals")
+      .select("id, referring_phone, referred_phone, created_at")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error("Could not load referrals awaiting confirmation.");
+    if (!rows?.length) return [];
+
+    const { data: orders } = await supabaseAdmin
+      .from("orders")
+      .select("id, order_reference, whatsapp_number, status, created_at")
+      .eq("status", "delivered")
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    const delivered = new Map<string, { id: string; order_reference: string }>();
+    for (const o of orders ?? []) {
+      const key = String(o.whatsapp_number ?? "").replace(/\D/g, "").slice(-10);
+      if (!delivered.has(key)) delivered.set(key, { id: o.id, order_reference: o.order_reference });
+    }
+
+    return rows
+      .filter((r) => delivered.has(r.referred_phone))
+      .map((r) => ({
+        ...(r as PendingReferral),
+        order_id: delivered.get(r.referred_phone)?.id ?? null,
+        order_reference: delivered.get(r.referred_phone)?.order_reference ?? null,
+      }));
+  },
+);
+
 export const adminCompleteReferral = createServerFn({ method: "POST" })
   .inputValidator((input: { id?: unknown }) => {
     const id = typeof input?.id === "string" ? input.id : "";
@@ -802,10 +721,149 @@ export const adminCompleteReferral = createServerFn({ method: "POST" })
     });
     if (error) {
       console.error("Referral completion failed", error);
+      await recordCreditFailure({
+        kind: "referral",
+        referral_id: data.id,
+        amount: REFERRAL_CREDIT,
+        message: error.message ?? "Unknown error",
+      });
       throw new Error("Could not credit that referral.");
     }
+    await clearCreditFailures({ referral_id: data.id });
     return { ok: true as const, result: String(result ?? "completed") };
   });
+
+// ---------- Credit failures ----------
+
+export type CreditFailure = {
+  id: string;
+  created_at: string;
+  kind: "cashback" | "referral";
+  order_id: string | null;
+  order_reference: string | null;
+  referral_id: string | null;
+  phone: string | null;
+  amount: number | null;
+  message: string;
+};
+
+async function recordCreditFailure(row: {
+  kind: "cashback" | "referral";
+  order_id?: string;
+  order_reference?: string | null;
+  referral_id?: string;
+  phone?: string | null;
+  amount?: number | null;
+  message: string;
+}) {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("credit_failures").insert({
+      kind: row.kind,
+      order_id: row.order_id ?? null,
+      order_reference: row.order_reference ?? null,
+      referral_id: row.referral_id ?? null,
+      phone: row.phone ?? null,
+      amount: row.amount ?? null,
+      message: row.message.slice(0, 500),
+    });
+  } catch (err) {
+    console.error("Could not record credit failure", err);
+  }
+}
+
+async function clearCreditFailures(match: { order_id?: string; referral_id?: string }) {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin
+      .from("credit_failures")
+      .update({ resolved_at: new Date().toISOString() })
+      .is("resolved_at", null);
+    if (match.order_id) q = q.eq("order_id", match.order_id);
+    if (match.referral_id) q = q.eq("referral_id", match.referral_id);
+    await q;
+  } catch (err) {
+    console.error("Could not clear credit failure", err);
+  }
+}
+
+export const adminListCreditFailures = createServerFn({ method: "POST" }).handler(
+  async (): Promise<CreditFailure[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("credit_failures")
+      .select("id, created_at, kind, order_id, order_reference, referral_id, phone, amount, message")
+      .is("resolved_at", null)
+      .order("created_at", { ascending: false })
+      .limit(30);
+    if (error) throw new Error("Could not load credit problems.");
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      created_at: r.created_at,
+      kind: r.kind === "referral" ? "referral" : "cashback",
+      order_id: r.order_id,
+      order_reference: r.order_reference,
+      referral_id: r.referral_id,
+      phone: r.phone,
+      amount: r.amount === null || r.amount === undefined ? null : Number(r.amount),
+      message: String(r.message ?? ""),
+    }));
+  },
+);
+
+export const adminRetryCreditFailure = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing id.");
+    return { id };
+  })
+  .handler(async ({ data }): Promise<{ ok: boolean; message?: string }> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error: readError } = await supabaseAdmin
+      .from("credit_failures")
+      .select("id, kind, order_id, referral_id")
+      .eq("id", data.id)
+      .single();
+    if (readError || !row) throw new Error("That problem record is gone.");
+
+    if (row.kind === "referral" && row.referral_id) {
+      const { error } = await supabaseAdmin.rpc("referral_complete", {
+        _referral_id: row.referral_id,
+        _credit: REFERRAL_CREDIT,
+      });
+      if (error) return { ok: false, message: error.message };
+    } else if (row.order_id) {
+      const { error } = await supabaseAdmin.rpc("order_apply_cashback", { _order_id: row.order_id });
+      if (error) return { ok: false, message: error.message };
+    } else {
+      return { ok: false, message: "Nothing to retry for this record." };
+    }
+
+    await supabaseAdmin
+      .from("credit_failures")
+      .update({ resolved_at: new Date().toISOString() })
+      .eq("id", data.id);
+    return { ok: true };
+  });
+
+export const adminDismissCreditFailure = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("credit_failures")
+      .update({ resolved_at: new Date().toISOString() })
+      .eq("id", data.id);
+    return { ok: true as const };
+  });
+
 
 export type SheetFeedEntry = {
   key: string;

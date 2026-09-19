@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, ArrowRight, RefreshCw } from "lucide-react";
+import { Loader2, ArrowRight, RefreshCw, AlertTriangle } from "lucide-react";
 import {
   adminStats,
   adminSheetFeed,
   adminListPendingNotifications,
   adminMarkNotified,
+  adminListAwaitingReferrals,
+  adminCompleteReferral,
+  adminListCreditFailures,
+  adminRetryCreditFailure,
+  adminDismissCreditFailure,
   type AdminStats,
+  type AwaitingReferral,
+  type CreditFailure,
   type PendingNotification,
   type SheetFeed,
   type SheetFeedEntry,
 } from "@/lib/admin.functions";
+
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
@@ -35,6 +43,14 @@ function AdminOverview() {
   const loadNotifications = useServerFn(adminListPendingNotifications);
   const markNotified = useServerFn(adminMarkNotified);
   const [pending, setPending] = useState<PendingNotification[] | null>(null);
+  const loadAwaiting = useServerFn(adminListAwaitingReferrals);
+  const completeReferral = useServerFn(adminCompleteReferral);
+  const [awaiting, setAwaiting] = useState<AwaitingReferral[] | null>(null);
+  const loadFailures = useServerFn(adminListCreditFailures);
+  const retryFailure = useServerFn(adminRetryCreditFailure);
+  const dismissFailure = useServerFn(adminDismissCreditFailure);
+  const [failures, setFailures] = useState<CreditFailure[] | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -43,16 +59,20 @@ function AdminOverview() {
       if (typeof document !== "undefined" && document.hidden) return;
       setSyncing(true);
       try {
-        const [nextStats, nextFeed, nextPending] = await Promise.all([
+        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures] = await Promise.all([
           loadStats(),
           loadFeed().catch(() => null),
           loadNotifications().catch(() => null),
+          loadAwaiting().catch(() => null),
+          loadFailures().catch(() => null),
         ]);
         if (!active) return;
         setStats(nextStats);
         setError(null);
         if (nextFeed) setFeed(nextFeed);
         if (nextPending) setPending(nextPending);
+        if (nextAwaiting) setAwaiting(nextAwaiting);
+        if (nextFailures) setFailures(nextFailures);
       } catch {
         if (active && !stats) setError("Could not load the dashboard.");
       } finally {
@@ -79,6 +99,39 @@ function AdminOverview() {
     }
   };
 
+  const creditReferral = async (r: AwaitingReferral) => {
+    setBusyId(r.id);
+    try {
+      await completeReferral({ data: { id: r.id } });
+    } catch {
+      /* failure is recorded server-side and shows in the problems card */
+    } finally {
+      setBusyId(null);
+      setAwaiting(await loadAwaiting().catch(() => null));
+      setFailures(await loadFailures().catch(() => null));
+      setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
+  const retry = async (f: CreditFailure) => {
+    setBusyId(f.id);
+    try {
+      await retryFailure({ data: { id: f.id } });
+    } catch {
+      /* stays listed */
+    } finally {
+      setBusyId(null);
+      setFailures(await loadFailures().catch(() => null));
+      setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
+  const dismiss = async (f: CreditFailure) => {
+    setFailures((prev) => (prev ?? []).filter((p) => p.id !== f.id));
+    await dismissFailure({ data: { id: f.id } }).catch(() => null);
+  };
+
+
   if (error) return <p className="mt-8 text-sm text-rose-600">{error}</p>;
 
   if (!stats) {
@@ -99,6 +152,73 @@ function AdminOverview() {
   return (
     <div className="mt-5">
       <h1 className="font-display text-2xl font-bold text-slate-800">Overview</h1>
+
+      {failures && failures.length > 0 ? (
+        <div className="mt-4 rounded-3xl border border-rose-200 bg-rose-50 p-5">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-rose-600" />
+            <p className="text-sm font-semibold text-rose-800">Wallet credits that failed</p>
+          </div>
+          <ul className="mt-3 space-y-2">
+            {failures.map((f) => (
+              <li key={f.id} className="rounded-2xl bg-white px-4 py-3">
+                <p className="text-sm font-semibold text-slate-800">
+                  {f.kind === "referral" ? "Referral bonus" : "Cashback"}
+                  {f.amount ? ` · ₹${f.amount.toLocaleString("en-IN")}` : ""}
+                  {f.order_reference ? ` · ${f.order_reference}` : ""}
+                </p>
+                <p className="mt-0.5 break-words text-[11px] text-rose-700">{f.message}</p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    disabled={busyId === f.id}
+                    onClick={() => void retry(f)}
+                    className="rounded-full bg-teal-700 px-3 py-2 text-[11px] font-semibold text-white disabled:opacity-60"
+                  >
+                    {busyId === f.id ? "Trying…" : "Try again"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void dismiss(f)}
+                    className="rounded-full border border-slate-200 px-3 py-2 text-[11px] font-semibold text-slate-600"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {awaiting && awaiting.length > 0 ? (
+        <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+          <p className="text-sm font-semibold text-slate-800">Referrals awaiting confirmation</p>
+          <ul className="mt-3 space-y-2">
+            {awaiting.map((r) => (
+              <li key={r.id} className="rounded-2xl bg-slate-50 px-4 py-3">
+                <p className="text-sm font-semibold text-slate-800">
+                  +91 {r.referring_phone} → +91 {r.referred_phone}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  First order delivered{r.order_reference ? ` · ${r.order_reference}` : ""} — credit
+                  ₹100 to both?
+                </p>
+                <button
+                  type="button"
+                  disabled={busyId === r.id}
+                  onClick={() => void creditReferral(r)}
+                  className="mt-2 rounded-full bg-teal-700 px-3 py-2 text-[11px] font-semibold text-white disabled:opacity-60"
+                >
+                  {busyId === r.id ? "Crediting…" : "Credit ₹100 to both"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+
 
       <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
         <div className="flex items-center justify-between gap-2">
