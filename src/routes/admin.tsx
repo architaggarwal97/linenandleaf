@@ -26,8 +26,8 @@ const TABS = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/orders", label: "Orders", icon: ClipboardList, exact: false },
   { to: "/admin/wallet", label: "Wallet", icon: Wallet, exact: false },
-  { to: "/admin/referrals", label: "Referrals", icon: Gift, exact: false },
 ] as const;
+
 
 function AdminLayout() {
   const checkSession = useServerFn(adminSessionStatus);
