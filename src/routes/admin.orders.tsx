@@ -248,7 +248,7 @@ function AdminOrdersPage() {
                     {order.customer_name}
                   </p>
                   <a
-                    href={`tel:${order.whatsapp_number}`}
+                    href={`tel:+91${String(order.whatsapp_number ?? "").replace(/\D/g, "").slice(-10)}`}
                     className="text-sm text-slate-500 underline-offset-2 hover:underline"
                   >
                     {order.whatsapp_number}
