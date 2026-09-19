@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      credit_failures: {
+        Row: {
+          amount: number | null
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          order_id: string | null
+          order_reference: string | null
+          phone: string | null
+          referral_id: string | null
+          resolved_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          order_id?: string | null
+          order_reference?: string | null
+          phone?: string | null
+          referral_id?: string | null
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          order_id?: string | null
+          order_reference?: string | null
+          phone?: string | null
+          referral_id?: string | null
+          resolved_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           cashback_amount: number | null
