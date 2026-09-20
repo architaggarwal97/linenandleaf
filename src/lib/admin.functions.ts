@@ -1030,6 +1030,72 @@ export const adminListPendingNotifications = createServerFn({ method: "POST" }).
   },
 );
 
+// ---------- Review requests (delivered orders) ----------
+
+// TODO: replace with the live Google Business Profile review link once the
+// profile is set up.
+export const GBP_REVIEW_LINK = "https://g.page/r/PLACEHOLDER_LINEN_AND_LEAF/review";
+
+export type PendingReview = {
+  id: string;
+  phone: string;
+  customerName: string;
+  orderReference: string;
+  deliveredAt: string;
+  whatsappUrl: string;
+};
+
+export const adminListPendingReviews = createServerFn({ method: "POST" }).handler(
+  async (): Promise<PendingReview[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: rows, error } = await supabaseAdmin
+      .from("orders")
+      .select("id, order_reference, customer_name, whatsapp_number, created_at")
+      .eq("status", "delivered")
+      .is("review_requested_at", null)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error("Could not load review requests.");
+
+    return (rows ?? [])
+      .map((r) => {
+        const phone = String(r.whatsapp_number ?? "").replace(/\D/g, "").slice(-10);
+        if (phone.length !== 10) return null;
+        const firstName = String(r.customer_name ?? "").trim().split(/\s+/)[0] || "there";
+        const text = `Hi ${firstName}, thanks for choosing Linen & Leaf! If you have a minute, we'd really appreciate a quick review: ${GBP_REVIEW_LINK}`;
+        return {
+          id: r.id,
+          phone,
+          customerName: String(r.customer_name ?? "").trim() || "Customer",
+          orderReference: r.order_reference as string,
+          deliveredAt: r.created_at as string,
+          whatsappUrl: `https://wa.me/91${phone}?text=${encodeURIComponent(text)}`,
+        };
+      })
+      .filter((r): r is PendingReview => r !== null);
+  },
+);
+
+export const adminMarkReviewRequested = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing order id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .update({ review_requested_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .is("review_requested_at", null);
+    if (error) throw new Error("Could not mark the review as requested.");
+    return { ok: true as const };
+  });
+
 export const adminMarkNotified = createServerFn({ method: "POST" })
   .inputValidator((input: { id?: unknown }) => {
     const id = typeof input?.id === "string" ? input.id : "";
