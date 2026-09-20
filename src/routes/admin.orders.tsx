@@ -27,10 +27,12 @@ const LABELS: Record<AdminStatus, string> = {
   in_process: "In Process",
   ready: "Ready",
   delivered: "Delivered",
+  cancelled: "Cancelled",
 };
 
 function nextLabel(status: AdminStatus): string | null {
-  const i = ADMIN_STATUSES.indexOf(status);
+  if (status === "cancelled") return null;
+  const i = (ADMIN_STATUSES as readonly string[]).indexOf(status);
   const next = ADMIN_STATUSES[i + 1];
   return next ? LABELS[next] : null;
 }
@@ -47,6 +49,7 @@ function AdminOrdersPage() {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showCancelled, setShowCancelled] = useState(false);
   const [rowBusy, setRowBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [photoBusy, setPhotoBusy] = useState<string | null>(null);
@@ -58,11 +61,11 @@ function AdminOrdersPage() {
   const [referralNote, setReferralNote] = useState<string | null>(null);
 
   const refresh = useCallback(
-    async (term: string) => {
+    async (term: string, includeCancelled = showCancelled) => {
       setLoading(true);
       setError(null);
       try {
-        setOrders(await listOrders({ data: { search: term } }));
+        setOrders(await listOrders({ data: { search: term, includeCancelled } }));
       } catch (err) {
         console.error(err);
         setError("Could not load orders. Try again.");
@@ -70,18 +73,21 @@ function AdminOrdersPage() {
         setLoading(false);
       }
     },
-    [listOrders],
+    [listOrders, showCancelled],
   );
 
   useEffect(() => {
     void refresh("");
-  }, [refresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const applyRow = (row: AdminOrder) =>
     setOrders((prev) => prev.map((o) => (o.id === row.id ? row : o)));
 
   const nextStatus = (order: AdminOrder): AdminStatus | undefined =>
-    ADMIN_STATUSES[ADMIN_STATUSES.indexOf(order.status) + 1];
+    order.status === "cancelled"
+      ? undefined
+      : ADMIN_STATUSES[(ADMIN_STATUSES as readonly string[]).indexOf(order.status) + 1];
 
   const afterUpdate = async (row: AdminOrder) => {
     applyRow(row);

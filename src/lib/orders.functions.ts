@@ -90,7 +90,7 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 const ORDER_STATUSES = ["requested", "picked_up", "in_process", "ready", "delivered"] as const;
-export type OrderStatus = (typeof ORDER_STATUSES)[number];
+export type OrderStatus = (typeof ORDER_STATUSES)[number] | "cancelled";
 
 export type TrackOrderResult = {
   found: boolean;
@@ -100,6 +100,8 @@ export type TrackOrderResult = {
   createdAt?: string;
   pickupPhotoUrl?: string | null;
   deliveryPhotoUrl?: string | null;
+  preferredWindow?: string | null;
+  preferredDate?: string | null;
 };
 
 function normalizePhone(value: string): string {
@@ -120,7 +122,7 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url",
+        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date",
       )
       .eq("order_reference", data.order_reference)
       .limit(5);
@@ -134,25 +136,137 @@ export const trackOrder = createServerFn({ method: "POST" })
     const match = (rows ?? []).find((r) => normalizePhone(r.whatsapp_number) === needle);
     if (!match) return { found: false };
 
-    const status = (ORDER_STATUSES as readonly string[]).includes(match.status)
-      ? (match.status as OrderStatus)
-      : "requested";
-    const stage = ORDER_STATUSES.indexOf(status);
-    const { signOrderPhoto } = await import("@/lib/order-photos.server");
-    const [pickupPhotoUrl, deliveryPhotoUrl] = await Promise.all([
-      stage >= ORDER_STATUSES.indexOf("picked_up")
-        ? signOrderPhoto(match.pickup_photo_url)
-        : null,
-      stage >= ORDER_STATUSES.indexOf("ready") ? signOrderPhoto(match.delivery_photo_url) : null,
-    ]);
+    return toTrackResult(match as OrderLookupRow);
+  });
 
-    return {
-      found: true,
-      id: match.id,
-      status,
-      orderReference: match.order_reference,
-      createdAt: match.created_at,
-      pickupPhotoUrl,
-      deliveryPhotoUrl,
-    };
+type OrderLookupRow = {
+  id: string;
+  order_reference: string;
+  status: string;
+  created_at: string;
+  whatsapp_number: string;
+  pickup_photo_url: string | null;
+  delivery_photo_url: string | null;
+  preferred_window: string | null;
+  preferred_date: string | null;
+};
+
+const TRACK_COLUMNS =
+  "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date";
+
+async function toTrackResult(match: OrderLookupRow): Promise<TrackOrderResult> {
+  const status: OrderStatus =
+    match.status === "cancelled"
+      ? "cancelled"
+      : (ORDER_STATUSES as readonly string[]).includes(match.status)
+        ? (match.status as OrderStatus)
+        : "requested";
+  const stage =
+    status === "cancelled" ? -1 : (ORDER_STATUSES as readonly string[]).indexOf(status);
+  const { signOrderPhoto } = await import("@/lib/order-photos.server");
+  const [pickupPhotoUrl, deliveryPhotoUrl] = await Promise.all([
+    stage >= ORDER_STATUSES.indexOf("picked_up") ? signOrderPhoto(match.pickup_photo_url) : null,
+    stage >= ORDER_STATUSES.indexOf("ready") ? signOrderPhoto(match.delivery_photo_url) : null,
+  ]);
+
+  return {
+    found: true,
+    id: match.id,
+    status,
+    orderReference: match.order_reference,
+    createdAt: match.created_at,
+    pickupPhotoUrl,
+    deliveryPhotoUrl,
+    preferredWindow: match.preferred_window,
+    preferredDate: match.preferred_date,
+  };
+}
+
+/** Finds an order only when reference AND phone match together. */
+async function findOwnedOrder(reference: string, phone: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: rows, error } = await supabaseAdmin
+    .from("orders")
+    .select(TRACK_COLUMNS)
+    .eq("order_reference", reference)
+    .limit(5);
+  if (error) throw new Error("We couldn't reach your order just now. Please try again.");
+  const needle = normalizePhone(phone);
+  return (
+    ((rows ?? []).find((r) => normalizePhone(r.whatsapp_number) === needle) as
+      | OrderLookupRow
+      | undefined) ?? null
+  );
+}
+
+function ownerInput(input: { whatsapp_number?: unknown; order_reference?: unknown }) {
+  const whatsapp_number = clean(input?.whatsapp_number, 30);
+  const order_reference = clean(input?.order_reference, 20).toUpperCase();
+  if (!whatsapp_number || !order_reference) {
+    throw new Error("Please enter your WhatsApp number and order reference.");
+  }
+  return { whatsapp_number, order_reference };
+}
+
+export const cancelOrder = createServerFn({ method: "POST" })
+  .inputValidator(ownerInput)
+  .handler(async ({ data }): Promise<TrackOrderResult> => {
+    const match = await findOwnedOrder(data.order_reference, data.whatsapp_number);
+    if (!match) return { found: false };
+    if (match.status !== "requested") {
+      throw new Error("This order is already in progress — please message us on WhatsApp.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("orders")
+      .update({ status: "cancelled" })
+      .eq("id", match.id)
+      .eq("status", "requested")
+      .select(TRACK_COLUMNS)
+      .single();
+    if (error || !row) throw new Error("We couldn't cancel that order. Please try again.");
+    return toTrackResult(row as OrderLookupRow);
+  });
+
+export const rescheduleOrder = createServerFn({ method: "POST" })
+  .inputValidator(
+    (input: {
+      whatsapp_number?: unknown;
+      order_reference?: unknown;
+      preferred_window?: unknown;
+      preferred_date?: unknown;
+    }) => {
+      const base = ownerInput(input);
+      const rawWindow = clean(input?.preferred_window, 20).toLowerCase();
+      if (!(WINDOWS as readonly string[]).includes(rawWindow)) {
+        throw new Error("Please choose a pickup time.");
+      }
+      const rawDate = clean(input?.preferred_date, 10);
+      const preferred_date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : null;
+      return {
+        ...base,
+        preferred_window: rawWindow as (typeof WINDOWS)[number],
+        preferred_date,
+      };
+    },
+  )
+  .handler(async ({ data }): Promise<TrackOrderResult> => {
+    const match = await findOwnedOrder(data.order_reference, data.whatsapp_number);
+    if (!match) return { found: false };
+    if (match.status !== "requested") {
+      throw new Error("This order is already in progress — please message us on WhatsApp.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("orders")
+      .update({
+        preferred_window: data.preferred_window,
+        preferred_date: data.preferred_date,
+      })
+      .eq("id", match.id)
+      .eq("status", "requested")
+      .select(TRACK_COLUMNS)
+      .single();
+    if (error || !row) throw new Error("We couldn't change that pickup time. Please try again.");
+    return toTrackResult(row as OrderLookupRow);
   });

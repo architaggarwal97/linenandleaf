@@ -9,7 +9,7 @@ export const ADMIN_STATUSES = [
   "ready",
   "delivered",
 ] as const;
-export type AdminStatus = (typeof ADMIN_STATUSES)[number];
+export type AdminStatus = (typeof ADMIN_STATUSES)[number] | "cancelled";
 
 export type AdminOrder = {
   id: string;
@@ -71,6 +71,7 @@ async function requireAdmin() {
 }
 
 function normalizeStatus(value: string): AdminStatus {
+  if (value === "cancelled") return "cancelled";
   return (ADMIN_STATUSES as readonly string[]).includes(value)
     ? (value as AdminStatus)
     : "requested";
@@ -103,8 +104,9 @@ export const adminLogout = createServerFn({ method: "POST" }).handler(async () =
 });
 
 export const adminListOrders = createServerFn({ method: "POST" })
-  .inputValidator((input: { search?: unknown }) => ({
+  .inputValidator((input: { search?: unknown; includeCancelled?: unknown }) => ({
     search: typeof input?.search === "string" ? input.search.trim().slice(0, 40) : "",
+    includeCancelled: input?.includeCancelled === true,
   }))
   .handler(async ({ data }): Promise<AdminOrder[]> => {
     await requireAdmin();
@@ -114,6 +116,9 @@ export const adminListOrders = createServerFn({ method: "POST" })
       .select(ORDER_COLUMNS)
       .order("created_at", { ascending: false })
       .limit(60);
+
+    if (!data.includeCancelled) query = query.neq("status", "cancelled");
+
 
     if (data.search) {
       const term = data.search.replace(/[%,()]/g, "");
@@ -146,8 +151,11 @@ export const adminAdvanceStatus = createServerFn({ method: "POST" })
       .single();
     if (readError || !current) throw new Error("Order not found.");
 
-    const index = ADMIN_STATUSES.indexOf(normalizeStatus(current.status));
+    const currentStatus = normalizeStatus(current.status);
+    if (currentStatus === "cancelled") throw new Error("This order was cancelled.");
+    const index = (ADMIN_STATUSES as readonly string[]).indexOf(currentStatus);
     const next = ADMIN_STATUSES[Math.min(index + 1, ADMIN_STATUSES.length - 1)]!;
+
 
     const { data: row, error } = await supabaseAdmin
       .from("orders")
