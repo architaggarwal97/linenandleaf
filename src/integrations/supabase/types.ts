@@ -72,6 +72,7 @@ export type Database = {
           preferred_window: string | null
           referral_credited_at: string | null
           referred_by_phone: string | null
+          review_requested_at: string | null
           service_notes: string | null
           status: string
           whatsapp_number: string
@@ -91,6 +92,7 @@ export type Database = {
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null
+          review_requested_at?: string | null
           service_notes?: string | null
           status?: string
           whatsapp_number: string
@@ -110,6 +112,7 @@ export type Database = {
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null
+          review_requested_at?: string | null
           service_notes?: string | null
           status?: string
           whatsapp_number?: string

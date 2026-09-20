@@ -7,6 +7,8 @@ import {
   adminSheetFeed,
   adminListPendingNotifications,
   adminMarkNotified,
+  adminListPendingReviews,
+  adminMarkReviewRequested,
   adminListAwaitingReferrals,
   adminCompleteReferral,
   adminListCreditFailures,
@@ -16,6 +18,7 @@ import {
   type AwaitingReferral,
   type CreditFailure,
   type PendingNotification,
+  type PendingReview,
   type SheetFeed,
   type SheetFeedEntry,
 } from "@/lib/admin.functions";
@@ -43,6 +46,9 @@ function AdminOverview() {
   const loadNotifications = useServerFn(adminListPendingNotifications);
   const markNotified = useServerFn(adminMarkNotified);
   const [pending, setPending] = useState<PendingNotification[] | null>(null);
+  const loadReviews = useServerFn(adminListPendingReviews);
+  const markReviewRequested = useServerFn(adminMarkReviewRequested);
+  const [reviews, setReviews] = useState<PendingReview[] | null>(null);
   const loadAwaiting = useServerFn(adminListAwaitingReferrals);
   const completeReferral = useServerFn(adminCompleteReferral);
   const [awaiting, setAwaiting] = useState<AwaitingReferral[] | null>(null);
@@ -59,12 +65,13 @@ function AdminOverview() {
       if (typeof document !== "undefined" && document.hidden) return;
       setSyncing(true);
       try {
-        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures] = await Promise.all([
+        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures, nextReviews] = await Promise.all([
           loadStats(),
           loadFeed().catch(() => null),
           loadNotifications().catch(() => null),
           loadAwaiting().catch(() => null),
           loadFailures().catch(() => null),
+          loadReviews().catch(() => null),
         ]);
         if (!active) return;
         setStats(nextStats);
@@ -73,6 +80,7 @@ function AdminOverview() {
         if (nextPending) setPending(nextPending);
         if (nextAwaiting) setAwaiting(nextAwaiting);
         if (nextFailures) setFailures(nextFailures);
+        if (nextReviews) setReviews(nextReviews);
       } catch {
         if (active && !stats) setError("Could not load the dashboard.");
       } finally {
@@ -96,6 +104,16 @@ function AdminOverview() {
       await markNotified({ data: { id: n.id } });
     } catch {
       setPending(await loadNotifications().catch(() => null));
+    }
+  };
+
+  const askReview = async (r: PendingReview) => {
+    window.open(r.whatsappUrl, "_blank", "noopener");
+    setReviews((prev) => (prev ?? []).filter((p) => p.id !== r.id));
+    try {
+      await markReviewRequested({ data: { id: r.id } });
+    } catch {
+      setReviews(await loadReviews().catch(() => null));
     }
   };
 
@@ -266,6 +284,38 @@ function AdminOverview() {
         )}
       </div>
 
+
+      {reviews && reviews.length > 0 ? (
+        <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-slate-800">Review requests</p>
+            <span className="rounded-full bg-teal-100 px-2.5 py-1 text-[11px] font-semibold text-teal-800">
+              {reviews.length} to ask
+            </span>
+          </div>
+          <ul className="mt-3 space-y-2">
+            {reviews.map((r) => (
+              <li key={r.id} className="rounded-2xl bg-slate-50 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-800">{r.customerName}</p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      +91 {r.phone} · {r.orderReference} · delivered
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void askReview(r)}
+                    className="shrink-0 rounded-full bg-teal-700 px-3 py-2 text-[11px] font-semibold text-white"
+                  >
+                    Ask for a review
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         {cards.map((c) => (
