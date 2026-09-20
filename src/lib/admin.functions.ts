@@ -1047,3 +1047,84 @@ export const adminMarkNotified = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not mark that as notified.");
     return { ok: true as const };
   });
+
+// ---------- Business overview (owner) ----------
+
+export type AdminOverview = {
+  totalOrders: number;
+  revenueCollected: number;
+  byStatus: Record<AdminStatus, number>;
+  walletBalanceOutstanding: number;
+  cashbackPaid: number;
+  referralPaid: number;
+  completedReferrals: number;
+  pendingTopUps: { count: number; amount: number };
+};
+
+export const adminBusinessOverview = createServerFn({ method: "POST" }).handler(
+  async (): Promise<AdminOverview> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [ordersRes, balancesRes, txRes, referralsRes, pendingRes] = await Promise.all([
+      supabaseAdmin.from("orders").select("status, paid, order_amount").limit(5000),
+      supabaseAdmin.from("wallet_balances").select("balance").limit(5000),
+      supabaseAdmin
+        .from("wallet_transactions")
+        .select("type, status, amount, bonus")
+        .limit(10000),
+      supabaseAdmin
+        .from("referrals")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "completed"),
+      supabaseAdmin
+        .from("wallet_transactions")
+        .select("amount")
+        .eq("type", "topup")
+        .eq("status", "pending")
+        .limit(1000),
+    ]);
+
+    if (ordersRes.error) throw new Error("Could not load order totals.");
+
+    const byStatus = ADMIN_STATUSES.reduce(
+      (acc, s) => ({ ...acc, [s]: 0 }),
+      {} as Record<AdminStatus, number>,
+    );
+    let revenueCollected = 0;
+    for (const row of ordersRes.data ?? []) {
+      byStatus[normalizeStatus(row.status)] += 1;
+      if (row.paid) revenueCollected += Number(row.order_amount ?? 0);
+    }
+
+    const walletBalanceOutstanding = (balancesRes.data ?? []).reduce(
+      (sum, b) => sum + Number(b.balance ?? 0),
+      0,
+    );
+
+    let cashbackPaid = 0;
+    let referralPaid = 0;
+    for (const tx of txRes.data ?? []) {
+      if (tx.status !== "confirmed") continue;
+      const total = Number(tx.amount ?? 0) + Number(tx.bonus ?? 0);
+      if (tx.type === "cashback") cashbackPaid += total;
+      else if (tx.type === "referral") referralPaid += total;
+    }
+
+    const pendingTopUps = {
+      count: (pendingRes.data ?? []).length,
+      amount: (pendingRes.data ?? []).reduce((sum, t) => sum + Number(t.amount ?? 0), 0),
+    };
+
+    return {
+      totalOrders: (ordersRes.data ?? []).length,
+      revenueCollected,
+      byStatus,
+      walletBalanceOutstanding,
+      cashbackPaid,
+      referralPaid,
+      completedReferrals: referralsRes.count ?? 0,
+      pendingTopUps,
+    };
+  },
+);
