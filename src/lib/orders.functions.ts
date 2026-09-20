@@ -90,7 +90,7 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 const ORDER_STATUSES = ["requested", "picked_up", "in_process", "ready", "delivered"] as const;
-export type OrderStatus = (typeof ORDER_STATUSES)[number];
+export type OrderStatus = (typeof ORDER_STATUSES)[number] | "cancelled";
 
 export type TrackOrderResult = {
   found: boolean;
@@ -100,6 +100,8 @@ export type TrackOrderResult = {
   createdAt?: string;
   pickupPhotoUrl?: string | null;
   deliveryPhotoUrl?: string | null;
+  preferredWindow?: string | null;
+  preferredDate?: string | null;
 };
 
 function normalizePhone(value: string): string {
