@@ -7,6 +7,8 @@ import {
   adminSheetFeed,
   adminListPendingNotifications,
   adminMarkNotified,
+  adminListPendingReviews,
+  adminMarkReviewRequested,
   adminListAwaitingReferrals,
   adminCompleteReferral,
   adminListCreditFailures,
@@ -16,6 +18,7 @@ import {
   type AwaitingReferral,
   type CreditFailure,
   type PendingNotification,
+  type PendingReview,
   type SheetFeed,
   type SheetFeedEntry,
 } from "@/lib/admin.functions";
