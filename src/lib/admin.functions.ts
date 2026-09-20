@@ -104,8 +104,9 @@ export const adminLogout = createServerFn({ method: "POST" }).handler(async () =
 });
 
 export const adminListOrders = createServerFn({ method: "POST" })
-  .inputValidator((input: { search?: unknown }) => ({
+  .inputValidator((input: { search?: unknown; includeCancelled?: unknown }) => ({
     search: typeof input?.search === "string" ? input.search.trim().slice(0, 40) : "",
+    includeCancelled: input?.includeCancelled === true,
   }))
   .handler(async ({ data }): Promise<AdminOrder[]> => {
     await requireAdmin();
@@ -115,6 +116,9 @@ export const adminListOrders = createServerFn({ method: "POST" })
       .select(ORDER_COLUMNS)
       .order("created_at", { ascending: false })
       .limit(60);
+
+    if (!data.includeCancelled) query = query.neq("status", "cancelled");
+
 
     if (data.search) {
       const term = data.search.replace(/[%,()]/g, "");
