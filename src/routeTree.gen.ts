@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ReferRouteImport } from './routes/refer'
@@ -53,6 +54,11 @@ const ContactRoute = ContactRouteImport.update({
 const CorporateRoute = CorporateRouteImport.update({
   id: '/corporate',
   path: '/corporate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
   '/refer': typeof ReferRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
   '/refer': typeof ReferRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
   '/refer': typeof ReferRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/corporate'
+    | '/dashboard'
     | '/faq'
     | '/how-it-works'
     | '/refer'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/corporate'
+    | '/dashboard'
     | '/faq'
     | '/how-it-works'
     | '/refer'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/corporate'
+    | '/dashboard'
     | '/faq'
     | '/how-it-works'
     | '/refer'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
+  DashboardRoute: typeof DashboardRoute
   FaqRoute: typeof FaqRoute
   HowItWorksRoute: typeof HowItWorksRoute
   ReferRoute: typeof ReferRoute
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/corporate'
       fullPath: '/corporate'
       preLoaderRoute: typeof CorporateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -451,6 +471,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
+  DashboardRoute: DashboardRoute,
   FaqRoute: FaqRoute,
   HowItWorksRoute: HowItWorksRoute,
   ReferRoute: ReferRoute,
