@@ -27,10 +27,12 @@ const LABELS: Record<AdminStatus, string> = {
   in_process: "In Process",
   ready: "Ready",
   delivered: "Delivered",
+  cancelled: "Cancelled",
 };
 
 function nextLabel(status: AdminStatus): string | null {
-  const i = ADMIN_STATUSES.indexOf(status);
+  if (status === "cancelled") return null;
+  const i = (ADMIN_STATUSES as readonly string[]).indexOf(status);
   const next = ADMIN_STATUSES[i + 1];
   return next ? LABELS[next] : null;
 }

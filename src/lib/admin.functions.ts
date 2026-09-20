@@ -147,8 +147,11 @@ export const adminAdvanceStatus = createServerFn({ method: "POST" })
       .single();
     if (readError || !current) throw new Error("Order not found.");
 
-    const index = ADMIN_STATUSES.indexOf(normalizeStatus(current.status));
+    const currentStatus = normalizeStatus(current.status);
+    if (currentStatus === "cancelled") throw new Error("This order was cancelled.");
+    const index = (ADMIN_STATUSES as readonly string[]).indexOf(currentStatus);
     const next = ADMIN_STATUSES[Math.min(index + 1, ADMIN_STATUSES.length - 1)]!;
+
 
     const { data: row, error } = await supabaseAdmin
       .from("orders")
