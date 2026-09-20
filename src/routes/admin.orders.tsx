@@ -188,13 +188,22 @@ function AdminOrdersPage() {
     <div className="mt-5">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold text-slate-800">Orders</h1>
-        <Link
-          to="/admin/overview"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700"
-        >
-          Business overview <ArrowRight className="h-4 w-4" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700"
+          >
+            Customers
+          </Link>
+          <Link
+            to="/admin/overview"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700"
+          >
+            Business <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
+
 
       <form
         onSubmit={(e) => {
