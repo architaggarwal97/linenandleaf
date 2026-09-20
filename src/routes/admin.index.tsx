@@ -285,6 +285,38 @@ function AdminOverview() {
       </div>
 
 
+      {reviews && reviews.length > 0 ? (
+        <div className="mt-4 rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-slate-800">Review requests</p>
+            <span className="rounded-full bg-teal-100 px-2.5 py-1 text-[11px] font-semibold text-teal-800">
+              {reviews.length} to ask
+            </span>
+          </div>
+          <ul className="mt-3 space-y-2">
+            {reviews.map((r) => (
+              <li key={r.id} className="rounded-2xl bg-slate-50 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-800">{r.customerName}</p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      +91 {r.phone} · {r.orderReference} · delivered
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void askReview(r)}
+                    className="shrink-0 rounded-full bg-teal-700 px-3 py-2 text-[11px] font-semibold text-white"
+                  >
+                    Ask for a review
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <div className="mt-4 grid grid-cols-2 gap-3">
         {cards.map((c) => (
           <div
