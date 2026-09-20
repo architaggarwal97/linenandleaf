@@ -69,6 +69,7 @@ export type Database = {
           paid: boolean
           pickup_address: string
           pickup_photo_url: string | null
+          preferred_date: string | null
           preferred_window: string | null
           referral_credited_at: string | null
           referred_by_phone: string | null
@@ -89,6 +90,7 @@ export type Database = {
           paid?: boolean
           pickup_address: string
           pickup_photo_url?: string | null
+          preferred_date?: string | null
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           paid?: boolean
           pickup_address?: string
           pickup_photo_url?: string | null
+          preferred_date?: string | null
           preferred_window?: string | null
           referral_credited_at?: string | null
           referred_by_phone?: string | null
