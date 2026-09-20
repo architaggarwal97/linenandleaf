@@ -83,7 +83,9 @@ function AdminOrdersPage() {
     setOrders((prev) => prev.map((o) => (o.id === row.id ? row : o)));
 
   const nextStatus = (order: AdminOrder): AdminStatus | undefined =>
-    ADMIN_STATUSES[ADMIN_STATUSES.indexOf(order.status) + 1];
+    order.status === "cancelled"
+      ? undefined
+      : ADMIN_STATUSES[(ADMIN_STATUSES as readonly string[]).indexOf(order.status) + 1];
 
   const afterUpdate = async (row: AdminOrder) => {
     applyRow(row);
