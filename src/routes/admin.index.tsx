@@ -107,6 +107,16 @@ function AdminOverview() {
     }
   };
 
+  const askReview = async (r: PendingReview) => {
+    window.open(r.whatsappUrl, "_blank", "noopener");
+    setReviews((prev) => (prev ?? []).filter((p) => p.id !== r.id));
+    try {
+      await markReviewRequested({ data: { id: r.id } });
+    } catch {
+      setReviews(await loadReviews().catch(() => null));
+    }
+  };
+
   const creditReferral = async (r: AwaitingReferral) => {
     setBusyId(r.id);
     try {
