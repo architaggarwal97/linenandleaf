@@ -9,7 +9,7 @@ export const ADMIN_STATUSES = [
   "ready",
   "delivered",
 ] as const;
-export type AdminStatus = (typeof ADMIN_STATUSES)[number];
+export type AdminStatus = (typeof ADMIN_STATUSES)[number] | "cancelled";
 
 export type AdminOrder = {
   id: string;
@@ -71,6 +71,7 @@ async function requireAdmin() {
 }
 
 function normalizeStatus(value: string): AdminStatus {
+  if (value === "cancelled") return "cancelled";
   return (ADMIN_STATUSES as readonly string[]).includes(value)
     ? (value as AdminStatus)
     : "requested";
