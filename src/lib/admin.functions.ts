@@ -1128,3 +1128,163 @@ export const adminBusinessOverview = createServerFn({ method: "POST" }).handler(
     };
   },
 );
+
+export type AdminCustomer = {
+  phone: string;
+  name: string;
+  orderCount: number;
+  totalSpent: number;
+  lastOrderAt: string | null;
+  lastOrderReference: string | null;
+  lastStatus: AdminStatus | null;
+  walletBalance: number;
+  active: boolean;
+};
+
+const ACTIVE_WINDOW_DAYS = 60;
+
+export const adminListCustomers = createServerFn({ method: "POST" })
+  .inputValidator((input: { search?: unknown }) => ({
+    search: typeof input?.search === "string" ? input.search.trim().slice(0, 40) : "",
+  }))
+  .handler(async ({ data }): Promise<AdminCustomer[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [ordersRes, balancesRes] = await Promise.all([
+      supabaseAdmin
+        .from("orders")
+        .select("order_reference, customer_name, whatsapp_number, status, paid, order_amount, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5000),
+      supabaseAdmin.from("wallet_balances").select("phone, balance").limit(5000),
+    ]);
+
+    if (ordersRes.error) throw new Error("Could not load customers.");
+
+    const balances = new Map<string, number>();
+    for (const row of balancesRes.data ?? []) {
+      const key = String(row.phone ?? "").replace(/\D/g, "").slice(-10);
+      if (key.length === 10) balances.set(key, Number(row.balance ?? 0));
+    }
+
+    const cutoff = Date.now() - ACTIVE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+    const map = new Map<string, AdminCustomer>();
+
+    for (const row of ordersRes.data ?? []) {
+      const phone = String(row.whatsapp_number ?? "").replace(/\D/g, "").slice(-10);
+      if (phone.length !== 10) continue;
+      const existing = map.get(phone);
+      const createdAt = row.created_at as string;
+      if (!existing) {
+        map.set(phone, {
+          phone,
+          name: String(row.customer_name ?? "").trim() || "Customer",
+          orderCount: 1,
+          totalSpent: row.paid ? Number(row.order_amount ?? 0) : 0,
+          lastOrderAt: createdAt,
+          lastOrderReference: row.order_reference ?? null,
+          lastStatus: normalizeStatus(String(row.status ?? "")),
+          walletBalance: balances.get(phone) ?? 0,
+          active: new Date(createdAt).getTime() >= cutoff,
+        });
+      } else {
+        existing.orderCount += 1;
+        if (row.paid) existing.totalSpent += Number(row.order_amount ?? 0);
+      }
+    }
+
+    // Customers with a wallet but no orders yet
+    for (const [phone, balance] of balances) {
+      if (map.has(phone)) continue;
+      map.set(phone, {
+        phone,
+        name: "Wallet customer",
+        orderCount: 0,
+        totalSpent: 0,
+        lastOrderAt: null,
+        lastOrderReference: null,
+        lastStatus: null,
+        walletBalance: balance,
+        active: false,
+      });
+    }
+
+    let list = [...map.values()].sort((a, b) => {
+      const at = a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0;
+      const bt = b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0;
+      return bt - at;
+    });
+
+    const search = data.search.toLowerCase();
+    if (search) {
+      const digits = search.replace(/\D/g, "");
+      list = list.filter(
+        (c) =>
+          c.name.toLowerCase().includes(search) ||
+          (digits.length > 0 && c.phone.includes(digits)) ||
+          (c.lastOrderReference ?? "").toLowerCase().includes(search),
+      );
+    }
+
+    return list.slice(0, 200);
+  });
+
+export type AdminCustomerDetail = {
+  phone: string;
+  name: string;
+  walletBalance: number;
+  orders: {
+    id: string;
+    order_reference: string;
+    status: AdminStatus;
+    paid: boolean;
+    order_amount: number | null;
+    cashback_amount: number | null;
+    created_at: string;
+  }[];
+};
+
+export const adminCustomerDetail = createServerFn({ method: "POST" })
+  .inputValidator((input: { phone?: unknown }) => ({
+    phone: String(typeof input?.phone === "string" ? input.phone : "")
+      .replace(/\D/g, "")
+      .slice(-10),
+  }))
+  .handler(async ({ data }): Promise<AdminCustomerDetail | null> => {
+    await requireAdmin();
+    if (data.phone.length !== 10) return null;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [ordersRes, balanceRes] = await Promise.all([
+      supabaseAdmin
+        .from("orders")
+        .select("id, order_reference, customer_name, whatsapp_number, status, paid, order_amount, cashback_amount, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabaseAdmin.from("wallet_balances").select("phone, balance").limit(5000),
+    ]);
+
+    const orders = (ordersRes.data ?? []).filter(
+      (row) => String(row.whatsapp_number ?? "").replace(/\D/g, "").slice(-10) === data.phone,
+    );
+
+    const balanceRow = (balanceRes.data ?? []).find(
+      (row) => String(row.phone ?? "").replace(/\D/g, "").slice(-10) === data.phone,
+    );
+
+    return {
+      phone: data.phone,
+      name: String(orders[0]?.customer_name ?? "").trim() || "Customer",
+      walletBalance: Number(balanceRow?.balance ?? 0),
+      orders: orders.slice(0, 50).map((row) => ({
+        id: row.id,
+        order_reference: row.order_reference,
+        status: normalizeStatus(String(row.status ?? "")),
+        paid: Boolean(row.paid),
+        order_amount: row.order_amount === null ? null : Number(row.order_amount),
+        cashback_amount: row.cashback_amount === null ? null : Number(row.cashback_amount),
+        created_at: row.created_at as string,
+      })),
+    };
+  });
