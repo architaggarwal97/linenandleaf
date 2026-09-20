@@ -22,9 +22,10 @@ export const Route = createFileRoute("/admin")({
 });
 
 const TABS = [
-  { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
+  { to: "/admin", label: "Today", icon: LayoutDashboard, exact: true },
   { to: "/admin/orders", label: "Orders", icon: ClipboardList, exact: false },
   { to: "/admin/wallet", label: "Wallet", icon: Wallet, exact: false },
+  { to: "/admin/overview", label: "Business", icon: TrendingUp, exact: false },
 ] as const;
 
 
