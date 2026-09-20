@@ -69,6 +69,13 @@ const STAGES: { key: OrderStatus; label: string }[] = [
   { key: "delivered", label: "Delivered" },
 ];
 
+type WindowValue = "morning" | "afternoon" | "evening";
+const WINDOW_OPTIONS: { value: WindowValue; label: string }[] = [
+  { value: "morning", label: "Morning" },
+  { value: "afternoon", label: "Afternoon" },
+  { value: "evening", label: "Evening" },
+];
+
 function formatPrefillPhone(value: string): string {
   const digits = value.replace(/\D/g, "");
   if (digits.length === 12 && digits.startsWith("91")) {
@@ -85,6 +92,57 @@ function TrackPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TrackOrderResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const cancel = useServerFn(cancelOrder);
+  const reschedule = useServerFn(rescheduleOrder);
+  const [rescheduling, setRescheduling] = useState(false);
+  const [newWindow, setNewWindow] = useState<WindowValue>("morning");
+  const [newDate, setNewDate] = useState("");
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionNote, setActionNote] = useState<string | null>(null);
+
+  const onCancel = async () => {
+    if (actionBusy) return;
+    setActionBusy(true);
+    setError(null);
+    setActionNote(null);
+    try {
+      const res = await cancel({
+        data: { whatsapp_number: phone, order_reference: reference },
+      });
+      setResult(res);
+      setRescheduling(false);
+    } catch (err) {
+      console.error(err);
+      setError("We couldn't cancel that order. Please message us on WhatsApp.");
+    } finally {
+      setActionBusy(false);
+    }
+  };
+
+  const onReschedule = async () => {
+    if (actionBusy) return;
+    setActionBusy(true);
+    setError(null);
+    setActionNote(null);
+    try {
+      const res = await reschedule({
+        data: {
+          whatsapp_number: phone,
+          order_reference: reference,
+          preferred_window: newWindow,
+          preferred_date: newDate || undefined,
+        },
+      });
+      setResult(res);
+      setRescheduling(false);
+      setActionNote("Pickup time updated — we'll confirm on WhatsApp.");
+    } catch (err) {
+      console.error(err);
+      setError("We couldn't change that pickup time. Please message us on WhatsApp.");
+    } finally {
+      setActionBusy(false);
+    }
+  };
 
   const runLookup = async (nextPhone: string, nextRef: string) => {
     setError(null);
