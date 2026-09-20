@@ -46,6 +46,9 @@ function AdminOverview() {
   const loadNotifications = useServerFn(adminListPendingNotifications);
   const markNotified = useServerFn(adminMarkNotified);
   const [pending, setPending] = useState<PendingNotification[] | null>(null);
+  const loadReviews = useServerFn(adminListPendingReviews);
+  const markReviewRequested = useServerFn(adminMarkReviewRequested);
+  const [reviews, setReviews] = useState<PendingReview[] | null>(null);
   const loadAwaiting = useServerFn(adminListAwaitingReferrals);
   const completeReferral = useServerFn(adminCompleteReferral);
   const [awaiting, setAwaiting] = useState<AwaitingReferral[] | null>(null);
@@ -62,12 +65,13 @@ function AdminOverview() {
       if (typeof document !== "undefined" && document.hidden) return;
       setSyncing(true);
       try {
-        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures] = await Promise.all([
+        const [nextStats, nextFeed, nextPending, nextAwaiting, nextFailures, nextReviews] = await Promise.all([
           loadStats(),
           loadFeed().catch(() => null),
           loadNotifications().catch(() => null),
           loadAwaiting().catch(() => null),
           loadFailures().catch(() => null),
+          loadReviews().catch(() => null),
         ]);
         if (!active) return;
         setStats(nextStats);
@@ -76,6 +80,7 @@ function AdminOverview() {
         if (nextPending) setPending(nextPending);
         if (nextAwaiting) setAwaiting(nextAwaiting);
         if (nextFailures) setFailures(nextFailures);
+        if (nextReviews) setReviews(nextReviews);
       } catch {
         if (active && !stats) setError("Could not load the dashboard.");
       } finally {
