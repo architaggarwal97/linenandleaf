@@ -1,13 +1,37 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { PackageSearch, Loader2, Check, MessageCircle } from "lucide-react";
-import { trackOrder, type TrackOrderResult, type OrderStatus } from "@/lib/orders.functions";
+import {
+  PackageSearch,
+  Loader2,
+  Check,
+  MessageCircle,
+  CalendarClock,
+  XCircle,
+} from "lucide-react";
+import {
+  trackOrder,
+  cancelOrder,
+  rescheduleOrder,
+  type TrackOrderResult,
+  type OrderStatus,
+} from "@/lib/orders.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { whatsappLink } from "@/lib/whatsapp";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const TITLE = "Track Your Order — Linen & Leaf Dry Cleaners";
 const DESCRIPTION =
@@ -196,14 +220,17 @@ function TrackPage() {
                       })}`
                     : ""}
                 </p>
-                <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-teal-700 font-medium">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-600" />
-                  </span>
-                  Live updates on — this page refreshes itself as we work on your order.
-                </p>
-                <ol className="mt-6 space-y-0">
+                {result.status !== "cancelled" ? (
+                  <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-teal-700 font-medium">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-600" />
+                    </span>
+                    Live updates on — this page refreshes itself as we work on your order.
+                  </p>
+                ) : null}
+                {result.status !== "cancelled" ? (
+                  <ol className="mt-6 space-y-0">
                   {STAGES.map((stage, i) => {
                     const done = i < currentIndex;
                     const current = i === currentIndex;
@@ -272,8 +299,146 @@ function TrackPage() {
                       </li>
                     );
                   })}
-                </ol>
-                <p className="text-sm text-slate-500 font-light leading-relaxed border-t border-slate-100 pt-5">
+                  </ol>
+                ) : (
+                  <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4">
+                    <p className="font-display text-base font-bold text-rose-700">
+                      This order was cancelled.
+                    </p>
+                    <p className="mt-1 text-sm text-rose-600/90 font-light">
+                      Nothing further is scheduled. Book again any time, or message us on WhatsApp
+                      if this wasn't meant to happen.
+                    </p>
+                  </div>
+                )}
+                {result.status === "requested" ? (
+                  <div className="border-t border-slate-100 pt-5">
+                    <p className="font-display text-base font-bold text-slate-800">
+                      Need to change something?
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500 font-light">
+                      You can still change your pickup time or cancel — we haven't collected your
+                      items yet.
+                    </p>
+
+                    {rescheduling ? (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          void onReschedule();
+                        }}
+                        className="mt-4 space-y-3 rounded-2xl bg-slate-50 p-4"
+                      >
+                        <div>
+                          <span className="block text-sm font-medium text-slate-700 mb-1.5">
+                            Preferred pickup time
+                          </span>
+                          <div className="grid grid-cols-3 gap-2">
+                            {WINDOW_OPTIONS.map((w) => (
+                              <button
+                                key={w.value}
+                                type="button"
+                                onClick={() => setNewWindow(w.value)}
+                                className={`rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                                  newWindow === w.value
+                                    ? "bg-teal-600 text-white"
+                                    : "bg-white border border-slate-200 text-slate-600"
+                                }`}
+                              >
+                                {w.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="track-date"
+                            className="block text-sm font-medium text-slate-700 mb-1.5"
+                          >
+                            Preferred date (optional)
+                          </label>
+                          <input
+                            id="track-date"
+                            type="date"
+                            value={newDate}
+                            min={new Date().toISOString().slice(0, 10)}
+                            onChange={(e) => setNewDate(e.target.value)}
+                            className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                          />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="submit"
+                            disabled={actionBusy}
+                            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-70 text-white px-4 py-2.5 text-sm font-medium transition-colors"
+                          >
+                            {actionBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                            Save new pickup time
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setRescheduling(false)}
+                            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600"
+                          >
+                            Never mind
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewWindow(
+                              (WINDOW_OPTIONS.find((w) => w.value === result.preferredWindow)
+                                ?.value ?? "morning") as WindowValue,
+                            );
+                            setNewDate(result.preferredDate ?? "");
+                            setRescheduling(true);
+                          }}
+                          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 text-slate-600 hover:border-teal-400 hover:text-teal-700 px-4 py-2.5 text-sm font-medium transition-colors"
+                        >
+                          <CalendarClock className="h-4 w-4 shrink-0" /> Change pickup time
+                        </button>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-2 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 px-4 py-2.5 text-sm font-medium transition-colors"
+                            >
+                              <XCircle className="h-4 w-4 shrink-0" /> Cancel this order
+                            </button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Cancel this pickup?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Order {result.orderReference} will be cancelled and we won't come
+                                to collect. You can always book again.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Keep my order</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => void onCancel()}>
+                                Yes, cancel it
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
+                    {actionNote ? (
+                      <p className="mt-3 text-sm text-teal-700">{actionNote}</p>
+                    ) : null}
+                  </div>
+                ) : result.status !== "cancelled" ? (
+                  <p className="text-sm text-slate-500 font-light leading-relaxed border-t border-slate-100 pt-5">
+                    Contact us on WhatsApp for changes to an order already in progress.
+                  </p>
+                ) : null}
+
+                <p className="mt-5 text-sm text-slate-500 font-light leading-relaxed border-t border-slate-100 pt-5">
                   Questions about this order?{" "}
                   <a
                     href={whatsappLink(
