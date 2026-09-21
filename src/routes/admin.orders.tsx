@@ -240,6 +240,19 @@ function AdminOrdersPage() {
         </button>
       </form>
 
+      <label className="mt-3 flex items-center gap-2 text-sm text-slate-500">
+        <input
+          type="checkbox"
+          checked={showCancelled}
+          onChange={(e) => {
+            setShowCancelled(e.target.checked);
+            void refresh(search, e.target.checked);
+          }}
+          className="h-4 w-4 rounded border-slate-300"
+        />
+        Show cancelled orders
+      </label>
+
       {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
       {referralNote ? (
         <p className="mt-4 rounded-2xl bg-teal-50 px-4 py-3 text-sm text-teal-800">
@@ -257,10 +270,13 @@ function AdminOrdersPage() {
         {orders.map((order) => {
           const busy = rowBusy === order.id;
           const next = nextLabel(order.status);
+          const cancelled = order.status === "cancelled";
           return (
             <article
               key={order.id}
-              className="rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
+              className={`rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] ${
+                cancelled ? "opacity-60 grayscale" : ""
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -277,7 +293,11 @@ function AdminOrdersPage() {
                     {order.whatsapp_number}
                   </a>
                 </div>
-                <span className="shrink-0 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
+                <span
+                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+                    cancelled ? "bg-rose-50 text-rose-600" : "bg-teal-50 text-teal-700"
+                  }`}
+                >
                   {LABELS[order.status]}
                 </span>
               </div>
