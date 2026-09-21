@@ -27,6 +27,7 @@ import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminOverviewRouteImport } from './routes/admin.overview'
+import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminWalletRouteImport } from './routes/admin.wallet'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -121,6 +122,11 @@ const AdminOverviewRoute = AdminOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminWalletRoute = AdminWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin/'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
     | '/admin/'
@@ -425,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOverviewRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/testimonials': {
+      id: '/admin/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AdminTestimonialsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/wallet': {
       id: '/admin/wallet'
       path: '/wallet'
@@ -452,6 +471,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminWalletRoute: typeof AdminWalletRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -459,6 +479,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminOverviewRoute: AdminOverviewRoute,
+  AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminWalletRoute: AdminWalletRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
