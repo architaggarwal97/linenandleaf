@@ -1362,3 +1362,90 @@ export const adminCustomerDetail = createServerFn({ method: "POST" })
       })),
     };
   });
+
+// ---------- Testimonials ----------
+
+export type AdminTestimonial = {
+  id: string;
+  customer_name: string;
+  phone: string | null;
+  rating: number;
+  review: string;
+  order_reference: string | null;
+  created_at: string;
+};
+
+export const adminListTestimonials = createServerFn({ method: "POST" }).handler(
+  async (): Promise<AdminTestimonial[]> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("testimonials")
+      .select("id, customer_name, phone, rating, review, order_reference, created_at")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error("Could not load testimonials.");
+    return (data ?? []).map((row) => ({
+      id: row.id as string,
+      customer_name: String(row.customer_name ?? ""),
+      phone: (row.phone as string | null) ?? null,
+      rating: Number(row.rating ?? 0),
+      review: String(row.review ?? ""),
+      order_reference: (row.order_reference as string | null) ?? null,
+      created_at: row.created_at as string,
+    }));
+  },
+);
+
+export const adminAddTestimonial = createServerFn({ method: "POST" })
+  .inputValidator((input: {
+    customerName?: unknown;
+    phone?: unknown;
+    rating?: unknown;
+    review?: unknown;
+    orderReference?: unknown;
+  }) => {
+    const customerName = String(input?.customerName ?? "").trim();
+    const review = String(input?.review ?? "").trim();
+    const rating = Number(input?.rating ?? 0);
+    const phone = String(input?.phone ?? "").replace(/\D/g, "").slice(-10);
+    const orderReference = String(input?.orderReference ?? "").trim().toUpperCase();
+    if (!customerName) throw new Error("Customer name is required.");
+    if (!review) throw new Error("Review text is required.");
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5)
+      throw new Error("Rating must be between 1 and 5 stars.");
+    return {
+      customerName,
+      review,
+      rating,
+      phone: phone.length === 10 ? phone : null,
+      orderReference: orderReference || null,
+    };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("testimonials").insert({
+      customer_name: data.customerName,
+      review: data.review,
+      rating: data.rating,
+      phone: data.phone,
+      order_reference: data.orderReference,
+    });
+    if (error) throw new Error("Could not save the testimonial.");
+    return { ok: true as const };
+  });
+
+export const adminDeleteTestimonial = createServerFn({ method: "POST" })
+  .inputValidator((input: { id?: unknown }) => {
+    const id = typeof input?.id === "string" ? input.id : "";
+    if (!id) throw new Error("Missing testimonial id.");
+    return { id };
+  })
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("testimonials").delete().eq("id", data.id);
+    if (error) throw new Error("Could not delete the testimonial.");
+    return { ok: true as const };
+  });

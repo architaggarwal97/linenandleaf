@@ -293,6 +293,12 @@ function AdminOverview() {
               {reviews.length} to ask
             </span>
           </div>
+          <Link
+            to="/admin/testimonials"
+            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-teal-700"
+          >
+            View saved testimonials <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
           <ul className="mt-3 space-y-2">
             {reviews.map((r) => (
               <li key={r.id} className="rounded-2xl bg-slate-50 px-4 py-3">
