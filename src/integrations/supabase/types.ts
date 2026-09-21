@@ -149,6 +149,39 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          created_at: string
+          customer_name: string
+          id: string
+          order_reference: string | null
+          phone: string | null
+          rating: number
+          review: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          id?: string
+          order_reference?: string | null
+          phone?: string | null
+          rating: number
+          review: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          id?: string
+          order_reference?: string | null
+          phone?: string | null
+          rating?: number
+          review?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wallet_balances: {
         Row: {
           balance: number
