@@ -67,6 +67,7 @@ export type Database = {
           order_amount: number | null
           order_reference: string
           paid: boolean
+          paid_method: string | null
           pickup_address: string
           pickup_photo_url: string | null
           preferred_date: string | null
@@ -88,6 +89,7 @@ export type Database = {
           order_amount?: number | null
           order_reference?: string
           paid?: boolean
+          paid_method?: string | null
           pickup_address: string
           pickup_photo_url?: string | null
           preferred_date?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           order_amount?: number | null
           order_reference?: string
           paid?: boolean
+          paid_method?: string | null
           pickup_address?: string
           pickup_photo_url?: string | null
           preferred_date?: string | null
@@ -340,6 +343,15 @@ export type Database = {
       }
       wallet_deduct: {
         Args: { _amount: number; _note: string; _phone: string }
+        Returns: number
+      }
+      wallet_pay_order: {
+        Args: {
+          _amount: number
+          _note: string
+          _phone: string
+          _reference: string
+        }
         Returns: number
       }
     }

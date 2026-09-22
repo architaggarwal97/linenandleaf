@@ -407,6 +407,12 @@ function AdminOrdersPage() {
                 </button>
               </div>
 
+              {order.paid ? (
+                <p className="mt-2 text-xs font-medium text-emerald-700">
+                  {order.paid_method === "wallet" ? "Paid via wallet" : "Paid via Paytm / cash"}
+                </p>
+              ) : null}
+
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {(["pickup", "delivery"] as const).map((kind) => {
                   const url =
