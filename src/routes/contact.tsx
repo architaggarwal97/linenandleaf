@@ -81,14 +81,24 @@ function ContactPage() {
   const payFromWallet = async () => {
     const amount = Number(payAmount);
     if (!amount || paying) return;
+    if (!reference) {
+      setPayError("Place the booking first, then pay from your wallet.");
+      return;
+    }
     setPaying(true);
     setPayError(null);
     try {
       const res = await payWallet({
-        data: { amount, note: reference ? `Order ${reference}` : "Order payment" },
+        data: { amount, reference, note: `Order ${reference}` },
       });
       if (!res.ok) {
-        setPayError("That's more than your wallet balance.");
+        setPayError(
+          res.reason === "not_found"
+            ? "Order not found."
+            : res.reason === "already_paid"
+              ? "This order is already paid."
+              : "That's more than your wallet balance.",
+        );
         if (res.state) await wallet.refresh();
       } else {
         await wallet.refresh();
