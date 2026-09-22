@@ -289,29 +289,46 @@ export const walletRequestTopUp = createServerFn({ method: "POST" })
   });
 
 export const walletPayForOrder = createServerFn({ method: "POST" })
-  .inputValidator((input: { amount?: unknown; note?: unknown }) => {
+  .inputValidator((input: { amount?: unknown; reference?: unknown; note?: unknown }) => {
     const amount = Math.round(Number(input?.amount ?? 0));
     if (!Number.isFinite(amount) || amount <= 0) throw new Error("Enter a valid amount.");
+    const reference =
+      typeof input?.reference === "string" ? input.reference.trim().toUpperCase().slice(0, 32) : "";
+    if (!reference) throw new Error("Order reference is missing.");
     const note = typeof input?.note === "string" ? input.note.trim().slice(0, 200) : "";
-    return { amount, note };
+    return { amount, reference, note };
   })
   .handler(
-    async ({ data }): Promise<{ ok: boolean; reason?: "insufficient"; state?: WalletState }> => {
+    async ({
+      data,
+    }): Promise<{
+      ok: boolean;
+      reason?: "insufficient" | "not_found" | "already_paid";
+      state?: WalletState;
+    }> => {
       const phone = await currentPhone();
       if (!phone) throw new Error("Please sign in to your wallet first.");
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error } = await supabaseAdmin.rpc("wallet_deduct", {
+      const { error } = await supabaseAdmin.rpc("wallet_pay_order", {
         _phone: phone,
         _amount: data.amount,
-        _note: data.note || "Paid from wallet",
+        _reference: data.reference,
+        _note: data.note || `Paid for order ${data.reference}`,
       });
 
       if (error) {
-        if (String(error.message).includes("INSUFFICIENT_BALANCE")) {
+        const message = String(error.message);
+        if (message.includes("INSUFFICIENT_BALANCE")) {
           return { ok: false, reason: "insufficient", state: await loadState(phone) };
         }
-        console.error("Wallet deduction failed", error);
+        if (message.includes("ORDER_NOT_FOUND")) {
+          return { ok: false, reason: "not_found", state: await loadState(phone) };
+        }
+        if (message.includes("ORDER_ALREADY_PAID")) {
+          return { ok: false, reason: "already_paid", state: await loadState(phone) };
+        }
+        console.error("Wallet order payment failed", error);
         throw new Error("Could not take the payment from your wallet.");
       }
 
