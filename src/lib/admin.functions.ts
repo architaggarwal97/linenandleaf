@@ -231,7 +231,11 @@ export const adminSetPaid = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("orders")
-      .update({ paid: data.paid })
+      .update(
+        data.paid
+          ? { paid: true, paid_method: "counter", paid_at: new Date().toISOString() }
+          : { paid: false, paid_method: null, paid_at: null },
+      )
       .eq("id", data.id)
       .select(ORDER_COLUMNS)
       .single();

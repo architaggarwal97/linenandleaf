@@ -67,6 +67,7 @@ export type Database = {
           order_amount: number | null
           order_reference: string
           paid: boolean
+          paid_at: string | null
           paid_method: string | null
           pickup_address: string
           pickup_photo_url: string | null
@@ -89,6 +90,7 @@ export type Database = {
           order_amount?: number | null
           order_reference?: string
           paid?: boolean
+          paid_at?: string | null
           paid_method?: string | null
           pickup_address: string
           pickup_photo_url?: string | null
@@ -111,6 +113,7 @@ export type Database = {
           order_amount?: number | null
           order_reference?: string
           paid?: boolean
+          paid_at?: string | null
           paid_method?: string | null
           pickup_address?: string
           pickup_photo_url?: string | null
@@ -286,6 +289,7 @@ export type Database = {
           id: string
           note: string | null
           notified_at: string | null
+          order_reference: string | null
           phone: string
           resulting_balance: number | null
           status: string
@@ -298,6 +302,7 @@ export type Database = {
           id?: string
           note?: string | null
           notified_at?: string | null
+          order_reference?: string | null
           phone: string
           resulting_balance?: number | null
           status?: string
@@ -310,6 +315,7 @@ export type Database = {
           id?: string
           note?: string | null
           notified_at?: string | null
+          order_reference?: string | null
           phone?: string
           resulting_balance?: number | null
           status?: string
