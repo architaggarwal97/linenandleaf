@@ -29,7 +29,7 @@ export type AdminOrder = {
 };
 
 const ORDER_COLUMNS =
-  "id, order_reference, customer_name, whatsapp_number, status, paid, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url, order_amount, cashback_amount";
+  "id, order_reference, customer_name, whatsapp_number, status, paid, paid_method, created_at, pickup_address, preferred_window, pickup_photo_url, delivery_photo_url, order_amount, cashback_amount";
 
 type OrderRow = Omit<AdminOrder, "status"> & { status: string };
 
