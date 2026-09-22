@@ -18,6 +18,7 @@ export type AdminOrder = {
   whatsapp_number: string;
   status: AdminStatus;
   paid: boolean;
+  paid_method: string | null;
   created_at: string;
   pickup_address: string;
   preferred_window: string | null;
