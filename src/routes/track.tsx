@@ -496,6 +496,16 @@ function TrackPage() {
                   </p>
                 ) : null}
 
+                {result.paid ? (
+                  <Link
+                    to="/receipt"
+                    search={{ ref: result.orderReference, tel: `+91${phone.replace(/\D/g, "").slice(-10)}` }}
+                    className="mt-5 flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-6 py-4 text-base font-medium text-slate-700"
+                  >
+                    Download payment receipt
+                  </Link>
+                ) : null}
+
                 <p className="mt-5 text-sm text-slate-500 font-light leading-relaxed border-t border-slate-100 pt-5">
                   Questions about this order?{" "}
                   <a
