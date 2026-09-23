@@ -215,6 +215,7 @@ function ReceiptPage() {
                   </button>
                   <Link
                     to="/track"
+                    search={{ ref: receipt.orderReference, tel: `+91${phone.replace(/\D/g, "").slice(-10)}` }}
                     className="flex flex-1 items-center justify-center gap-2 border border-slate-200 text-slate-700 px-6 py-4 rounded-2xl text-base font-medium"
                   >
                     Track this order
