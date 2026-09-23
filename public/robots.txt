@@ -20,3 +20,4 @@ Disallow: /admin/
 Disallow: /dashboard
 
 Sitemap: https://linenandleaf.lovable.app/sitemap.xml
+Disallow: /receipt
