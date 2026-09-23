@@ -102,6 +102,7 @@ export type TrackOrderResult = {
   deliveryPhotoUrl?: string | null;
   preferredWindow?: string | null;
   preferredDate?: string | null;
+  paid?: boolean;
 };
 
 function normalizePhone(value: string): string {
@@ -122,7 +123,7 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date",
+        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date, paid",
       )
       .eq("order_reference", data.order_reference)
       .limit(5);
@@ -149,10 +150,11 @@ type OrderLookupRow = {
   delivery_photo_url: string | null;
   preferred_window: string | null;
   preferred_date: string | null;
+  paid?: boolean | null;
 };
 
 const TRACK_COLUMNS =
-  "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date";
+  "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date, paid";
 
 async function toTrackResult(match: OrderLookupRow): Promise<TrackOrderResult> {
   const status: OrderStatus =
@@ -179,6 +181,7 @@ async function toTrackResult(match: OrderLookupRow): Promise<TrackOrderResult> {
     deliveryPhotoUrl,
     preferredWindow: match.preferred_window,
     preferredDate: match.preferred_date,
+    paid: Boolean(match.paid),
   };
 }
 
@@ -269,4 +272,72 @@ export const rescheduleOrder = createServerFn({ method: "POST" })
       .single();
     if (error || !row) throw new Error("We couldn't change that pickup time. Please try again.");
     return toTrackResult(row as OrderLookupRow);
+  });
+
+export type PaymentReceipt = {
+  found: boolean;
+  orderReference?: string;
+  customerName?: string;
+  amount?: number;
+  method?: "wallet" | "counter";
+  paidAt?: string | null;
+  walletBefore?: number | null;
+  walletAfter?: number | null;
+};
+
+/** Receipt for a paid order. Requires reference AND phone together. */
+export const orderReceipt = createServerFn({ method: "POST" })
+  .inputValidator((input: { whatsapp_number?: unknown; order_reference?: unknown }) => {
+    const whatsapp_number = clean(input?.whatsapp_number, 30);
+    const order_reference = clean(input?.order_reference, 20).toUpperCase();
+    if (!whatsapp_number || !order_reference) {
+      throw new Error("Please enter your WhatsApp number and order reference.");
+    }
+    return { whatsapp_number, order_reference };
+  })
+  .handler(async ({ data }): Promise<PaymentReceipt> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("orders")
+      .select(
+        "order_reference, customer_name, whatsapp_number, paid, paid_method, paid_at, order_amount",
+      )
+      .eq("order_reference", data.order_reference)
+      .limit(5);
+    if (error) throw new Error("We couldn't load your receipt just now. Please try again.");
+
+    const needle = normalizePhone(data.whatsapp_number);
+    const order = (rows ?? []).find((r) => normalizePhone(r.whatsapp_number) === needle);
+    if (!order || !order.paid) return { found: false };
+
+    let amount = Number(order.order_amount ?? 0);
+    let walletBefore: number | null = null;
+    let walletAfter: number | null = null;
+
+    if (order.paid_method === "wallet") {
+      const { data: txn } = await supabaseAdmin
+        .from("wallet_transactions")
+        .select("amount, resulting_balance")
+        .eq("order_reference", order.order_reference)
+        .eq("type", "deduction")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (txn) {
+        amount = Number(txn.amount ?? amount);
+        walletAfter = txn.resulting_balance === null ? null : Number(txn.resulting_balance);
+        walletBefore = walletAfter === null ? null : walletAfter + amount;
+      }
+    }
+
+    return {
+      found: true,
+      orderReference: order.order_reference,
+      customerName: order.customer_name,
+      amount,
+      method: order.paid_method === "wallet" ? "wallet" : "counter",
+      paidAt: order.paid_at,
+      walletBefore,
+      walletAfter,
+    };
   });

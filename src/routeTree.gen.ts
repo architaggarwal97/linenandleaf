@@ -17,6 +17,7 @@ import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as ReceiptRouteImport } from './routes/receipt'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as ServiceAreaRouteImport } from './routes/service-area'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -70,6 +71,11 @@ const FaqRoute = FaqRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceiptRoute = ReceiptRouteImport.update({
+  id: '/receipt',
+  path: '/receipt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReferRoute = ReferRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/faq'
     | '/how-it-works'
+    | '/receipt'
     | '/refer'
     | '/service-area'
     | '/services'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/faq'
     | '/how-it-works'
+    | '/receipt'
     | '/refer'
     | '/service-area'
     | '/services'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/faq'
     | '/how-it-works'
+    | '/receipt'
     | '/refer'
     | '/service-area'
     | '/services'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FaqRoute: typeof FaqRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  ReceiptRoute: typeof ReceiptRoute
   ReferRoute: typeof ReferRoute
   ServiceAreaRoute: typeof ServiceAreaRoute
   ServicesRoute: typeof ServicesRoute
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/receipt': {
+      id: '/receipt'
+      path: '/receipt'
+      fullPath: '/receipt'
+      preLoaderRoute: typeof ReceiptRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refer': {
@@ -495,6 +515,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FaqRoute: FaqRoute,
   HowItWorksRoute: HowItWorksRoute,
+  ReceiptRoute: ReceiptRoute,
   ReferRoute: ReferRoute,
   ServiceAreaRoute: ServiceAreaRoute,
   ServicesRoute: ServicesRoute,

@@ -2,11 +2,13 @@ User-agent: Googlebot
 Allow: /
 Disallow: /admin/
 Disallow: /dashboard
+Disallow: /receipt
 
 User-agent: Bingbot
 Allow: /
 Disallow: /admin/
 Disallow: /dashboard
+Disallow: /receipt
 
 User-agent: Twitterbot
 Allow: /
@@ -18,5 +20,6 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /dashboard
+Disallow: /receipt
 
 Sitemap: https://linenandleaf.lovable.app/sitemap.xml
