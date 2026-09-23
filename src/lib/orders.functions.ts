@@ -123,7 +123,7 @@ export const trackOrder = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date",
+        "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date, paid",
       )
       .eq("order_reference", data.order_reference)
       .limit(5);
@@ -150,10 +150,11 @@ type OrderLookupRow = {
   delivery_photo_url: string | null;
   preferred_window: string | null;
   preferred_date: string | null;
+  paid?: boolean | null;
 };
 
 const TRACK_COLUMNS =
-  "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date";
+  "id, order_reference, status, created_at, whatsapp_number, pickup_photo_url, delivery_photo_url, preferred_window, preferred_date, paid";
 
 async function toTrackResult(match: OrderLookupRow): Promise<TrackOrderResult> {
   const status: OrderStatus =
@@ -180,6 +181,7 @@ async function toTrackResult(match: OrderLookupRow): Promise<TrackOrderResult> {
     deliveryPhotoUrl,
     preferredWindow: match.preferred_window,
     preferredDate: match.preferred_date,
+    paid: Boolean(match.paid),
   };
 }
 
