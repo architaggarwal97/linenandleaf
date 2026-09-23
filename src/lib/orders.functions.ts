@@ -102,6 +102,7 @@ export type TrackOrderResult = {
   deliveryPhotoUrl?: string | null;
   preferredWindow?: string | null;
   preferredDate?: string | null;
+  paid?: boolean;
 };
 
 function normalizePhone(value: string): string {
