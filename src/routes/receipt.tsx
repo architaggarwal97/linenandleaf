@@ -184,6 +184,7 @@ function ReceiptPage() {
                           ? new Date(receipt.paidAt).toLocaleString("en-IN", {
                               dateStyle: "medium",
                               timeStyle: "short",
+                              timeZone: "Asia/Kolkata",
                             })
                           : "—"
                       }
