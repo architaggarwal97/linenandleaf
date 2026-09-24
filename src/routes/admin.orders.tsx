@@ -202,6 +202,12 @@ function AdminOrdersPage() {
             Customers
           </Link>
           <Link
+            to="/admin/payments"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700"
+          >
+            Payments
+          </Link>
+          <Link
             to="/admin/overview"
             className="inline-flex items-center gap-1 text-sm font-semibold text-teal-700"
           >
