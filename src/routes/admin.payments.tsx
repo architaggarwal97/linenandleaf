@@ -153,7 +153,7 @@ function AdminPaymentsPage() {
             <p className="mt-2 font-display text-2xl font-bold text-slate-800">
               {inr(t.walletAmount)}
             </p>
-            <p className="text-xs text-slate-500">{t.walletCount} payments</p>
+            <p className="text-xs text-slate-500">{t.walletCount} payment{t.walletCount === 1 ? "" : "s"}</p>
           </div>
           <div className="rounded-3xl bg-white p-4 shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">
@@ -162,7 +162,7 @@ function AdminPaymentsPage() {
             <p className="mt-2 font-display text-2xl font-bold text-slate-800">
               {inr(t.counterAmount)}
             </p>
-            <p className="text-xs text-slate-500">{t.counterCount} payments</p>
+            <p className="text-xs text-slate-500">{t.counterCount} payment{t.counterCount === 1 ? "" : "s"}</p>
           </div>
         </div>
       ) : null}
