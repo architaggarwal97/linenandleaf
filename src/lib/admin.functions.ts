@@ -1454,3 +1454,178 @@ export const adminDeleteTestimonial = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not delete the testimonial.");
     return { ok: true as const };
   });
+
+// ---------------------------------------------------------------------------
+// Payment history — wallet debits + Paytm / cash payments in one list
+// ---------------------------------------------------------------------------
+
+export type AdminPayment = {
+  id: string;
+  method: "wallet" | "counter";
+  amount: number;
+  paidAt: string;
+  phone: string;
+  customerName: string | null;
+  orderId: string | null;
+  orderReference: string | null;
+  orderStatus: AdminStatus | null;
+  orderAmount: number | null;
+  walletBefore: number | null;
+  walletAfter: number | null;
+  note: string | null;
+};
+
+export type AdminPaymentHistory = {
+  payments: AdminPayment[];
+  totals: {
+    walletCount: number;
+    walletAmount: number;
+    counterCount: number;
+    counterAmount: number;
+    unlinkedWalletDebits: number;
+  };
+};
+
+const REF_IN_NOTE = /\bLL-[A-Z0-9]+\b/i;
+
+function lastTen(value: unknown): string {
+  return String(value ?? "").replace(/\D/g, "").slice(-10);
+}
+
+export const adminListPayments = createServerFn({ method: "POST" })
+  .inputValidator((input: { search?: unknown; method?: unknown } | undefined) => {
+    const search = typeof input?.search === "string" ? input.search.trim().slice(0, 40) : "";
+    const m = input?.method;
+    const method: "all" | "wallet" | "counter" =
+      m === "wallet" || m === "counter" ? m : "all";
+    return { search, method };
+  })
+  .handler(async ({ data }): Promise<AdminPaymentHistory> => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [debitsRes, paidRes] = await Promise.all([
+      supabaseAdmin
+        .from("wallet_transactions")
+        .select("id, phone, amount, resulting_balance, note, order_reference, created_at, status")
+        .eq("type", "deduction")
+        .eq("status", "confirmed")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabaseAdmin
+        .from("orders")
+        .select(
+          "id, order_reference, customer_name, whatsapp_number, status, paid, paid_method, paid_at, order_amount, created_at",
+        )
+        .eq("paid", true)
+        .order("created_at", { ascending: false })
+        .limit(500),
+    ]);
+    if (debitsRes.error || paidRes.error) throw new Error("Could not load payment history.");
+
+    type OrderLite = {
+      id: string;
+      order_reference: string;
+      customer_name: string;
+      whatsapp_number: string;
+      status: string;
+      paid: boolean;
+      paid_method: string | null;
+      paid_at: string | null;
+      order_amount: number | null;
+      created_at: string;
+    };
+    const byRef = new Map<string, OrderLite>();
+    for (const o of (paidRes.data ?? []) as OrderLite[]) byRef.set(o.order_reference.toUpperCase(), o);
+
+    // Resolve references for wallet debits (structured column first, then the note text)
+    const debits = (debitsRes.data ?? []).map((t) => {
+      const ref =
+        (t.order_reference as string | null)?.toUpperCase() ??
+        (String(t.note ?? "").match(REF_IN_NOTE)?.[0]?.toUpperCase() || null);
+      return { ...t, ref };
+    });
+    const missing = [...new Set(debits.map((d) => d.ref).filter((r): r is string => !!r && !byRef.has(r)))];
+    if (missing.length) {
+      const { data: extra } = await supabaseAdmin
+        .from("orders")
+        .select(
+          "id, order_reference, customer_name, whatsapp_number, status, paid, paid_method, paid_at, order_amount, created_at",
+        )
+        .in("order_reference", missing);
+      for (const o of (extra ?? []) as OrderLite[]) byRef.set(o.order_reference.toUpperCase(), o);
+    }
+
+    const payments: AdminPayment[] = [];
+    for (const d of debits) {
+      const order = d.ref ? byRef.get(d.ref) ?? null : null;
+      const amount = Number(d.amount ?? 0);
+      const after = d.resulting_balance === null ? null : Number(d.resulting_balance);
+      payments.push({
+        id: `w-${d.id}`,
+        method: "wallet",
+        amount,
+        paidAt: d.created_at as string,
+        phone: lastTen(d.phone),
+        customerName: order?.customer_name ?? null,
+        orderId: order?.id ?? null,
+        orderReference: order?.order_reference ?? d.ref,
+        orderStatus: order ? normalizeStatus(order.status) : null,
+        orderAmount: order?.order_amount === null || order?.order_amount === undefined ? null : Number(order.order_amount),
+        walletBefore: after === null ? null : after + amount,
+        walletAfter: after,
+        note: (d.note as string | null) ?? null,
+      });
+    }
+    for (const o of (paidRes.data ?? []) as OrderLite[]) {
+      if (o.paid_method === "wallet") continue;
+      payments.push({
+        id: `c-${o.id}`,
+        method: "counter",
+        amount: Number(o.order_amount ?? 0),
+        paidAt: o.paid_at ?? o.created_at,
+        phone: lastTen(o.whatsapp_number),
+        customerName: o.customer_name,
+        orderId: o.id,
+        orderReference: o.order_reference,
+        orderStatus: normalizeStatus(o.status),
+        orderAmount: o.order_amount === null ? null : Number(o.order_amount),
+        walletBefore: null,
+        walletAfter: null,
+        note: null,
+      });
+    }
+
+    payments.sort((a, b) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime());
+
+    const totals = {
+      walletCount: 0,
+      walletAmount: 0,
+      counterCount: 0,
+      counterAmount: 0,
+      unlinkedWalletDebits: 0,
+    };
+    for (const p of payments) {
+      if (p.method === "wallet") {
+        totals.walletCount += 1;
+        totals.walletAmount += p.amount;
+        if (!p.orderId) totals.unlinkedWalletDebits += 1;
+      } else {
+        totals.counterCount += 1;
+        totals.counterAmount += p.amount;
+      }
+    }
+
+    const term = data.search.toLowerCase();
+    const digits = data.search.replace(/\D/g, "");
+    const filtered = payments.filter((p) => {
+      if (data.method !== "all" && p.method !== data.method) return false;
+      if (!term) return true;
+      if (p.orderReference?.toLowerCase().includes(term)) return true;
+      if (p.customerName?.toLowerCase().includes(term)) return true;
+      if (digits.length >= 3 && p.phone.includes(digits.slice(-10))) return true;
+      return false;
+    });
+
+    return { payments: filtered.slice(0, 300), totals };
+  });

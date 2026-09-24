@@ -28,6 +28,7 @@ import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminOverviewRouteImport } from './routes/admin.overview'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminWalletRouteImport } from './routes/admin.wallet'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -128,6 +129,11 @@ const AdminOverviewRoute = AdminOverviewRouteImport.update({
   path: '/overview',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
   id: '/testimonials',
   path: '/testimonials',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/wallet': typeof AdminWalletRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/payments'
     | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/payments'
     | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/admin/orders'
     | '/admin/overview'
+    | '/admin/payments'
     | '/admin/testimonials'
     | '/admin/wallet'
     | '/blog/$slug'
@@ -457,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOverviewRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/testimonials': {
       id: '/admin/testimonials'
       path: '/testimonials'
@@ -491,6 +510,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminWalletRoute: typeof AdminWalletRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -499,6 +519,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminOverviewRoute: AdminOverviewRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
   AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminWalletRoute: AdminWalletRoute,
   AdminIndexRoute: AdminIndexRoute,

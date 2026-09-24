@@ -158,6 +158,14 @@ function AdminOverviewPage() {
         </div>
       </div>
 
+      <Link
+        to="/admin/payments"
+        className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-teal-800"
+      >
+        Payment history — wallet &amp; Paytm
+        <ArrowRight className="h-4 w-4" />
+      </Link>
+
       {data.pendingTopUps.count > 0 ? (
         <Link
           to="/admin/wallet"
