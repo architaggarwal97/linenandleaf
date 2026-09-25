@@ -144,6 +144,14 @@ export function ReferralForm() {
         />
       </div>
 
+      <label className="mt-5 flex items-start gap-3 text-sm text-slate-600">
+        <input type="checkbox" required className="mt-1 h-4 w-4 accent-teal-600" />
+        <span>
+          I confirm my friend is happy to be contacted, and I agree to the{" "}
+          <a href="/privacy" target="_blank" className="text-teal-700 underline">Privacy Notice</a>.
+        </span>
+      </label>
+
       <button
         type="submit"
         disabled={saving}
