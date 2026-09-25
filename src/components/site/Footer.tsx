@@ -90,7 +90,10 @@ export function Footer() {
 
         <div className="border-t border-teal-900/50 pt-8 mt-4 text-xs sm:text-sm text-center font-light flex flex-col md:flex-row justify-between items-center gap-4">
           <p>© {new Date().getFullYear()} Linen and Leaf Dry Cleaners. All rights reserved.</p>
-          <p>Sarojini Nagar Market, New Delhi.</p>
+          <p>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Notice</Link>
+            {" · "}Sarojini Nagar Market, New Delhi.
+          </p>
         </div>
       </div>
     </footer>

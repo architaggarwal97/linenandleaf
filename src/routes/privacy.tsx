@@ -148,7 +148,7 @@ const sections: Array<{ h: string; body: React.ReactNode }> = [
 function PrivacyPage() {
   return (
     <>
-      <PageHero eyebrow="Your data" title="Privacy Notice" subtitle="Last updated: September 2026" />
+      <PageHero eyebrow="Your data" title="Privacy Notice" description="Last updated: September 2026. How we handle your personal data under the DPDP Act, 2023." />
       <section className="max-w-3xl mx-auto px-4 sm:px-6 py-16 space-y-10 text-slate-700 leading-relaxed">
         {sections.map((s) => (
           <div key={s.h}>
