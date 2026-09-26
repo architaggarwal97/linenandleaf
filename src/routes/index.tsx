@@ -370,6 +370,65 @@ function Home() {
         </div>
       </section>
 
+      {/* Self-service laundry teaser */}
+      <section className="py-16 md:py-24 bg-white border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="rounded-[2rem] bg-teal-50/70 border border-teal-100 p-8 sm:p-12 md:p-16">
+              <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
+                <div>
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm">
+                    <WashingMachine className="h-6 w-6 text-teal-700" />
+                  </div>
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-600 mb-3">
+                    Self-Service Laundry
+                  </p>
+                  <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-4 leading-tight">
+                    Prefer to wash it yourself? Use our machines.
+                  </h2>
+                  <p className="text-slate-600 text-base leading-relaxed font-light">
+                    Bring your own laundry to our Sarojini Nagar shop, use our washing machines
+                    yourself, and pay based on what you use. It's a do-it-yourself option, separate
+                    from our pickup-and-delivery dry-cleaning service.
+                  </p>
+                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                    <Link
+                      to="/self-service"
+                      className="inline-flex items-center justify-center gap-2 bg-teal-800 hover:bg-teal-700 text-white px-7 py-3.5 rounded-full text-sm sm:text-base font-medium transition-all duration-300 shadow-lg shadow-teal-900/10 hover:-translate-y-0.5"
+                    >
+                      About Self-Service Laundry <ArrowRight className="h-4 w-4 text-teal-200" />
+                    </Link>
+                    <a
+                      href={whatsappLink(
+                        "Hi Linen & Leaf! I'd like to ask about the self-service laundry — machine availability, opening hours, and current pricing."
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-teal-200 bg-white px-7 py-3.5 text-sm sm:text-base font-medium text-teal-800 transition-colors hover:bg-teal-50"
+                    >
+                      <MessageCircle className="h-4 w-4" /> Ask availability &amp; rates
+                    </a>
+                  </div>
+                </div>
+                <ul className="space-y-4 text-sm sm:text-base text-slate-600">
+                  {[
+                    "Walk in during opening hours — no booking needed",
+                    "Staff on hand to get you set up",
+                    "Detergent available at the counter",
+                    "Pricing depends on load size and wash type — message us for current rates",
+                  ].map((point) => (
+                    <li key={point} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 mt-0.5 shrink-0 text-teal-600" />
+                      <span className="font-light leading-relaxed">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
     </>
   );
 }
