@@ -72,7 +72,7 @@ export function Header() {
             <Wordmark />
           </Link>
 
-          <div className="hidden lg:flex space-x-7 items-center">
+          <div className="hidden lg:flex space-x-5 items-center">
             {links.map((link) =>
               link.children ? (
                 <div
@@ -85,7 +85,7 @@ export function Header() {
                 >
                   <Link
                     to={link.to}
-                    className={`relative inline-flex items-center gap-1 text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full ${
+                    className={`relative inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full ${
                       isParentActive(link)
                         ? "text-teal-700 font-semibold after:w-full"
                         : "text-slate-500 hover:text-teal-600"
@@ -126,7 +126,7 @@ export function Header() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative text-sm font-medium text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
+                  className="relative text-sm font-medium whitespace-nowrap text-slate-500 transition-colors hover:text-teal-600 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-teal-600 after:transition-all after:duration-300 hover:after:w-full"
                   activeProps={{ className: "text-teal-700 font-semibold" }}
                 >
                   {link.label}
