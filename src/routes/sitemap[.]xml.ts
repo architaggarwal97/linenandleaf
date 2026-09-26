@@ -27,6 +27,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/wallet", changefreq: "monthly", priority: "0.5" },
           { path: "/refer", changefreq: "monthly", priority: "0.5" },
           { path: "/corporate", changefreq: "monthly", priority: "0.5" },
+          { path: "/self-service", changefreq: "monthly", priority: "0.5" },
         ];
 
         const { posts } = await import("@/lib/blog");
