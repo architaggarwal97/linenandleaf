@@ -40,6 +40,7 @@ export const navLinks: NavLink[] = [
     ],
   },
   { to: "/service-area", label: "Service Area" },
+  { to: "/self-service", label: "Self-Service" },
   {
     to: "/about",
     label: "About",
@@ -48,7 +49,6 @@ export const navLinks: NavLink[] = [
       { to: "/faq", label: "FAQ" },
       { to: "/refer", label: "Refer & Earn" },
       { to: "/corporate", label: "Corporate" },
-      { to: "/self-service", label: "Self-Service Laundry" },
     ],
   },
   { to: "/wallet", label: "Wallet" },
