@@ -29,3 +29,4 @@ Linen & Leaf is a founder-led dry cleaner serving Sarojini Nagar and South Delhi
 - [Wallet](/wallet): Prepaid wallet top-up with bonus credit, handled manually via WhatsApp.
 - [Refer & Earn](/refer): Referral program where both parties get wallet credit after a first order.
 - [Corporate & Bulk](/corporate): Bulk laundry and dry-cleaning inquiries for offices, hotels, PGs, and boutiques.
+- [Self-Service Laundry](/self-service): Bring your own laundry and use our washing machines yourself, paying based on usage.

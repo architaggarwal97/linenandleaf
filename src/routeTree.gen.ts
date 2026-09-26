@@ -20,6 +20,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReceiptRouteImport } from './routes/receipt'
 import { Route as ReferRouteImport } from './routes/refer'
+import { Route as SelfServiceRouteImport } from './routes/self-service'
 import { Route as ServiceAreaRouteImport } from './routes/service-area'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -88,6 +89,11 @@ const ReceiptRoute = ReceiptRouteImport.update({
 const ReferRoute = ReferRouteImport.update({
   id: '/refer',
   path: '/refer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SelfServiceRoute = SelfServiceRouteImport.update({
+  id: '/self-service',
+  path: '/self-service',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServiceAreaRoute = ServiceAreaRouteImport.update({
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
+  '/self-service': typeof SelfServiceRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
+  '/self-service': typeof SelfServiceRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/receipt': typeof ReceiptRoute
   '/refer': typeof ReferRoute
+  '/self-service': typeof SelfServiceRoute
   '/service-area': typeof ServiceAreaRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/receipt'
     | '/refer'
+    | '/self-service'
     | '/service-area'
     | '/services'
     | '/sitemap.xml'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/receipt'
     | '/refer'
+    | '/self-service'
     | '/service-area'
     | '/services'
     | '/sitemap.xml'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/receipt'
     | '/refer'
+    | '/self-service'
     | '/service-area'
     | '/services'
     | '/sitemap.xml'
@@ -337,6 +349,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ReceiptRoute: typeof ReceiptRoute
   ReferRoute: typeof ReferRoute
+  SelfServiceRoute: typeof SelfServiceRoute
   ServiceAreaRoute: typeof ServiceAreaRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       path: '/refer'
       fullPath: '/refer'
       preLoaderRoute: typeof ReferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/self-service': {
+      id: '/self-service'
+      path: '/self-service'
+      fullPath: '/self-service'
+      preLoaderRoute: typeof SelfServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/service-area': {
@@ -559,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ReceiptRoute: ReceiptRoute,
   ReferRoute: ReferRoute,
+  SelfServiceRoute: SelfServiceRoute,
   ServiceAreaRoute: ServiceAreaRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
