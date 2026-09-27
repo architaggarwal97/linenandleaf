@@ -37,6 +37,8 @@ export const navLinks: NavLink[] = [
     children: [
       { to: "/services", label: "Services & Pricing" },
       { to: "/how-it-works", label: "How It Works" },
+      { to: "/wallet", label: "Wallet" },
+      { to: "/track", label: "Track Order" },
     ],
   },
   { to: "/service-area", label: "Service Area" },
@@ -51,7 +53,5 @@ export const navLinks: NavLink[] = [
       { to: "/corporate", label: "Corporate" },
     ],
   },
-  { to: "/wallet", label: "Wallet" },
-  { to: "/track", label: "Track Order" },
   { to: "/contact", label: "Book a Pickup" },
 ];
