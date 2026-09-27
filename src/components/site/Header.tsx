@@ -72,7 +72,7 @@ export function Header() {
             <Wordmark />
           </Link>
 
-          <div className="hidden lg:flex space-x-5 items-center">
+          <div className="hidden lg:flex space-x-5 items-center pl-4">
             {links.map((link) =>
               link.children ? (
                 <div
