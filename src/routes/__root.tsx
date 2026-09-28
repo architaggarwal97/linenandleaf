@@ -164,6 +164,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           image: "https://linenandleaf.lovable.app/og-image.jpg",
           priceRange: "₹₹",
           currenciesAccepted: "INR",
+          paymentAccepted: "Cash, UPI, Wallet credit",
+          hasMap:
+            "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent(
+              "Linen & Leaf Dry Cleaners, Shop No. 108, Sarojini Nagar Market, New Delhi 110023",
+            ),
           knowsAbout: [
             "Dry cleaning",
             "Low-water dry cleaning",
