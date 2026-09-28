@@ -15,8 +15,10 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:title", content: post.metaTitle },
         { property: "og:description", content: post.metaDescription },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: `https://linenandleaf.lovable.app/blog/${post.slug}` },
         ...socialMeta(post.metaTitle, post.metaDescription),
       ],
+      links: [{ rel: "canonical", href: `https://linenandleaf.lovable.app/blog/${post.slug}` }],
       scripts: [breadcrumbScript(`/blog/${post.slug}`, post.title)],
     };
   },

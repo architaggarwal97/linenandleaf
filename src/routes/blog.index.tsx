@@ -12,7 +12,16 @@ const DESCRIPTION =
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
-    meta: [{ title: TITLE }, ...socialMeta(TITLE, DESCRIPTION)],
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://linenandleaf.lovable.app/blog" },
+      ...socialMeta(TITLE, DESCRIPTION),
+    ],
+    links: [{ rel: "canonical", href: "https://linenandleaf.lovable.app/blog" }],
     scripts: [breadcrumbScript("/blog", "Blog")],
   }),
   component: BlogPage,
