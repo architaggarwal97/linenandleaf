@@ -216,6 +216,30 @@ function TrackPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="mb-8 rounded-3xl sm:rounded-[2rem] border border-teal-100 bg-white p-6 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">How tracking works</h2>
+            <p className="mt-2 text-sm sm:text-base text-slate-500 font-light leading-relaxed">
+              Every booking gets a reference like <span className="font-semibold text-slate-700">LL-0001</span>,
+              shown on your booking confirmation. Enter it with the WhatsApp number you booked with
+              and you'll see where your order stands across five stages — Requested, Picked Up, In
+              Process, Ready, Delivered.
+            </p>
+            <ul className="mt-4 space-y-2 text-sm sm:text-base text-slate-600 font-light">
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                The page updates itself while it's open as we work on your order.
+              </li>
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                Still waiting for pickup? You can change your pickup time or cancel right here.
+              </li>
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                Once an order is paid, you can download a payment receipt from this page.
+              </li>
+            </ul>
+          </Reveal>
+
           <Reveal className="bg-white rounded-3xl sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-6 sm:p-10">
             <form onSubmit={submit} className="space-y-5">
               <div>

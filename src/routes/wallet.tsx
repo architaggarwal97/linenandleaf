@@ -127,6 +127,29 @@ function WalletPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="mb-8 rounded-[2rem] border border-teal-100 bg-white p-6 sm:p-8">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">What the wallet does</h2>
+            <p className="mt-2 text-sm sm:text-base text-slate-500 font-light leading-relaxed">
+              Your wallet is a prepaid balance you can use to pay for any order. Sign in with your
+              WhatsApp number — we send you a 6-digit code on WhatsApp — and your balance appears here.
+            </p>
+            <ul className="mt-4 space-y-2 text-sm sm:text-base text-slate-600 font-light">
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                Top up and we credit 10% extra on top of what you add.
+              </li>
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                Top-ups are marked pending until we confirm the payment on our side.
+              </li>
+              <li className="flex gap-2">
+                <Check className="h-4 w-4 mt-1 shrink-0 text-teal-600" />
+                Once signed in, you can also see your transaction history, your past orders and any
+                cashback or referral bonuses credited here.
+              </li>
+            </ul>
+          </Reveal>
+
           <WalletAccount wallet={wallet} />
 
           {ready && basket ? (
