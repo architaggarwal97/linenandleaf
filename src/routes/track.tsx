@@ -357,6 +357,7 @@ function TrackPage() {
                                 src={result.pickupPhotoUrl}
                                 alt={`Your garments photographed at pickup for order ${result.orderReference}`}
                                 loading="lazy"
+                                decoding="async"
                                 className="w-full max-w-xs rounded-2xl object-cover shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
                               />
                               <figcaption className="mt-1.5 text-xs text-slate-500 font-light">
@@ -370,6 +371,7 @@ function TrackPage() {
                                 src={result.deliveryPhotoUrl}
                                 alt={`Your garments photographed after cleaning for order ${result.orderReference}`}
                                 loading="lazy"
+                                decoding="async"
                                 className="w-full max-w-xs rounded-2xl object-cover shadow-[0_8px_30px_rgb(0,0,0,0.06)]"
                               />
                               <figcaption className="mt-1.5 text-xs text-slate-500 font-light">
