@@ -16,7 +16,6 @@ import {
   type TrackOrderResult,
   type OrderStatus,
 } from "@/lib/orders.functions";
-import { supabase } from "@/integrations/supabase/client";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -183,23 +182,34 @@ function TrackPage() {
   const orderId = result?.found ? result.id : undefined;
   useEffect(() => {
     if (!orderId) return;
-    const channel = supabase
-      .channel(`track-order-${orderId}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${orderId}` },
-        (payload) => {
-          const next = (payload.new as { status?: string } | null)?.status;
-          if (!next || !STAGES.some((s) => s.key === next)) return;
-          setResult((prev) =>
-            prev?.found ? { ...prev, status: next as OrderStatus } : prev,
-          );
-        },
-      )
-      .subscribe();
+    // Load the realtime client only after a successful lookup, so the
+    // tracking page's initial download stays small.
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+    void import("@/integrations/supabase/client").then(({ supabase }) => {
+      if (cancelled) return;
+      const channel = supabase
+        .channel(`track-order-${orderId}`)
+        .on(
+          "postgres_changes",
+          { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${orderId}` },
+          (payload) => {
+            const next = (payload.new as { status?: string } | null)?.status;
+            if (!next || !STAGES.some((s) => s.key === next)) return;
+            setResult((prev) =>
+              prev?.found ? { ...prev, status: next as OrderStatus } : prev,
+            );
+          },
+        )
+        .subscribe();
+      cleanup = () => {
+        supabase.removeChannel(channel);
+      };
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      cleanup?.();
     };
   }, [orderId]);
 
