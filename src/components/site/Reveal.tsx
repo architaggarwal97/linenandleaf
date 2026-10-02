@@ -17,20 +17,21 @@ export function Reveal({
   as?: "div" | "section" | "li" | "article";
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(false);
+  // Content is visible in the server HTML so phones paint it immediately;
+  // only elements still below the fold after hydration get hidden + revealed.
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) return;
+    setPending(true);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            setVisible(true);
+            setPending(false);
             observer.disconnect();
           }
         }
@@ -45,7 +46,7 @@ export function Reveal({
     <Tag
       ref={ref as never}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
-      className={`ll-reveal ${visible ? "is-visible" : ""} ${className}`}
+      className={`ll-reveal ${pending ? "is-pending" : ""} ${className}`}
     >
       {children}
     </Tag>
