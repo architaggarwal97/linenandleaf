@@ -45,7 +45,6 @@ const sections: Array<{ h: string; body: React.ReactNode }> = [
         <li>Order amounts, payment status, wallet balance and transactions.</li>
         <li>Photos of your garments taken at pickup and after cleaning.</li>
         <li>Reviews you choose to share with us.</li>
-        <li>Anonymous usage statistics through Google Analytics (pages visited, device type).</li>
       </ul>
     ),
   },
@@ -75,9 +74,9 @@ const sections: Array<{ h: string; body: React.ReactNode }> = [
     h: "Who we share it with",
     body: (
       <p>
-        We do not sell your data. It is stored with our cloud hosting and database providers, a
-        Google Sheets record used by our staff, and Google Analytics — each acting as a Data
-        Processor on our behalf. We may disclose data where required by law.
+        We do not sell your data. It is stored with our cloud hosting and database provider
+        (Supabase), acting as a Data Processor on our behalf. We may disclose data where required
+        by law.
       </p>
     ),
   },
