@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Cpu, Camera, Shield, Leaf, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { breadcrumbScript, socialMeta } from "@/lib/seo";
@@ -30,6 +30,11 @@ const blocks = [
     icon: Droplet,
     title: "99% less water",
     desc: "Solvent-based dry cleaning recirculates and filters its solvent instead of flushing fresh water through every cycle. Compared with a conventional wash, water use drops by around 99% — a meaningful difference in a city under real water stress.",
+    link: {
+      to: "/blog/$slug" as const,
+      params: { slug: "how-much-water-does-dry-cleaning-use" },
+      label: "Read the full water-use breakdown",
+    },
   },
   {
     icon: Cpu,
@@ -69,7 +74,7 @@ function TechnologyPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {blocks.map(({ icon: Icon, title, desc }, i) => (
+          {blocks.map(({ icon: Icon, title, desc, link }, i) => (
             <Reveal
               as="article"
               key={title}
@@ -81,6 +86,15 @@ function TechnologyPage() {
               </div>
               <h2 className="font-display text-xl font-bold text-slate-800 mb-3">{title}</h2>
               <p className="text-slate-500 font-light leading-relaxed text-sm sm:text-base">{desc}</p>
+              {link && (
+                <Link
+                  to={link.to}
+                  params={link.params}
+                  className="mt-4 inline-block text-sm font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
+                >
+                  {link.label}
+                </Link>
+              )}
             </Reveal>
           ))}
         </div>

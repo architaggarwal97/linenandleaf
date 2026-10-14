@@ -30,9 +30,9 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostPage,
 });
 
-/** Renders inline **bold** and bracketed CTAs as real links. */
+/** Renders inline **bold**, [label](/path) internal links, and bracketed CTAs as real links. */
 function RichText({ text }: { text: string }) {
-  const parts = text.split(/(\[[^\]]+\]|\*\*[^*]+\*\*)/g).filter(Boolean);
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\)|\[[^\]]+\]|\*\*[^*]+\*\*)/g).filter(Boolean);
   return (
     <>
       {parts.map((part, i) => {
@@ -41,6 +41,18 @@ function RichText({ text }: { text: string }) {
             <strong key={i} className="font-semibold text-stone-900">
               {part.slice(2, -2)}
             </strong>
+          );
+        }
+        const internal = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (internal && internal[2]) {
+          return (
+            <Link
+              key={i}
+              to={internal[2] as string}
+              className="font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
+            >
+              {internal[1]}
+            </Link>
           );
         }
         if (part.startsWith("[") && part.endsWith("]")) {

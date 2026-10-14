@@ -46,6 +46,7 @@ const usps = [
     glow: "hover:shadow-[0_20px_40px_rgb(13,148,136,0.12)]",
     title: "99% Less Water",
     desc: "Solvent-based dry cleaning that uses a fraction of the water of a conventional wash — better for your fabrics and the planet.",
+    to: "/technology" as const,
   },
   {
     icon: Eye,
@@ -54,6 +55,7 @@ const usps = [
     glow: "hover:shadow-[0_20px_40px_rgb(37,99,235,0.12)]",
     title: "Live Order Updates",
     desc: "Tagged photo checkpoints at pickup and after cleaning, sent straight to your WhatsApp. You always know where your order is.",
+    to: "/track" as const,
   },
 
   {
@@ -263,9 +265,8 @@ function Home() {
             <div className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 sm:px-6 sm:-mx-6 lg:mx-0 lg:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {usps.map((usp, i) => {
                 const Icon = usp.icon;
-                return (
+                const card = (
                   <Reveal
-                    key={usp.title}
                     delay={i * 70}
                     className={`w-[85vw] sm:w-[350px] shrink-0 snap-center md:w-auto md:shrink-none md:snap-none h-full bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] group transition-all duration-500 hover:-translate-y-2 ${usp.glow}`}
                   >
@@ -276,7 +277,26 @@ function Home() {
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold tracking-tight leading-snug text-slate-900 mb-3 sm:mb-4">{usp.title}</h3>
                     <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-medium tracking-normal">{usp.desc}</p>
+                    {"to" in usp && usp.to && (
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-700">
+                        Learn more <ArrowRight className="h-4 w-4" />
+                      </span>
+                    )}
                   </Reveal>
+                );
+                return "to" in usp && usp.to ? (
+                  <Link
+                    key={usp.title}
+                    to={usp.to}
+                    search={{ ref: undefined, tel: undefined }}
+                    className="contents"
+                  >
+                    {card}
+                  </Link>
+                ) : (
+                  <div key={usp.title} className="contents">
+                    {card}
+                  </div>
                 );
               })}
             </div>
