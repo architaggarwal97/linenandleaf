@@ -108,7 +108,7 @@ function HowItWorksPage() {
                   {link && (
                     <Link
                       to={link.to}
-                      search={{}}
+                      search={{ ref: undefined, tel: undefined }}
                       className="mt-4 inline-block text-sm font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
                     >
                       {link.label}

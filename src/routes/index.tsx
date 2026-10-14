@@ -285,7 +285,12 @@ function Home() {
                   </Reveal>
                 );
                 return "to" in usp && usp.to ? (
-                  <Link key={usp.title} to={usp.to} className="contents">
+                  <Link
+                    key={usp.title}
+                    to={usp.to}
+                    search={{ ref: undefined, tel: undefined }}
+                    className="contents"
+                  >
                     {card}
                   </Link>
                 ) : (
