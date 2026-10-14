@@ -44,11 +44,11 @@ function RichText({ text }: { text: string }) {
           );
         }
         const internal = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-        if (internal) {
+        if (internal && internal[2]) {
           return (
             <Link
               key={i}
-              to={internal[2]}
+              to={internal[2] as string}
               className="font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
             >
               {internal[1]}

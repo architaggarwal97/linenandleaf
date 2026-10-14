@@ -31,7 +31,8 @@ const blocks = [
     title: "99% less water",
     desc: "Solvent-based dry cleaning recirculates and filters its solvent instead of flushing fresh water through every cycle. Compared with a conventional wash, water use drops by around 99% — a meaningful difference in a city under real water stress.",
     link: {
-      to: "/blog/how-much-water-does-dry-cleaning-use" as const,
+      to: "/blog/$slug" as const,
+      params: { slug: "how-much-water-does-dry-cleaning-use" },
       label: "Read the full water-use breakdown",
     },
   },
@@ -88,6 +89,7 @@ function TechnologyPage() {
               {link && (
                 <Link
                   to={link.to}
+                  params={link.params}
                   className="mt-4 inline-block text-sm font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
                 >
                   {link.label}
