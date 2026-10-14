@@ -62,7 +62,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "p",
-        text: "The comparison is against a standard household wash cycle — the 40 to 150+ litres a washing machine uses per load. Since the dry-cleaning process itself doesn't rely on water as the cleaning medium, the water used across the whole process (some finishing and steam-pressing steps may use a small amount) comes in dramatically lower than that baseline. That's where the 99% comes from: not a marketing round number, but a real comparison against what a normal wash cycle actually uses.",
+        text: "The comparison is against a standard household wash cycle — the 40 to 150+ litres a washing machine uses per load. Since the [dry-cleaning process](/technology) itself doesn't rely on water as the cleaning medium, the water used across the whole process (some finishing and steam-pressing steps may use a small amount) comes in dramatically lower than that baseline. That's where the 99% comes from: not a marketing round number, but a real comparison against what a normal wash cycle actually uses.",
       },
       {
         type: "p",
@@ -196,7 +196,7 @@ export const posts: BlogPost[] = [
       { type: "h2", text: "What this looks like at Linen & Leaf" },
       {
         type: "p",
-        text: "Every order gets tagged and photographed when it's collected, and photographed again once cleaning is complete — both photos shared directly over WhatsApp, so there's a real record on both ends, not just a claim. No app to download, no separate account to check — just two photos, sent to the same number you booked with.",
+        text: "Every order gets tagged and photographed when it's collected, and photographed again once cleaning is complete — both photos shared directly over WhatsApp, so there's a real record on both ends, not just a claim. No app to download, no separate account to check — just two photos, sent to the same number you booked with. You can also [follow any order on the tracking page](/track).",
       },
       {
         type: "p",
@@ -267,7 +267,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "note",
-        text: "Have a specific piece with a fabric combination you're unsure about? [Message us on WhatsApp] with a photo, and we'll talk through it before you book.",
+        text: "Have a specific piece with a fabric combination you're unsure about? [Message us on WhatsApp] with a photo, and we'll talk through it before you book. You can also browse our [services and pricing](/services) first.",
       },
     ],
   },
@@ -334,7 +334,7 @@ export const posts: BlogPost[] = [
       { type: "h2", text: "Where our plan fits" },
       {
         type: "p",
-        text: "We're finalizing the specific tiers and pricing for our own monthly plans, aimed at exactly the repeat households, PGs, and small offices described above. [Message us on WhatsApp] for current details — happy to run the actual numbers against your own usage before you commit to anything.",
+        text: "We're finalizing the specific tiers and pricing for our own monthly plans, aimed at exactly the repeat households, PGs, and small offices described above. [Message us on WhatsApp] for current details — happy to run the actual numbers against your own usage before you commit to anything. In the meantime, [our wallet](/wallet) is another way to save: top it up and we add a 10% bonus on every amount you put in.",
       },
       {
         type: "note",
