@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MessageCircle, ChevronDown } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
@@ -34,6 +34,7 @@ const faqs = [
   {
     q: "Which areas do you pick up from?",
     a: "Sarojini Nagar and nearby localities — RK Puram, Netaji Nagar, INA Colony, Vasant Vihar and Safdarjung Enclave. Check the Service Area page or just ask us.",
+    link: { text: "Service Area page", to: "/service-area" as const },
   },
   {
     q: "Do you handle bridal and designer wear?",
@@ -50,6 +51,7 @@ const faqs = [
   {
     q: "How do I pay?",
     a: "We accept UPI, cash, and most major wallets. Payment is collected after you approve the final quote. You can also sign in to your Linen & Leaf wallet at checkout to pay from a prepaid balance, which earns a 10% bonus on top-ups.",
+    link: { text: "Linen & Leaf wallet", to: "/wallet" as const },
   },
 ];
 
@@ -185,7 +187,21 @@ function FaqPage() {
                   >
                     <div className="overflow-hidden">
                       <p className="px-5 sm:px-8 pb-5 sm:pb-8 text-slate-500 text-sm sm:text-base leading-relaxed font-light">
-                        {faq.a}
+                        {"link" in faq && faq.link
+                          ? faq.a.split(faq.link.text).map((chunk, i, arr) => (
+                              <span key={i}>
+                                {chunk}
+                                {i < arr.length - 1 && (
+                                  <Link
+                                    to={faq.link.to}
+                                    className="font-medium text-teal-700 underline underline-offset-4 hover:text-teal-900"
+                                  >
+                                    {faq.link.text}
+                                  </Link>
+                                )}
+                              </span>
+                            ))
+                          : faq.a}
                       </p>
                     </div>
                   </div>
