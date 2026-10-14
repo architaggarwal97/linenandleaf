@@ -123,7 +123,11 @@ function BlockView({ block }: { block: Block }) {
 function BlogPostPage() {
   const { slug } = Route.useParams();
   const post = getPost(slug)!;
-  const others = posts.filter((p) => p.slug !== post.slug).slice(0, 3);
+  // Related articles: same tag first, then the rest, up to three.
+  const others = posts
+    .filter((p) => p.slug !== post.slug)
+    .sort((a, b) => Number(b.tag === post.tag) - Number(a.tag === post.tag))
+    .slice(0, 3);
 
   return (
     <div className="bg-[#fafafa]">
@@ -164,7 +168,7 @@ function BlogPostPage() {
       {others.length > 0 && (
         <section className="border-t border-stone-200 bg-white">
           <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
-            <h2 className="text-xl font-semibold text-stone-900">Keep reading</h2>
+            <h2 className="text-xl font-semibold text-stone-900">Related articles</h2>
             <div className="mt-6 grid gap-6 md:grid-cols-3">
               {others.map((p) => (
                 <Link
