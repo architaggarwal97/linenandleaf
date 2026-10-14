@@ -59,6 +59,7 @@ const steps = [
       "Steam sanitisation and finishing on every order.",
       "You get updates on WhatsApp as your order moves through each stage.",
     ],
+    link: { to: "/track" as const, label: "Track an order" },
   },
   {
     step: "04",
@@ -84,7 +85,7 @@ function HowItWorksPage() {
 
       <section className="py-16 md:py-24 bg-[#fafafa]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          {steps.map(({ step, icon: Icon, title, desc, detail }, i) => (
+          {steps.map(({ step, icon: Icon, title, desc, detail, link }, i) => (
             <Reveal
               as="article"
               key={step}
@@ -104,6 +105,14 @@ function HowItWorksPage() {
                       <li key={d}>{d}</li>
                     ))}
                   </ul>
+                  {link && (
+                    <Link
+                      to={link.to}
+                      className="mt-4 inline-block text-sm font-semibold text-teal-700 underline underline-offset-4 hover:text-teal-900"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </div>
               </div>
             </Reveal>
